@@ -1,0 +1,71 @@
+********
+Meeting minutes:
+********
+Meeting with Vajda
+Attendence: All
+-------------------------------
+
+What we did:
+
+Lucas: Worked on SRS and Designs
+Joe: Worked on SRS
+Richard: Made SRS and Fliers. Research Flutter Documentation. Looked into Google API to test compatability
+Craig: I'm finishing my SRS and have made some flowcharts for user input design.  I've also downloaded some 
+other charging apps to check which databases we might use
+Kirsten: Helped out with making survey, working on SRS, made 2 mini flutter projects. UI dev in flutter is easy.
+
+
+What we will do this week:
+
+Lucas: What  I'm going to do this week, Finish Designs, see if google API is implemetable into flutter
+Joe: Go to charging stations, research APIs and Framework.
+Richard: Finish SRS, Get basic interface design Down. Meet up at Stations.
+Craig:  Future plans, I'll be looking at car chargers here in Moses Lake and putting up some of the flyers Richard 
+and Kirsten made there.
+Kirsten: Continueing to make SRS, work through Flutter, survey people
+
+
+We can borrow devices for the quarter.
+
+Questions:
+
+What are you looking high, low design?
+
+High level, how this problem as its own as a software should be seperated into logica parts.
+Everything related to database, everything related to backend, everything related to user.
+Low level design, how inout is handle, output handled, data structures used, what primitives, functianality of moduals.
+Function signitures.
+Have ideas on our own, doesn't have to be permanent or practical.
+
+How to add prof to Github?
+Give Kirsten ID to add
+"szilardv"
+
+When to develop/ wrap up design phase?
+Why not yesterday, We should start soon and get something going
+Sooner we start the better.
+
+Presentation Midterm?
+Will involve a demo. Monday of the Sixth Week. feb 7?
+Maybe have some version by next monday
+Present for 40 minutes the state of our presentation. 8 minutes per person. 5/6 minutes minimum.
+
+Midterm:
+intoduce client
+discuss project
+cover requirements
+discuss/analyse these requirements
+"based on requirements/discussion" what tools do we want to use/ why not something else.
+Flutter?... defend your choice.
+mySQL?... why that one?
+Gant chart to show upcoming weeks, how to finalize project.
+from reading GANT, has to see the light at the end of the tunnnel (Be sure to include every aspect, ie testing)
+Not asking for a DEMO (But if something is workign and adds value to the presentation)
+Conclusion (Problems, how to solve them, how to go from here)
+
+Why not get max points?
+Did not prepare, read slides from screen, does not have answers to questions.
+
++++++++++
+Met for 56 Minutes
++++++++++

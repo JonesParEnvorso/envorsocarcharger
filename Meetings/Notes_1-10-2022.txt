@@ -1,0 +1,61 @@
+********
+Meeting minutes:
+********
+Meeting with Prof Vajda.
+All attended.
+-------------------------------
+Not prepared, need to set agenda.
+Need to plan meeting minutes.
+
+Need to post minutes on Github.
+Make sure the github is intuitive.
+
+Discussed the initial meetings.
+
+Discussed Bob and Parker.
+Paricularly about Bob.
+Meet regularly with client in first few weeks.
+
+Send emails through a single person, CC the rest of the group.
+Respond to Bob for clarification, Be nice, not Aggressive.
+
+He doesn't want to micromanage, organize as we like.
+
+He won't grade line by line but by general involvement in the whole project.
+If people don't participate on the team, tell Vajda.
+
+Have atleast 1 meeting but 2 is beter.
+Make sure people outside ellensburg have a way of being involved with in person meetings.
+
+1 meeting with Vajda
+1-3 meeting with group
+1 meeting with Bob and Parker (at first)
+Make sure everyone is comfortable with the setting.
+
+No meeting next monday.
+
+Discussed SRS, due date, responsibilities.
+
+The SRS will also include Diagrams and designs.
+We will combine documents eventually.
+
+Commicate group problems 
+
+Be Proactive and open minded to new technologies.
+We are certanly going to have to learn new tech.
+
+Wait till after the SRS due date to combine them.
+Include Feasability and validity checks.
+
+++++++++++++++++
+Met for 60 Minutes
+++++++++++++++++
+
+
+
+
+
+
+
+
+

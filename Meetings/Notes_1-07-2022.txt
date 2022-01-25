@@ -1,0 +1,53 @@
+
+Notes from Parker
+
+How many user is the system expected to handle?
+That I'm unsure of, Right just a test envirmement. We would prob like a system that could handle any level of growth.
+
+We are expecting it to be an app.
+
+Would we be primarily develpong an android app?
+Bob is a fan of apple, he could provide some recourses.
+Guess that Bob would prob prefer apple.
+
+Should it be cross platform?
+you prob dont have the time, but most likely not.
+
+What kind of user data would we be collecting and how might it be involved with user.
+For the most part database oriented. prob from mult databases we don't control.
+I would gues the user itself will create an account.
+Idea is to centralize all the information for user.
+
+Would we be storing Credit Card info.
+Preferabbly not, only on the side of the membership side
+
+How can we measure the success of our app.
+He has some plans to look at the hardware ivolved with this.
+A successful project would be able to grab the information from different services and provide it to the user in the best way
+As long as its quick but that should be farily easy.
+
+Not a complete list of what should be implemented.
+Generally expected to implement Fords system.
+
+When the user is looking for a charger, should we give them more freedom to find outside charger.
+Priority is to find ones close to them, but don't see a problem.
+
+Preferably you guys don't have to spend any money.
+prob the most likely case is find a free option or here you go.
+
+Will the user be required to have an account.
+Preferably the user would need to log in atleast once.
+Account would thearetically store user data on their car.
+
+What would make this stand out.
+The main selling point would be the all in one charging locator.
+
+What  do you guys know of electric cars
+Bob owns and has experience working with and on electric cars industry.
+
+Looked as a prtotype of a product rather than a comercial product.
+
+What kind of documentation would be provided to the user.
+First time log in and account creation.
+Definetly a help area/button.
+

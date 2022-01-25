@@ -1,0 +1,54 @@
+********
+Meeting minutes:
+********
+Meeting with Bob.
+Attendence: All
+-------------------------------
+
+
+Bob's fav food is bread.
+Bob is a technical fellow at a venture fund.
+London -> Bangcoc -> Ellensburg.
+He talked to the president and he asked for help with Capstone projects.
+
+
+He wants to help in our job and what not.
+
+He goes to North Bend, tries to get home, 4 different companies took for ever.
+
+a federation of electric charging companies, members would only pay a single price.
+Gotta figure out how to do a fake card.
+
+"Hey Tony, can you rout me to the nearest fast charger?"
+	should know:
+	Car type, memberships
+Take to either fastes or cheapest.
+
+might tell user power rates.
+
+	- makes finding a place to charge that is available, that is cheap as possible, 
+	  that is fast as possible, that the user can or has signed up for.
+
+ Let voice do alot of the intereaction.
+
+Consider the possibility of collecting data and sending it to companies.
+
+consider interacting with other departments.
+
+Work with whatever language is hard. 
+Prioritized IOS.
+
+prepopulate with fake payment information.
+
+When users are looking for charger
+	provide a list.
+tell me nearest, fastest, cheapest, by brand.
+
+only deal with companies that have free base.
+
+Possibly go and interview people at charging stations.
+
+
++++++++++
+Met for 60 Minutes
++++++++++

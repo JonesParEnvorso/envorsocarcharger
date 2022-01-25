@@ -1,0 +1,19 @@
+Meeting 1/21/2022
+
+Meeting minutes:
+********
+Meeting with Parker
+Attendence: All
+-------------------------------
+
+Discussed react native versus Flutter
+React native has more documentation. 
+Flutter is more of a challenge and backed by google, something for resume
+
+Visual preferences: possibly integrated with google maps
+general Dark theme
+Model off of ford or other autombile websites
+
+++++++++++++++
+meeting time 20 minutes
+++++++++++++++
