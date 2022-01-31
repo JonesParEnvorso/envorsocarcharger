@@ -1,0 +1,35 @@
+********
+Meeting minutes:
+********
+Meeting with Vajda
+Attendence: All
+-------------------------------
+
+What we did:
+
+Lucas: Met to discuss charger, finished SRS, got a dev system set up, researched flutter.
+Joe: We met on monday with Vajda, monday-Thur working SRS, met Bob at Ford, went around to stations and discussed problems.
+Richard: Met up to post surveys, worked on/finished SRS. Simple flutter projects. Looked into connecting Firebase to flutter.
+Craig: Finished SRS, helped post surveys. met with client. Today meet to decide roles.
+Kirsten: helped make a survey, Finished SRS, Reviewed others, Set up Github. Researched Xcode Solutions
+
+
+What we will do this week:
+
+Lucas: Designate positions, combine SRS, make presentations
+Joe: We are going to combine SRS, assign roles.
+Richard: Meet to discuss SRS as whoel, Design roles, project roles, Develop some sort of Demo.
+Craig: SRS, presentation
+Kirsten: Combining SRS, make sure FLutter is working.
+
+
+Questions:
+Make a Gantt Chart!!!!!!!!!!!!!!!
+Make sure slides look alike
+
+send a copy for Approval from Bob.
+HAVE AGENDA!
+
++++++++++
+Met for 56 Minutes
++++++++++
