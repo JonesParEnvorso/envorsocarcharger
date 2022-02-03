@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "926253572011",
+    "project_id": "car-charger-app-e54ec",
+    "storage_bucket": "car-charger-app-e54ec.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:926253572011:android:f048ea85ed2de9ff687cee",
+        "android_client_info": {
+          "package_name": "com.example.envorso_charging_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "926253572011-7q40tgur6jgqviuvfev05ql9ppta3067.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3-BVlwfGkUdeUJR_Ivi2G63jBgCEMYz4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "926253572011-7q40tgur6jgqviuvfev05ql9ppta3067.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
