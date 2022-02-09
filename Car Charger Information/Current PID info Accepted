@@ -1,0 +1,7 @@
+- Name (First and Last)
+- Email
+- Phone number (Country Code is hardcoded as +1)
+- Address (Street, City, State, ZIP, Country)
+- Credit Card (Number, CVV, Expiration)
+- Charger Type(s)
+- Subscriptions
