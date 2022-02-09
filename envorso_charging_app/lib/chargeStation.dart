@@ -11,21 +11,21 @@ class Chargers {
   //the max range of the chargers being querried
   int range = 3;
 
+  var chargerList;
+
   //Constructor
-  Chargers() {}
+  Chargers();
 
   //Pull down n < maxSize chargers into a list
   void pullCharger(LatLng latlong) async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    var stat = await FirebaseFirestore.instance
+    chargerList = await FirebaseFirestore.instance
         .collection('stations')
         .limit(maxSize)
         .where('city', isEqualTo: "Ellensburg")
         .get();
-
-    //stat.size;
   }
 
   //Change the search range of chargers
