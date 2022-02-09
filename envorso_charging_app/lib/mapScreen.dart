@@ -63,7 +63,7 @@ class _MapScreenState extends State<MapScreen> {
 */
   @override
   Widget build(BuildContext context) {
-    getStation();
+    //getStation();
     return Scaffold(
       // Google Map component values
       body: GoogleMap(
