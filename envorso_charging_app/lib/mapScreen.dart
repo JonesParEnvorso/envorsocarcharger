@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'newUser.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 void main() {
   runApp(const MyApp());
@@ -46,8 +49,21 @@ class _MapScreenState extends State<MapScreen> {
     super.dispose();
   }
 
+//Experimenting with database calls. Does not currently work
+/*
+  void getStation() async {
+    final CollectionReference station =
+        FirebaseFirestore.instance.collection('stations');
+    station.where('city', isEqualTo: "Ellensburg").get().then((QuerySnapshot) {
+      for (var result in QuerySnapshot.docs) {
+        _addMarker(LatLng(result.get('lat'), result.get('lat')));
+      }
+    });
+  }
+*/
   @override
   Widget build(BuildContext context) {
+    //getStation();
     return Scaffold(
       // Google Map component values
       body: GoogleMap(
