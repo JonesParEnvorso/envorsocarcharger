@@ -1,0 +1,36 @@
+Meeting 1/21/2022
+
+Meeting minutes:
+********
+Meeting with Bob
+Attendence: All
+-------------------------------
+
+
+
+Talked about what we will do at the ford dealer.
+
+***************
+Lucas Keizur:
+Brain Dump.
+Charging:
+The process of charging a car is convoluted and tedius.
+For most any charge, the user must go through multiple companies' software.
+Current solutions are unefficient and impractical. They only do half the job and not the good half.
+There is no consistency amongst charging companies and even within a single charging company, the process is excessive.
+Mustang:
+Excelent car, most physical characteristics are designed practically.
+The draw back is the software. The GUI seems not quite tested enough.
+some common information like charging rate/progress aren't in the area one would expect.
+Other bits of information just arn't obvoius or even existent. It is hard to tell when the car is or isn't charging.
+The GUI is full of information. This might be great from an enthusiest's point of view, but the typical consumer
+may find this overwelming. Despite the desnity of the interface, it still takes 3 taps of the interface to see 
+the charge on the center console, and thats if you know what buttons to actually press.
+Overall, the car is great, the GUI just needs better usability for a more typical consumer.
+
+Thank you Bob for the ride and coffee, we all learned a lot.
+****************
+
+++++++++++++++
+meeting time 20 minutes
+++++++++++++++
