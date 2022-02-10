@@ -9,28 +9,48 @@ class Chargers {
   //the max number of chargers being pulled at any given time
   int maxSize = 15;
   //the max range of the chargers being querried
-  int range = 3;
+  double range = 0.042478;
 
-  var chargerList;
+  List<Map<String, dynamic>> chargerList = [];
 
   //Constructor
-  Chargers();
+  Chargers() {}
+
+  void setChargerList(List<Map<String, dynamic>> input) {
+    chargerList = input;
+  }
+
+  List<Map<String, dynamic>> getChargerList() {
+    return chargerList;
+  }
 
   //Pull down n < maxSize chargers into a list
-  void pullCharger(LatLng latlong) async {
+  void pullCharger(double lat, double lon) async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    chargerList = await FirebaseFirestore.instance
+    var querryList = await FirebaseFirestore.instance
         .collection('stations')
         .limit(maxSize)
         .where('city', isEqualTo: "Ellensburg")
         .get();
+    List<Map<String, dynamic>> charList = [];
+    for (var docs in querryList.docs) {
+      charList.add(docs.data());
+    }
+    setChargerList(charList);
   }
 
   //Change the search range of chargers
   void changeRange(int miles) {
-    range = miles;
+    range = miles / 69.00;
+    //print("range now " + range.toString());
+  }
+
+  void printList() {
+    for (int i = 0; i < chargerList.length; i++) {
+      print(chargerList.elementAt(i));
+    }
   }
 
   //order the list of chargers by price
