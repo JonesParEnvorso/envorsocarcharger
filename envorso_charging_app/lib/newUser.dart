@@ -41,12 +41,32 @@ class AddUser extends StatefulWidget {
 }
 
 class _AddUser extends State<AddUser> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey();
+
+  // address consists of: city, state, street, zip
+  final newCity = TextEditingController();
+  final newStreet = TextEditingController();
+  final newState = TextEditingController();
+  final newZip = TextEditingController();
+  final newCountry = TextEditingController();
+  // card consists of: number, expiration, and cvv
+  final newCard = TextEditingController();
+  final newExpirMon = TextEditingController();
+  final newExpirYr = TextEditingController();
+  final newCvv = TextEditingController();
+
+  final newName = TextEditingController();
+  final newEmail = TextEditingController();
+  final newPhone = TextEditingController();
+
+  // chargerType and Subscriptions still need to be fully updated
+  // charger type will be array
+  final newChargerType = TextEditingController();
+  // subscriptions will be array
+  final newSubscriptions = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
-
     // device dimensions. makes fields consistent across all devices
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
@@ -57,30 +77,9 @@ class _AddUser extends State<AddUser> {
     // padding around the text entry boxes
     const inputPadding = EdgeInsets.all(10.0);
 
-    // address consists of: city, state, street, zip
-    final newCity = TextEditingController();
-    final newStreet = TextEditingController();
-    final newState = TextEditingController();
-    final newZip = TextEditingController();
-    final newCountry = TextEditingController();
-    // card consists of: number, expiration, and cvv
-    final newCard = TextEditingController();
-    final newExpirMon = TextEditingController();
-    final newExpirYr = TextEditingController();
-    final newCvv = TextEditingController();
-    final newEmail = TextEditingController();
-    final newName = TextEditingController();
-    final newPhone = TextEditingController();
-
-    // chargerType and Subscriptions still need to be fully updated
-    // charger type will be array
-    final newChargerType = TextEditingController();
-    // subscriptions will be array
-    final newSubscriptions = TextEditingController();
-
     goToMaps(BuildContext context) {
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => MapScreen()));
+          context, MaterialPageRoute(builder: (context) => const MapScreen()));
     }
 
     @override
@@ -105,13 +104,21 @@ class _AddUser extends State<AddUser> {
       newCvv.dispose();
       newChargerType.dispose();
       newSubscriptions.dispose();
+
       super.dispose();
     }
 
-    Future<void> addUser() {
+    _addUser() async {
       //String name = newName.text; // split name into first and last
-      String firstName = newName.text.substring(0, newName.text.indexOf(" "));
-      String lastName = newName.text.substring(newName.text.indexOf(" ") + 1);
+      String firstName;
+      String lastName;
+      if (!newName.text.contains(" ")) {
+        firstName = newName.text;
+        lastName = "";
+      } else {
+        firstName = newName.text.substring(0, newName.text.indexOf(" "));
+        lastName = newName.text.substring(newName.text.indexOf(" ") + 1);
+      }
       String email = newEmail.text;
       String phoneNumber = newPhone.text;
       String city = newCity.text;
@@ -140,7 +147,11 @@ class _AddUser extends State<AddUser> {
       newExpirYr.clear();
       newCvv.clear();
 
-      return users
+      CollectionReference users =
+          FirebaseFirestore.instance.collection('users');
+
+      DocumentReference ref;
+      await users
           .add({
             'firstName': firstName,
             'lastName': lastName,
@@ -154,18 +165,29 @@ class _AddUser extends State<AddUser> {
               "state": state,
               "zip": zip,
             },
-            "chargerType": chargerType,
+            //"chargerType": chargerType,
             "creditCard": {
               // credit card is also a map
               "num": creditCard,
               "exp": expir,
               "cvv": cvv,
             },
-            "subscriptions": subscriptions,
+            //"subscriptions": subscriptions,
             "email": email,
           })
-          .then((value) => print("User Added"))
+          .then((value) => value
+              .collection('chargerType')
+              .add({'chargerType': chargerType}).then((v) => value
+                  .collection('subscriptions')
+                  .add({'subscriptions': subscriptions})))
           .catchError((error) => print("Failed to add user: $error"));
+    }
+
+    _validateField(String? value) {
+      if (value == null || value.isEmpty) {
+        return 'Required';
+      }
+      return null;
     }
 
     // ignore for now
@@ -185,68 +207,9 @@ class _AddUser extends State<AddUser> {
       }
     } // _selectDate */
 
-    // updating to form field
-    /*return Scaffold(
-        appBar: AppBar(
-          title: Text("Add User"),
-        ),
-        body: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              TextFormField(
-                controller: newName,
-                decoration: const InputDecoration(hintText: 'Name'),
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter in your name';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: newEmail,
-                decoration: const InputDecoration(hintText: 'Email'),
-                keyboardType: TextInputType.emailAddress,
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter in your email';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: newPhone,
-                decoration: const InputDecoration(hintText: 'Phone Number'),
-                keyboardType: TextInputType.number,
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.digitsOnly
-                ],
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter in your phone number';
-                  }
-                  return null;
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      // process data
-                    }
-                  },
-                  child: const Text("Submit"),
-                ),
-              ),
-            ],
-          ),
-        ));*/
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add User"),
+        title: const Text("Add User"),
       ),
       body: Form(
           key: _formKey,
@@ -258,54 +221,40 @@ class _AddUser extends State<AddUser> {
                 width: screenWidth,
                 padding: inputPadding,
                 child: TextFormField(
-                  controller: newName,
-                  autocorrect: false,
-                  decoration: const InputDecoration(hintText: 'Name'),
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter in your name';
-                    }
-                    return null;
-                  },
-                  //keyboardType: TextInputType.name,
-                ),
+                    controller: newName,
+                    //autocorrect: false,
+                    decoration: const InputDecoration(hintText: 'Name'),
+                    keyboardType: TextInputType.name,
+                    textInputAction: TextInputAction.next,
+                    validator: _validateField),
               ),
               Container(
                 // email
                 width: screenWidth,
                 padding: inputPadding,
                 child: TextFormField(
-                  controller: newEmail,
-                  autocorrect: false,
-                  decoration: const InputDecoration(hintText: 'Email'),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter in your email';
-                    }
-                    return null;
-                  },
-                ),
+                    controller: newEmail,
+                    //autocorrect: false,
+                    decoration: const InputDecoration(hintText: 'Email'),
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                    validator: _validateField),
               ),
               Container(
                   // phone number
                   width: screenWidth,
                   padding: inputPadding,
                   child: TextFormField(
-                    controller: newPhone,
-                    autocorrect: false,
-                    decoration: const InputDecoration(hintText: 'Phone Number'),
-                    keyboardType: TextInputType.phone,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly
-                    ],
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter in your phone number';
-                      }
-                      return null;
-                    },
-                  )),
+                      controller: newPhone,
+                      //autocorrect: false,
+                      decoration:
+                          const InputDecoration(hintText: 'Phone Number'),
+                      keyboardType: TextInputType.phone,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly
+                      ],
+                      textInputAction: TextInputAction.next,
+                      validator: _validateField)),
               Row(
                 // rows to make things look pretty / to save on screen space
                 children: [
@@ -314,33 +263,23 @@ class _AddUser extends State<AddUser> {
                     width: 180,
                     padding: inputPadding,
                     child: TextFormField(
-                      controller: newStreet,
-                      autocorrect: false,
-                      decoration: const InputDecoration(hintText: 'Street'),
-                      keyboardType: TextInputType.streetAddress,
-                      validator: (String? value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter in your street address';
-                        }
-                        return null;
-                      },
-                    ),
+                        controller: newStreet,
+                        //autocorrect: false,
+                        decoration: const InputDecoration(hintText: 'Street'),
+                        keyboardType: TextInputType.streetAddress,
+                        textInputAction: TextInputAction.next,
+                        validator: _validateField),
                   ),
                   Container(
                     // city
                     width: 180,
                     padding: inputPadding,
                     child: TextFormField(
-                      controller: newCity,
-                      autocorrect: false,
-                      decoration: const InputDecoration(hintText: 'City'),
-                      validator: (String? value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter in your city';
-                        }
-                        return null;
-                      },
-                    ),
+                        controller: newCity,
+                        //autocorrect: false,
+                        decoration: const InputDecoration(hintText: 'City'),
+                        textInputAction: TextInputAction.next,
+                        validator: _validateField),
                   )
                 ],
               ),
@@ -351,51 +290,42 @@ class _AddUser extends State<AddUser> {
                     width: 70,
                     padding: inputPadding,
                     child: TextFormField(
-                      controller: newState,
-                      autocorrect: false,
-                      decoration: const InputDecoration(
-                          hintText: 'State', counterText: ""),
-                      maxLength: 2,
-                      validator: (String? value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter in your name';
-                        }
-                        return null;
-                      },
-                    ),
+                        controller: newState,
+                        //autocorrect: false,
+                        decoration: const InputDecoration(
+                            hintText: 'State', counterText: ""),
+                        maxLength: 2,
+                        textInputAction: TextInputAction.next,
+                        validator: _validateField),
                   ),
                   Container(
                     // zip
                     width: 140,
                     padding: inputPadding,
                     child: TextFormField(
-                      controller: newZip,
-                      autocorrect: false,
-                      decoration: const InputDecoration(
-                          hintText: 'ZIP', counterText: ""),
-                      keyboardType: TextInputType.number,
-                      maxLength: 5,
-                      // accepts numbers only
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly
-                      ],
-                      validator: (String? value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter in your ZIP code';
-                        }
-                        return null;
-                      },
-                    ),
+                        controller: newZip,
+                        //autocorrect: false,
+                        decoration: const InputDecoration(
+                            hintText: 'ZIP', counterText: ""),
+                        keyboardType: TextInputType.number,
+                        maxLength: 5,
+                        // accepts numbers only
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        textInputAction: TextInputAction.next,
+                        validator: _validateField),
                   ),
                   Container(
                     // country
                     width: 140,
                     padding: inputPadding,
                     child: TextFormField(
-                      controller: newCountry,
-                      autocorrect: false,
-                      decoration: const InputDecoration(hintText: 'Country'),
-                    ),
+                        controller: newCountry,
+                        //autocorrect: false,
+                        decoration: const InputDecoration(hintText: 'Country'),
+                        textInputAction: TextInputAction.next,
+                        validator: _validateField),
                   )
                 ],
               ),
@@ -404,16 +334,17 @@ class _AddUser extends State<AddUser> {
                 width: screenWidth,
                 padding: inputPadding,
                 child: TextFormField(
-                  controller: newCard,
-                  autocorrect: false,
-                  decoration:
-                      const InputDecoration(hintText: 'Credit Card Number'),
-                  //keyboardType: TextInputType.number,
-                  // accepts numbers only
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.digitsOnly
-                  ],
-                ),
+                    controller: newCard,
+                    //autocorrect: false,
+                    decoration:
+                        const InputDecoration(hintText: 'Credit Card Number'),
+                    keyboardType: TextInputType.number,
+                    // accepts numbers only
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly
+                    ],
+                    textInputAction: TextInputAction.next,
+                    validator: _validateField),
               ),
               Row(
                 children: [
@@ -426,47 +357,50 @@ class _AddUser extends State<AddUser> {
                       width: 60,
                       padding: const EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 10.0),
                       child: TextFormField(
-                        controller: newExpirMon,
-                        autocorrect: false,
-                        decoration: const InputDecoration(
-                            hintText: 'MM', counterText: ""),
-                        maxLength: 2,
-                        //keyboardType: TextInputType.number,
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                      )),
+                          controller: newExpirMon,
+                          //autocorrect: false,
+                          decoration: const InputDecoration(
+                              hintText: 'MM', counterText: ""),
+                          maxLength: 2,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
+                          textInputAction: TextInputAction.next,
+                          validator: _validateField)),
                   const Text("/"),
                   Container(
                       // expiration year
                       width: 60,
                       padding: const EdgeInsets.fromLTRB(5.0, 10.0, 10.0, 10.0),
                       child: TextFormField(
-                        controller: newExpirYr,
-                        autocorrect: false,
-                        decoration: const InputDecoration(
-                            hintText: 'YYYY', counterText: ""),
-                        maxLength: 4,
-                        //keyboardType: TextInputType.number,
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                      )),
+                          controller: newExpirYr,
+                          //autocorrect: false,
+                          decoration: const InputDecoration(
+                              hintText: 'YYYY', counterText: ""),
+                          maxLength: 4,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
+                          textInputAction: TextInputAction.next,
+                          validator: _validateField)),
                   Container(
                     // cvv
                     width: 60,
                     padding: inputPadding,
                     child: TextFormField(
-                      controller: newCvv,
-                      autocorrect: false,
-                      decoration: const InputDecoration(
-                          hintText: 'CVV', counterText: ""),
-                      maxLength: 3,
-                      //keyboardType: TextInputType.number,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly
-                      ],
-                    ),
+                        controller: newCvv,
+                        //autocorrect: false,
+                        decoration: const InputDecoration(
+                            hintText: 'CVV', counterText: ""),
+                        maxLength: 3,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        textInputAction: TextInputAction.next,
+                        validator: _validateField),
                   )
                 ],
               ),
@@ -475,27 +409,46 @@ class _AddUser extends State<AddUser> {
                 width: 280,
                 padding: inputPadding,
                 child: TextFormField(
-                  controller: newChargerType,
-                  autocorrect: false,
-                  decoration: const InputDecoration(hintText: 'Charger Type'),
-                ),
+                    controller: newChargerType,
+                    //autocorrect: false,
+                    decoration: const InputDecoration(hintText: 'Charger Type'),
+                    textInputAction: TextInputAction.next,
+                    validator: _validateField),
               ),
               Container(
                 // subscriptions. look into onSubmitted field to keep ongoing list
                 width: 280,
                 padding: inputPadding,
                 child: TextFormField(
-                  controller: newSubscriptions,
-                  autocorrect: false,
-                  decoration: const InputDecoration(hintText: 'Subscriptions'),
-                ),
+                    controller: newSubscriptions,
+                    //autocorrect: false,
+                    decoration:
+                        const InputDecoration(hintText: 'Subscriptions'),
+                    textInputAction: TextInputAction.done,
+                    validator: _validateField),
               ),
-              TextButton(
+              Padding(
+                  padding: inputPadding,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        _addUser();
+                      }
+                    },
+                    child: const Text("Sign Up"),
+                  )),
+              Padding(
+                  padding: inputPadding,
+                  child: ElevatedButton(
+                    onPressed: () => goToMaps(context),
+                    child: const Text("Maps Screen"),
+                  )),
+              /*TextButton(
                   onPressed: addUser,
                   child: const Text("Add User")), // submit button
               TextButton(
                   onPressed: () => goToMaps(context),
-                  child: const Text("Maps Screen")), // navigation button*
+                  child: const Text("Maps Screen")),*/ // navigation button
             ],
           )),
     );
