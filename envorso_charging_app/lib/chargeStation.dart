@@ -4,6 +4,19 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 
+class CharTest {
+  CharTest() {
+    run();
+  }
+  void run() async {
+    print("start");
+    //ellensburg is 46.999883, -120.544755
+    var stations = Chargers();
+    await stations.pullChargers(46.999883, -120.544755);
+    stations.printChargers();
+  }
+}
+
 //This class will pull and store the collection of chagers
 class Chargers {
   //the max number of chargers being pulled at any given time
@@ -11,45 +24,33 @@ class Chargers {
   //the max range of the chargers being querried
   double range = 0.042478;
 
-  List<Map<String, dynamic>> chargerList = [];
+  List<Map<String, dynamic>> chargers = [];
 
   //Constructor
-  Chargers() {}
-
-  void setChargerList(List<Map<String, dynamic>> input) {
-    chargerList = input;
-  }
-
-  List<Map<String, dynamic>> getChargerList() {
-    return chargerList;
-  }
+  Chargers();
 
   //Pull down n < maxSize chargers into a list
-  void pullCharger(double lat, double lon) async {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+  pullChargers(double lat, double lon) async {
     var querryList = await FirebaseFirestore.instance
         .collection('stations')
         .limit(maxSize)
         .where('city', isEqualTo: "Ellensburg")
+        //.where('lon', isLessThan: (lon + range), isGreaterThan: (lon - range))
         .get();
-    List<Map<String, dynamic>> charList = [];
     for (var docs in querryList.docs) {
-      charList.add(docs.data());
+      chargers.add(docs.data());
     }
-    setChargerList(charList);
   }
 
   //Change the search range of chargers
   void changeRange(int miles) {
     range = miles / 69.00;
-    //print("range now " + range.toString());
   }
 
-  void printList() {
-    for (int i = 0; i < chargerList.length; i++) {
-      print(chargerList.elementAt(i));
+  void printChargers() {
+    print(chargers.length);
+    for (int i = 0; i < chargers.length; i++) {
+      print(chargers.elementAt(i)['name']);
     }
   }
 
@@ -67,4 +68,19 @@ class Chargers {
 
   //order the list of chargers by charging Speed
   void orderSpeed() {}
+}
+
+class Addition {
+  List<Map<String, dynamic>> a = [];
+
+  Addition(a) {}
+
+  void add() {
+    var b = {'1': 1, '2': "Hello", '3': 3.14159};
+    a.add(b);
+  }
+
+  void printNum() {
+    print("num is " + a.toString());
+  }
 }
