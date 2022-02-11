@@ -98,25 +98,19 @@ class _FirstLaunch extends State<FirstLaunch> {
                   ),
                 ),
                 Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      ElevatedButton.icon(
-                        onPressed: null,
-                        icon: Icon(
-                          Icons.favorite,
-                          color: Colors.white,
-                          size: 10,
-                        ),
-                        label: Text('Apple'),
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.black,
-                        ),
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children:<Widget>[
+                      ElevatedButton(
+                        onPressed: null,                       
+                        child: const Text('Apple'),
+                                                
                       ),
                       ElevatedButton(
                         onPressed: null,
                         child: const Text('Google'),
                       )
-                    ]),
+                    ]
+                ),
                 Container(
                     height: 50,
                     padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
