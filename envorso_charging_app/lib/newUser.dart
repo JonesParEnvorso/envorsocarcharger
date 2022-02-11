@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const AddUserPage(),
+      home: const AddUser(),
       /*home: Scaffold(
         appBar: AppBar(title: const Text('Sign up')),
         body: const AddUserPage(),
@@ -34,13 +34,13 @@ class MyApp extends StatelessWidget {
 }
 
 // create new user from user input
-class AddUserPage extends StatefulWidget {
-  const AddUserPage({Key? key}) : super(key: key);
+class AddUser extends StatefulWidget {
+  const AddUser({Key? key}) : super(key: key);
   @override
-  _AddUserState createState() => _AddUserState();
+  _AddUser createState() => _AddUser();
 }
 
-class _AddUserState extends State<AddUserPage> {
+class _AddUser extends State<AddUser> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
@@ -205,6 +205,31 @@ class _AddUserState extends State<AddUserPage> {
                   return null;
                 },
               ),
+              TextFormField(
+                controller: newEmail,
+                decoration: const InputDecoration(hintText: 'Email'),
+                keyboardType: TextInputType.emailAddress,
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter in your email';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: newPhone,
+                decoration: const InputDecoration(hintText: 'Phone Number'),
+                keyboardType: TextInputType.number,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly
+                ],
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter in your phone number';
+                  }
+                  return null;
+                },
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: ElevatedButton(
@@ -223,213 +248,256 @@ class _AddUserState extends State<AddUserPage> {
       appBar: AppBar(
         title: Text("Add User"),
       ),
-      body: ListView(
-        children: <Widget>[
-          // text entries
-
-          // text entries
-          Container(
-            // name
-            width: screenWidth,
-            padding: inputPadding,
-            child: TextField(
-              controller: newName,
-              autocorrect: false,
-              decoration: const InputDecoration(hintText: 'Name'),
-              //keyboardType: TextInputType.name,
-            ),
-          ),
-          Container(
-            // email
-            width: screenWidth,
-            padding: inputPadding,
-            child: TextField(
-              controller: newEmail,
-              autocorrect: false,
-              decoration: const InputDecoration(hintText: 'Email'),
-              //keyboardType: TextInputType.emailAddress,
-            ),
-          ),
-          Container(
-              // phone number
-              width: screenWidth,
-              padding: inputPadding,
-              child: TextField(
-                controller: newPhone,
-                autocorrect: false,
-                decoration: const InputDecoration(hintText: 'Phone Number'),
-                //keyboardType: TextInputType.phone,
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.digitsOnly
+      body: Form(
+          key: _formKey,
+          child: ListView(
+            children: <Widget>[
+              // text entries
+              Container(
+                // name
+                width: screenWidth,
+                padding: inputPadding,
+                child: TextFormField(
+                  controller: newName,
+                  autocorrect: false,
+                  decoration: const InputDecoration(hintText: 'Name'),
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter in your name';
+                    }
+                    return null;
+                  },
+                  //keyboardType: TextInputType.name,
+                ),
+              ),
+              Container(
+                // email
+                width: screenWidth,
+                padding: inputPadding,
+                child: TextFormField(
+                  controller: newEmail,
+                  autocorrect: false,
+                  decoration: const InputDecoration(hintText: 'Email'),
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter in your email';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              Container(
+                  // phone number
+                  width: screenWidth,
+                  padding: inputPadding,
+                  child: TextFormField(
+                    controller: newPhone,
+                    autocorrect: false,
+                    decoration: const InputDecoration(hintText: 'Phone Number'),
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly
+                    ],
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter in your phone number';
+                      }
+                      return null;
+                    },
+                  )),
+              Row(
+                // rows to make things look pretty / to save on screen space
+                children: [
+                  Container(
+                    //street
+                    width: 180,
+                    padding: inputPadding,
+                    child: TextFormField(
+                      controller: newStreet,
+                      autocorrect: false,
+                      decoration: const InputDecoration(hintText: 'Street'),
+                      keyboardType: TextInputType.streetAddress,
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter in your street address';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  Container(
+                    // city
+                    width: 180,
+                    padding: inputPadding,
+                    child: TextFormField(
+                      controller: newCity,
+                      autocorrect: false,
+                      decoration: const InputDecoration(hintText: 'City'),
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter in your city';
+                        }
+                        return null;
+                      },
+                    ),
+                  )
                 ],
-              )),
-          Row(
-            // rows to make things look pretty / to save on screen space
-            children: [
-              Container(
-                //street
-                width: 180,
-                padding: inputPadding,
-                child: TextField(
-                  controller: newStreet,
-                  autocorrect: false,
-                  decoration: const InputDecoration(hintText: 'Street'),
-                  //keyboardType: TextInputType.streetAddress,
-                ),
+              ),
+              Row(
+                children: [
+                  Container(
+                    // state
+                    width: 70,
+                    padding: inputPadding,
+                    child: TextFormField(
+                      controller: newState,
+                      autocorrect: false,
+                      decoration: const InputDecoration(
+                          hintText: 'State', counterText: ""),
+                      maxLength: 2,
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter in your name';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  Container(
+                    // zip
+                    width: 140,
+                    padding: inputPadding,
+                    child: TextFormField(
+                      controller: newZip,
+                      autocorrect: false,
+                      decoration: const InputDecoration(
+                          hintText: 'ZIP', counterText: ""),
+                      keyboardType: TextInputType.number,
+                      maxLength: 5,
+                      // accepts numbers only
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly
+                      ],
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter in your ZIP code';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  Container(
+                    // country
+                    width: 140,
+                    padding: inputPadding,
+                    child: TextFormField(
+                      controller: newCountry,
+                      autocorrect: false,
+                      decoration: const InputDecoration(hintText: 'Country'),
+                    ),
+                  )
+                ],
               ),
               Container(
-                // city
-                width: 180,
+                // credit card
+                width: screenWidth,
                 padding: inputPadding,
-                child: TextField(
-                  controller: newCity,
-                  autocorrect: false,
-                  decoration: const InputDecoration(hintText: 'City'),
-                ),
-              )
-            ],
-          ),
-          Row(
-            children: [
-              Container(
-                // state
-                width: 70,
-                padding: inputPadding,
-                child: TextField(
-                  controller: newState,
+                child: TextFormField(
+                  controller: newCard,
                   autocorrect: false,
                   decoration:
-                      const InputDecoration(hintText: 'State', counterText: ""),
-                  maxLength: 2,
-                ),
-              ),
-              Container(
-                // zip
-                width: 140,
-                padding: inputPadding,
-                child: TextField(
-                  controller: newZip,
-                  autocorrect: false,
-                  decoration:
-                      const InputDecoration(hintText: 'ZIP', counterText: ""),
+                      const InputDecoration(hintText: 'Credit Card Number'),
                   //keyboardType: TextInputType.number,
-                  maxLength: 5,
                   // accepts numbers only
                   inputFormatters: <TextInputFormatter>[
                     FilteringTextInputFormatter.digitsOnly
                   ],
                 ),
               ),
-              Container(
-                // country
-                width: 140,
-                padding: inputPadding,
-                child: TextField(
-                  controller: newCountry,
-                  autocorrect: false,
-                  decoration: const InputDecoration(hintText: 'Country'),
-                ),
-              )
-            ],
-          ),
-          Container(
-            // credit card
-            width: screenWidth,
-            padding: inputPadding,
-            child: TextField(
-              controller: newCard,
-              autocorrect: false,
-              decoration: const InputDecoration(hintText: 'Credit Card Number'),
-              //keyboardType: TextInputType.number,
-              // accepts numbers only
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.digitsOnly
-              ],
-            ),
-          ),
-          Row(
-            children: [
-              Container(
-                padding: inputPadding,
-                child: const Text("Expiration"),
+              Row(
+                children: [
+                  Container(
+                    padding: inputPadding,
+                    child: const Text("Expiration"),
+                  ),
+                  Container(
+                      // expiration month
+                      width: 60,
+                      padding: const EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 10.0),
+                      child: TextFormField(
+                        controller: newExpirMon,
+                        autocorrect: false,
+                        decoration: const InputDecoration(
+                            hintText: 'MM', counterText: ""),
+                        maxLength: 2,
+                        //keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                      )),
+                  const Text("/"),
+                  Container(
+                      // expiration year
+                      width: 60,
+                      padding: const EdgeInsets.fromLTRB(5.0, 10.0, 10.0, 10.0),
+                      child: TextFormField(
+                        controller: newExpirYr,
+                        autocorrect: false,
+                        decoration: const InputDecoration(
+                            hintText: 'YYYY', counterText: ""),
+                        maxLength: 4,
+                        //keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                      )),
+                  Container(
+                    // cvv
+                    width: 60,
+                    padding: inputPadding,
+                    child: TextFormField(
+                      controller: newCvv,
+                      autocorrect: false,
+                      decoration: const InputDecoration(
+                          hintText: 'CVV', counterText: ""),
+                      maxLength: 3,
+                      //keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly
+                      ],
+                    ),
+                  )
+                ],
               ),
               Container(
-                  // expiration month
-                  width: 60,
-                  padding: const EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 10.0),
-                  child: TextField(
-                    controller: newExpirMon,
-                    autocorrect: false,
-                    decoration:
-                        const InputDecoration(hintText: 'MM', counterText: ""),
-                    maxLength: 2,
-                    //keyboardType: TextInputType.number,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly
-                    ],
-                  )),
-              const Text("/"),
-              Container(
-                  // expiration year
-                  width: 60,
-                  padding: const EdgeInsets.fromLTRB(5.0, 10.0, 10.0, 10.0),
-                  child: TextField(
-                    controller: newExpirYr,
-                    autocorrect: false,
-                    decoration: const InputDecoration(
-                        hintText: 'YYYY', counterText: ""),
-                    maxLength: 4,
-                    //keyboardType: TextInputType.number,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly
-                    ],
-                  )),
-              Container(
-                // cvv
-                width: 60,
+                // charger. look into onSubmitted field to keep ongoing list
+                width: 280,
                 padding: inputPadding,
-                child: TextField(
-                  controller: newCvv,
+                child: TextFormField(
+                  controller: newChargerType,
                   autocorrect: false,
-                  decoration:
-                      const InputDecoration(hintText: 'CVV', counterText: ""),
-                  maxLength: 3,
-                  //keyboardType: TextInputType.number,
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.digitsOnly
-                  ],
+                  decoration: const InputDecoration(hintText: 'Charger Type'),
                 ),
-              )
+              ),
+              Container(
+                // subscriptions. look into onSubmitted field to keep ongoing list
+                width: 280,
+                padding: inputPadding,
+                child: TextFormField(
+                  controller: newSubscriptions,
+                  autocorrect: false,
+                  decoration: const InputDecoration(hintText: 'Subscriptions'),
+                ),
+              ),
+              TextButton(
+                  onPressed: addUser,
+                  child: const Text("Add User")), // submit button
+              TextButton(
+                  onPressed: () => goToMaps(context),
+                  child: const Text("Maps Screen")), // navigation button*
             ],
-          ),
-          Container(
-            // charger. look into onSubmitted field to keep ongoing list
-            width: 280,
-            padding: inputPadding,
-            child: TextField(
-              controller: newChargerType,
-              autocorrect: false,
-              decoration: const InputDecoration(hintText: 'Charger Type'),
-            ),
-          ),
-          Container(
-            // subscriptions. look into onSubmitted field to keep ongoing list
-            width: 280,
-            padding: inputPadding,
-            child: TextField(
-              controller: newSubscriptions,
-              autocorrect: false,
-              decoration: const InputDecoration(hintText: 'Subscriptions'),
-            ),
-          ),
-          TextButton(
-              onPressed: addUser,
-              child: const Text("Add User")), // submit button
-          TextButton(
-              onPressed: () => goToMaps(context),
-              child: const Text("Maps Screen")), // navigation button*
-        ],
-      ),
+          )),
     );
   } // build
 } // _AddUserState
