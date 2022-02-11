@@ -1,5 +1,6 @@
 import 'package:envorso_charging_app/speech_recognition.dart';
 import 'package:flutter/material.dart';
+import 'newUser.dart';
 
 //void main() => runApp(const MyApp());
 void main() {
@@ -32,17 +33,19 @@ class _FirstLaunch extends State<FirstLaunch> {
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
+  goToSignUp(BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => AddUser()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        
         body: Padding(
             padding: const EdgeInsets.all(10),
             child: ListView(
               children: <Widget>[
                 Container(
                     alignment: Alignment.center,
-                    
                     padding: const EdgeInsets.all(10),
                     child: const Text(
                       'LOGO',
@@ -59,13 +62,12 @@ class _FirstLaunch extends State<FirstLaunch> {
                       style: TextStyle(fontSize: 20),
                     )),
                 Container(
-                  alignment: Alignment.centerLeft,
-                  padding: const EdgeInsets.all(10),
-                  child: const Text(
-                    'Welcome back!', 
-                    style: TextStyle(fontSize: 15, color: Colors.grey),
-                  )),
-                
+                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.all(10),
+                    child: const Text(
+                      'Welcome back!',
+                      style: TextStyle(fontSize: 15, color: Colors.grey),
+                    )),
                 Container(
                   padding: const EdgeInsets.all(10),
                   child: TextField(
@@ -97,10 +99,8 @@ class _FirstLaunch extends State<FirstLaunch> {
                 ),
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    
-                    children:<Widget>[
+                    children: <Widget>[
                       ElevatedButton.icon(
-                        
                         onPressed: null,
                         icon: Icon(
                           Icons.favorite,
@@ -108,18 +108,15 @@ class _FirstLaunch extends State<FirstLaunch> {
                           size: 10,
                         ),
                         label: Text('Apple'),
-                        style: ElevatedButton.styleFrom (
+                        style: ElevatedButton.styleFrom(
                           primary: Colors.black,
                         ),
-                        
-                        
                       ),
                       ElevatedButton(
                         onPressed: null,
                         child: const Text('Google'),
                       )
-                    ]
-                ),
+                    ]),
                 Container(
                     height: 50,
                     padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -138,9 +135,7 @@ class _FirstLaunch extends State<FirstLaunch> {
                         'Sign up!',
                         style: TextStyle(fontSize: 20),
                       ),
-                      onPressed: () {
-                        //signup screen
-                      },
+                      onPressed: () => goToSignUp(context),
                     )
                   ],
                   mainAxisAlignment: MainAxisAlignment.center,
