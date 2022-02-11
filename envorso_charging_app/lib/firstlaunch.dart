@@ -45,15 +45,18 @@ class _FirstLaunch extends State<FirstLaunch> {
             child: ListView(
               children: <Widget>[
                 Container(
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.all(10),
-                    child: const Text(
-                      'LOGO',
-                      style: TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 30),
-                    )),
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.all(10),
+                  child: Row(children: <Widget>[
+                    Align(
+                      alignment: Alignment.center,
+                      child: Image.asset(
+                        'assets/images/Transparent-Envorso-Logo.png',
+                        width: 150,
+                      ),
+                    )
+                  ]),
+                ),
                 Container(
                     alignment: Alignment.centerLeft,
                     padding: const EdgeInsets.all(10),
@@ -98,19 +101,51 @@ class _FirstLaunch extends State<FirstLaunch> {
                   ),
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children:<Widget>[
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
                       ElevatedButton(
-                        onPressed: null,                       
-                        child: const Text('Apple'),
-                                                
+                        onPressed: null,
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.black),
+                        ),
+                        child: Row(children: <Widget>[
+                          Image.asset(
+                            'assets/images/apple_icon.png',
+                            width: 15,
+                            height: 15,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text("Apple",
+                              style:
+                                  TextStyle(fontSize: 15, color: Colors.white)),
+                        ]),
                       ),
                       ElevatedButton(
                         onPressed: null,
-                        child: const Text('Google'),
-                      )
-                    ]
-                ),
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.black),
+                        ),
+                        child: Row(children: <Widget>[
+                          Image.asset(
+                            'assets/images/google_logo.png',
+                            width: 15,
+                            height: 15,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text("Google",
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.white,
+                              )),
+                        ]),
+                      ),
+                    ]),
                 Container(
                     height: 50,
                     padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
