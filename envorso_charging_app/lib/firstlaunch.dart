@@ -51,7 +51,7 @@ class _FirstLaunch extends State<FirstLaunch> {
                     Align(
                       alignment: Alignment.center,
                       child: Image.asset(
-                        'assets/images/Transparent-Envorso-Logo.png',
+                        'assets/images/ENRoute-logo.png',
                         width: 150,
                       ),
                     )
