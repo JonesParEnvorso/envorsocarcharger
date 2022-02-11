@@ -5,6 +5,7 @@ import 'firebase_options.dart';
 import 'newUser.dart';
 import 'firstlaunch.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
