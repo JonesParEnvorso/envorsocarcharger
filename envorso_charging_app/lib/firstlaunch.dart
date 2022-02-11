@@ -35,37 +35,44 @@ class _FirstLaunch extends State<FirstLaunch> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("First Launch"),
-        ),
+        
         body: Padding(
             padding: const EdgeInsets.all(10),
             child: ListView(
               children: <Widget>[
                 Container(
                     alignment: Alignment.center,
+                    
                     padding: const EdgeInsets.all(10),
                     child: const Text(
-                      'TutorialKart',
+                      'LOGO',
                       style: TextStyle(
                           color: Colors.blue,
                           fontWeight: FontWeight.w500,
                           fontSize: 30),
                     )),
                 Container(
-                    alignment: Alignment.center,
+                    alignment: Alignment.centerLeft,
                     padding: const EdgeInsets.all(10),
                     child: const Text(
                       'Sign in',
                       style: TextStyle(fontSize: 20),
                     )),
                 Container(
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.all(10),
+                  child: const Text(
+                    'Welcome back!', 
+                    style: TextStyle(fontSize: 15, color: Colors.grey),
+                  )),
+                
+                Container(
                   padding: const EdgeInsets.all(10),
                   child: TextField(
                     controller: nameController,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText: 'User Name',
+                      labelText: 'Email',
                     ),
                   ),
                 ),
@@ -85,8 +92,33 @@ class _FirstLaunch extends State<FirstLaunch> {
                     //forgot password screen
                   },
                   child: const Text(
-                    'Forgot Password',
+                    'Forgot Password?',
                   ),
+                ),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    
+                    children:<Widget>[
+                      ElevatedButton.icon(
+                        
+                        onPressed: null,
+                        icon: Icon(
+                          Icons.favorite,
+                          color: Colors.white,
+                          size: 10,
+                        ),
+                        label: Text('Apple'),
+                        style: ElevatedButton.styleFrom (
+                          primary: Colors.black,
+                        ),
+                        
+                        
+                      ),
+                      ElevatedButton(
+                        onPressed: null,
+                        child: const Text('Google'),
+                      )
+                    ]
                 ),
                 Container(
                     height: 50,
@@ -100,10 +132,10 @@ class _FirstLaunch extends State<FirstLaunch> {
                     )),
                 Row(
                   children: <Widget>[
-                    const Text('Does not have account?'),
+                    const Text("Don't have an account?"),
                     TextButton(
                       child: const Text(
-                        'Sign in',
+                        'Sign up!',
                         style: TextStyle(fontSize: 20),
                       ),
                       onPressed: () {
