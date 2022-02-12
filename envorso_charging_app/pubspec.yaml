@@ -82,6 +82,9 @@ flutter:
     - assets/images/Transparent-Envorso-Logo.png
     - assets/images/ENRoute-logo.png
     - assets/images/Thumb-logo.png
+    - assets/images/Plug-Icon-CHAdeMO.png
+    - assets/images/Plug-Icon-J1772-Combo.png
+    - assets/images/Plug-Icon-J1772.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
