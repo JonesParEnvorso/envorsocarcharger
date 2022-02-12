@@ -97,7 +97,10 @@ class _FirstLaunch extends State<FirstLaunch> {
                     )
                   ),
                 ),
-                Row(
+                // What is commented out below is the buttons for Google and Apple login
+                // Keep commented out until we can implement those features. 
+                
+                /*Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       ElevatedButton(
@@ -157,6 +160,9 @@ class _FirstLaunch extends State<FirstLaunch> {
                         ]),
                       ),
                     ]),
+                SizedBox(
+                  height: 15
+                ),*/
                 Container(
                     height: 50,
                     padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
