@@ -1,8 +1,7 @@
 import 'package:envorso_charging_app/speech_recognition.dart';
 import 'package:flutter/material.dart';
-import 'newUser.dart';
+import 'newUserEmail.dart';
 
-//void main() => runApp(const MyApp());
 void main() {
   runApp(const MyApp());
 }
@@ -17,8 +16,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-      ),
-      //home: const ,
+      ),      
     );
   }
 }
