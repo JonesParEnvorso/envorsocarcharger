@@ -40,12 +40,7 @@ class _FirstLaunch extends State<FirstLaunch> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-            leading: Center(
-          child: Image.asset(
-            'assets/images/ENRoute-logo.png',
-          ),
-        )),
+        
         body: Padding(
             padding: const EdgeInsets.all(10),
             child: ListView(
@@ -97,18 +92,24 @@ class _FirstLaunch extends State<FirstLaunch> {
                   },
                   child: const Text(
                     'Forgot Password?',
+                    style: TextStyle(
+                      color: Color(0xff096B72 )
+                    )
                   ),
                 ),
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       ElevatedButton(
-                        onPressed: null,
+                        onPressed: null,                      
                         style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all(Colors.black),
+                            MaterialStateProperty.all(Colors.black), 
                         ),
                         child: Row(children: <Widget>[
+                          SizedBox(
+                            width: 20,
+                          ),
                           Image.asset(
                             'assets/images/apple_icon.png',
                             width: 15,
@@ -119,7 +120,11 @@ class _FirstLaunch extends State<FirstLaunch> {
                           ),
                           Text("Apple",
                               style:
-                                  TextStyle(fontSize: 15, color: Colors.white)),
+                                  TextStyle(fontSize: 15, color: Colors.white)
+                          ),
+                          SizedBox(
+                            width: 20,
+                          ),
                         ]),
                       ),
                       ElevatedButton(
@@ -129,6 +134,9 @@ class _FirstLaunch extends State<FirstLaunch> {
                               MaterialStateProperty.all(Colors.black),
                         ),
                         child: Row(children: <Widget>[
+                          SizedBox(
+                            width: 20,
+                          ),
                           Image.asset(
                             'assets/images/google_logo.png',
                             width: 15,
@@ -141,7 +149,11 @@ class _FirstLaunch extends State<FirstLaunch> {
                               style: TextStyle(
                                 fontSize: 15,
                                 color: Colors.white,
-                              )),
+                              )
+                              ),
+                              SizedBox(
+                            width: 20,
+                          ),
                         ]),
                       ),
                     ]),
@@ -150,6 +162,9 @@ class _FirstLaunch extends State<FirstLaunch> {
                     padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                     child: ElevatedButton(
                       child: const Text('Login'),
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Color(0xff096B72)),
+                      ),
                       onPressed: () {
                         print(nameController.text);
                         print(passwordController.text);
@@ -161,7 +176,10 @@ class _FirstLaunch extends State<FirstLaunch> {
                     TextButton(
                       child: const Text(
                         'Sign up!',
-                        style: TextStyle(fontSize: 20),
+                        style: TextStyle(
+                          fontSize: 20, 
+                          color: Color(0xff096B72),
+                          ),
                       ),
                       onPressed: () => goToSignUp(context),
                     )
