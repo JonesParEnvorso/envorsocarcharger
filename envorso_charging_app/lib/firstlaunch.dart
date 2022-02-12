@@ -40,22 +40,21 @@ class _FirstLaunch extends State<FirstLaunch> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+            leading: Center(
+          child: Image.asset(
+            'assets/images/ENRoute-logo.png',
+          ),
+        )),
         body: Padding(
             padding: const EdgeInsets.all(10),
             child: ListView(
               children: <Widget>[
                 Container(
                   alignment: Alignment.center,
-                  padding: const EdgeInsets.all(10),
-                  child: Row(children: <Widget>[
-                    Align(
-                      alignment: Alignment.center,
-                      child: Image.asset(
-                        'assets/images/ENRoute-logo.png',
-                        width: 150,
-                      ),
-                    )
-                  ]),
+                  child: Image.asset(
+                    'assets/images/ENRoute-logo.png',
+                  ),
                 ),
                 Container(
                     alignment: Alignment.centerLeft,
