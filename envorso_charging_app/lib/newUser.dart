@@ -24,23 +24,19 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const AddUser(),
-      /*home: Scaffold(
-        appBar: AppBar(title: const Text('Sign up')),
-        body: const AddUserPage(),
-      ),*/
+      home: const AddPID(),
     );
   }
 }
 
 // create new user from user input
-class AddUser extends StatefulWidget {
-  const AddUser({Key? key}) : super(key: key);
+class AddPID extends StatefulWidget {
+  const AddPID({Key? key}) : super(key: key);
   @override
-  _AddUser createState() => _AddUser();
+  _AddPID createState() => _AddPID();
 }
 
-class _AddUser extends State<AddUser> {
+class _AddPID extends State<AddPID> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   // address consists of: city, state, street, zip
@@ -113,7 +109,7 @@ class _AddUser extends State<AddUser> {
       super.dispose();
     }
 
-    _addUser() async {
+    _AddPID() async {
       //String name = newName.text; // split name into first and last
       String firstName;
       String lastName;
@@ -566,7 +562,7 @@ class _AddUser extends State<AddUser> {
                   child: ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        _addUser();
+                        _AddPID();
                       }
                     },
                     child: const Text("Sign Up"),
@@ -578,7 +574,7 @@ class _AddUser extends State<AddUser> {
                     child: const Text("Maps Screen"),
                   )),
               /*TextButton(
-                  onPressed: addUser,
+                  onPressed: AddPID,
                   child: const Text("Add User")), // submit button
               TextButton(
                   onPressed: () => goToMaps(context),
@@ -587,4 +583,4 @@ class _AddUser extends State<AddUser> {
           )),
     );
   } // build
-} // _AddUserState
+} // _AddPIDState
