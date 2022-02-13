@@ -37,6 +37,10 @@ class _AddUser extends State<AddUser> {
   goToPID(BuildContext context) {
     Navigator.push(context, MaterialPageRoute(builder: (context) => AddPID()));
   }
+  goToLogin(BuildContext context){
+    Navigator.push(context, MaterialPageRoute(builder: (context) => FirstLaunch()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,6 +82,11 @@ class _AddUser extends State<AddUser> {
             ),
             onPressed: () => goToPID(context),
           )),
+      TextButton(
+                  onPressed: () => goToLogin(context),
+                  child: const Text('Already have an account?',
+                      style: TextStyle(color: Color(0xff096B72))),
+                ),
     ])));
   }
 }

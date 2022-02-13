@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'firebase_options.dart';
 import 'mapScreen.dart';
+import 'package:flutter_credit_card/flutter_credit_card.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,6 +38,7 @@ class AddPID extends StatefulWidget {
 }
 
 class _AddPID extends State<AddPID> {
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   // address consists of: city, state, street, zip
@@ -54,6 +56,14 @@ class _AddPID extends State<AddPID> {
   final newName = TextEditingController();
   final newEmail = TextEditingController();
   final newPhone = TextEditingController();
+
+  String cardNumber = '';
+  String expiryDate = '';
+  String cardHolderName = '';
+  String cvvCode = '';
+  bool isCvvFocused = false;
+  bool useGlassMorphism = false;
+  bool useBackgroundImage = false;
 
   // chargerType and Subscriptions still need to be fully updated
   // charger type will be array
@@ -83,9 +93,17 @@ class _AddPID extends State<AddPID> {
           context, MaterialPageRoute(builder: (context) => const MapScreen()));
     }
 
+    OutlineInputBorder? border;
+
     @override
     void initState() {
       super.initState();
+      border = OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.grey.withOpacity(0.7),
+          width: 2.0,
+        ),
+      );
     }
 
     @override
@@ -111,6 +129,8 @@ class _AddPID extends State<AddPID> {
 
     _AddPID() async {
       //String name = newName.text; // split name into first and last
+
+      final GlobalKey<FormState> formKey = GlobalKey<FormState>();
       String firstName;
       String lastName;
       if (!newName.text.contains(" ")) {
@@ -229,8 +249,8 @@ class _AddPID extends State<AddPID> {
                     'User Info',
                     style: TextStyle(fontSize: 20),
                   )),
-              Container(
-                // namw
+              /*Container(
+                // name
                 width: screenWidth,
                 padding: inputPadding,
                 child: TextFormField(
@@ -243,7 +263,7 @@ class _AddPID extends State<AddPID> {
                     keyboardType: TextInputType.name,
                     textInputAction: TextInputAction.next,
                     validator: _validateField),
-              ),
+              ),*/
               Container(
                 // email
                 width: screenWidth,
@@ -361,98 +381,53 @@ class _AddPID extends State<AddPID> {
                 ],
               ),
               Container(
-                // credit card
-                width: screenWidth,
-                padding: inputPadding,
-                child: TextFormField(
-                    controller: newCard,
-                    //autocorrect: false,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Credit Card #',
-                    ),
-                    keyboardType: TextInputType.number,
-                    // accepts numbers only
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly
-                    ],
-                    textInputAction: TextInputAction.next,
-                    validator: _validateField),
-              ),
-              Row(
-                children: [
-                  Container(
-                    padding: inputPadding,
-                    child: const Text("Expiration:"),
+                child: CreditCardForm(
+                  formKey: formKey,
+                  obscureCvv: true,
+                  obscureNumber: true,
+                  cardNumber: cardNumber,
+                  cvvCode: cvvCode,
+                  isHolderNameVisible: true,
+                  isCardNumberVisible: true,
+                  isExpiryDateVisible: true,
+                  cardHolderName: cardHolderName,
+                  expiryDate: expiryDate,
+                  themeColor: Colors.blue,
+                  textColor: Colors.black,
+                  cardHolderDecoration: InputDecoration(
+                    hintStyle: const TextStyle(color: Colors.black),
+                    labelStyle: const TextStyle(color: Colors.black),
+                    focusedBorder: border,
+                    enabledBorder: border,
+                    labelText: 'Card Holder',
+                    hintText: 'First Name Last Name',
                   ),
-
-                  // WILL BE DROP DOWN
-
-                  /*Container(
-                      // expiration month
-                      width: screenWidth / 7,
-                      padding: const EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 10.0),
-                      child: TextFormField(
-                          controller: newExpirMon,
-                          //autocorrect: false,
-                          decoration: const InputDecoration(
-                              hintText: 'MM', counterText: ""),
-                          maxLength: 2,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
-                          textInputAction: TextInputAction.next,
-                          onChanged: (value) => {
-                                if (newExpirMon.text.length == 2)
-                                  {FocusScope.of(context).nextFocus()}
-                              },
-                          validator: _validateField)),
-                  const Text("/"),
-                  Container(
-                      // expiration year
-                      width: screenWidth / 6,
-                      padding: const EdgeInsets.fromLTRB(5.0, 10.0, 10.0, 10.0),
-                      child: TextFormField(
-                          controller: newExpirYr,
-                          //autocorrect: false,
-                          decoration: const InputDecoration(
-                              hintText: 'YYYY', counterText: ""),
-                          maxLength: 4,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
-                          textInputAction: TextInputAction.next,
-                          onChanged: (value) => {
-                                if (newExpirYr.text.length == 4)
-                                  {FocusScope.of(context).nextFocus()}
-                              },
-                          validator: _validateField)),*/
-                  Container(
-                    // cvv
-                    width: screenWidth / 6,
-                    padding: inputPadding,
-                    child: TextFormField(
-                        controller: newCvv,
-                        //autocorrect: false,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'CVV',
-                        ),
-                        maxLength: 3,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                        textInputAction: TextInputAction.next,
-                        onChanged: (value) => {
-                              if (newCvv.text.length == 3)
-                                {FocusScope.of(context).nextFocus()}
-                            },
-                        validator: _validateField),
-                  )
-                ],
+                  cardNumberDecoration: InputDecoration(
+                    labelText: 'CC Number',
+                    hintText: 'XXXX XXXX XXXX XXXX',
+                    hintStyle: const TextStyle(color: Colors.black),
+                    labelStyle: const TextStyle(color: Colors.black),
+                    focusedBorder: border,
+                    enabledBorder: border,
+                  ),
+                  expiryDateDecoration: InputDecoration(
+                    hintStyle: const TextStyle(color: Colors.black),
+                    labelStyle: const TextStyle(color: Colors.black),
+                    focusedBorder: border,
+                    enabledBorder: border,
+                    labelText: 'Expired Date',
+                    hintText: 'XX/XX',
+                  ),
+                  cvvCodeDecoration: InputDecoration(
+                    hintStyle: const TextStyle(color: Colors.black),
+                    labelStyle: const TextStyle(color: Colors.black),
+                    focusedBorder: border,
+                    enabledBorder: border,
+                    labelText: 'CVV',
+                    hintText: 'XXX',
+                  ),                  
+                  onCreditCardModelChange: onCreditCardModelChange,
+                ),
               ),
               Container(
                 padding: inputPadding,
@@ -603,5 +578,16 @@ class _AddPID extends State<AddPID> {
             ],
           )),
     );
+  }
+
+  void onCreditCardModelChange(CreditCardModel? creditCardModel) {
+    setState(() {
+      cardNumber = creditCardModel!.cardNumber;
+      expiryDate = creditCardModel.expiryDate;
+      cardHolderName = creditCardModel.cardHolderName;
+      cvvCode = creditCardModel.cvvCode;
+      isCvvFocused = creditCardModel.isCvvFocused;
+    });
   } // build
 } // _AddPIDState
+

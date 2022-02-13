@@ -1,6 +1,7 @@
 import 'package:envorso_charging_app/speech_recognition.dart';
 import 'package:flutter/material.dart';
 import 'newUserEmail.dart';
+import 'mapScreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,6 +34,9 @@ class _FirstLaunch extends State<FirstLaunch> {
 
   goToSignUp(BuildContext context) {
     Navigator.push(context, MaterialPageRoute(builder: (context) => AddUser()));
+  }
+  goToMap(BuildContext context){
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MapScreen()));
   }
 
   @override
@@ -90,6 +94,7 @@ class _FirstLaunch extends State<FirstLaunch> {
                   child: const Text('Forgot Password?',
                       style: TextStyle(color: Color(0xff096B72))),
                 ),
+
                 // What is commented out below is the buttons for Google and Apple login
                 // Keep commented out until we can implement those features.
 
@@ -165,10 +170,7 @@ class _FirstLaunch extends State<FirstLaunch> {
                         backgroundColor:
                             MaterialStateProperty.all(Color(0xff096B72)),
                       ),
-                      onPressed: () {
-                        //print(nameController.text);
-                        //print(passwordController.text);
-                      },
+                      onPressed: () => goToMap(context) ,
                     )),
                 Row(
                   children: <Widget>[
