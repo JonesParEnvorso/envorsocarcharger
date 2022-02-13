@@ -217,22 +217,29 @@ class _AddPID extends State<AddPID> {
     } // _selectDate */
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Add User"),
-      ),
       body: Form(
           key: _formKey,
           child: ListView(
             children: <Widget>[
               // text entries
               Container(
-                // name
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.all(10),
+                  child: const Text(
+                    'User Info',
+                    style: TextStyle(fontSize: 20),
+                  )),
+              Container(
+                // namw
                 width: screenWidth,
                 padding: inputPadding,
                 child: TextFormField(
                     controller: newName,
                     //autocorrect: false,
-                    decoration: const InputDecoration(hintText: 'Name'),
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'First Name Last Name',
+                    ),
                     keyboardType: TextInputType.name,
                     textInputAction: TextInputAction.next,
                     validator: _validateField),
@@ -243,8 +250,10 @@ class _AddPID extends State<AddPID> {
                 padding: inputPadding,
                 child: TextFormField(
                     controller: newEmail,
-                    //autocorrect: false,
-                    decoration: const InputDecoration(hintText: 'Email'),
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Username',
+                    ),
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
                     validator: _validateField),
@@ -256,8 +265,10 @@ class _AddPID extends State<AddPID> {
                   child: TextFormField(
                       controller: newPhone,
                       //autocorrect: false,
-                      decoration:
-                          const InputDecoration(hintText: 'Phone Number'),
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Phone Number',
+                      ),
                       keyboardType: TextInputType.phone,
                       inputFormatters: <TextInputFormatter>[
                         FilteringTextInputFormatter.digitsOnly
@@ -274,7 +285,10 @@ class _AddPID extends State<AddPID> {
                     child: TextFormField(
                         controller: newStreet,
                         //autocorrect: false,
-                        decoration: const InputDecoration(hintText: 'Street'),
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Home street',
+                        ),
                         keyboardType: TextInputType.streetAddress,
                         textInputAction: TextInputAction.next,
                         validator: _validateField),
@@ -286,7 +300,10 @@ class _AddPID extends State<AddPID> {
                     child: TextFormField(
                         controller: newCity,
                         //autocorrect: false,
-                        decoration: const InputDecoration(hintText: 'City'),
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'City',
+                        ),
                         textInputAction: TextInputAction.next,
                         validator: _validateField),
                   )
@@ -298,18 +315,13 @@ class _AddPID extends State<AddPID> {
                     // state
                     width: screenWidth / 4.5,
                     padding: inputPadding,
-                    child: TextFormField(
-                        controller: newState,
-                        //autocorrect: false,
-                        decoration: const InputDecoration(
-                            hintText: 'State', counterText: ""),
-                        maxLength: 2,
-                        textInputAction: TextInputAction.next,
-                        onChanged: (value) => {
-                              if (newState.text.length == 2)
-                                {FocusScope.of(context).nextFocus()}
-                            },
-                        validator: _validateField),
+
+                    // WILL BE DROP DOWN
+
+                    /*child: DropdownButton(
+                      value: selectedValue, 
+
+                    )*/
                   ),
                   Container(
                     // zip
@@ -319,7 +331,9 @@ class _AddPID extends State<AddPID> {
                         controller: newZip,
                         //autocorrect: false,
                         decoration: const InputDecoration(
-                            hintText: 'ZIP', counterText: ""),
+                          border: OutlineInputBorder(),
+                          labelText: 'ZIP',
+                        ),
                         keyboardType: TextInputType.number,
                         maxLength: 5,
                         // accepts numbers only
@@ -337,12 +351,12 @@ class _AddPID extends State<AddPID> {
                     // country
                     width: screenWidth / 3,
                     padding: inputPadding,
-                    child: TextFormField(
-                        controller: newCountry,
-                        //autocorrect: false,
-                        decoration: const InputDecoration(hintText: 'Country'),
-                        textInputAction: TextInputAction.next,
-                        validator: _validateField),
+                    
+                    // WILL BE DROP DOWN
+
+                    /*child: DropdownButton(
+
+                       ),*/
                   )
                 ],
               ),
@@ -353,8 +367,10 @@ class _AddPID extends State<AddPID> {
                 child: TextFormField(
                     controller: newCard,
                     //autocorrect: false,
-                    decoration:
-                        const InputDecoration(hintText: 'Credit Card Number'),
+                    decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Credit Card #',
+                        ),
                     keyboardType: TextInputType.number,
                     // accepts numbers only
                     inputFormatters: <TextInputFormatter>[
@@ -367,9 +383,12 @@ class _AddPID extends State<AddPID> {
                 children: [
                   Container(
                     padding: inputPadding,
-                    child: const Text("Expiration"),
+                    child: const Text("Expiration:"),
                   ),
-                  Container(
+
+                  // WILL BE DROP DOWN
+
+                  /*Container(
                       // expiration month
                       width: screenWidth / 7,
                       padding: const EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 10.0),
@@ -409,7 +428,7 @@ class _AddPID extends State<AddPID> {
                                 if (newExpirYr.text.length == 4)
                                   {FocusScope.of(context).nextFocus()}
                               },
-                          validator: _validateField)),
+                          validator: _validateField)),*/
                   Container(
                     // cvv
                     width: screenWidth / 6,
@@ -418,7 +437,9 @@ class _AddPID extends State<AddPID> {
                         controller: newCvv,
                         //autocorrect: false,
                         decoration: const InputDecoration(
-                            hintText: 'CVV', counterText: ""),
+                          border: OutlineInputBorder(),
+                          labelText: 'CVV',
+                        ),
                         maxLength: 3,
                         keyboardType: TextInputType.number,
                         inputFormatters: <TextInputFormatter>[
