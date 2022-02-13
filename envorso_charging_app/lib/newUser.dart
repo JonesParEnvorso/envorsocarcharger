@@ -24,23 +24,19 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const AddUser(),
-      /*home: Scaffold(
-        appBar: AppBar(title: const Text('Sign up')),
-        body: const AddUserPage(),
-      ),*/
+      home: const AddPID(),
     );
   }
 }
 
 // create new user from user input
-class AddUser extends StatefulWidget {
-  const AddUser({Key? key}) : super(key: key);
+class AddPID extends StatefulWidget {
+  const AddPID({Key? key}) : super(key: key);
   @override
-  _AddUser createState() => _AddUser();
+  _AddPID createState() => _AddPID();
 }
 
-class _AddUser extends State<AddUser> {
+class _AddPID extends State<AddPID> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   // address consists of: city, state, street, zip
@@ -62,8 +58,13 @@ class _AddUser extends State<AddUser> {
   // chargerType and Subscriptions still need to be fully updated
   // charger type will be array
   final newChargerType = TextEditingController();
+  final List<String> chargerTypes = <String>[];
   // subscriptions will be array
   final newSubscriptions = TextEditingController();
+
+  bool _j1772Selected = false;
+  bool _chademoSelected = false;
+  bool _saeComboSelected = false;
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +109,7 @@ class _AddUser extends State<AddUser> {
       super.dispose();
     }
 
-    _addUser() async {
+    _AddPID() async {
       //String name = newName.text; // split name into first and last
       String firstName;
       String lastName;
@@ -128,7 +129,16 @@ class _AddUser extends State<AddUser> {
       String creditCard = newCard.text;
       String expir = newExpirMon.text + "/" + newExpirYr.text;
       String cvv = newCvv.text;
-      String chargerType = newChargerType.text; // needs to be array
+      //String chargerType = newChargerType.text;
+      if (_j1772Selected) {
+        chargerTypes.add('J1772');
+      }
+      if (_chademoSelected) {
+        chargerTypes.add('CHAdeMO');
+      }
+      if (_saeComboSelected) {
+        chargerTypes.add('SAE Combo CCS');
+      }
       String subscriptions = newSubscriptions.text; // needs to be array
 
       // clear text entries
@@ -150,7 +160,6 @@ class _AddUser extends State<AddUser> {
       CollectionReference users =
           FirebaseFirestore.instance.collection('users');
 
-      DocumentReference ref;
       await users
           .add({
             'firstName': firstName,
@@ -177,7 +186,7 @@ class _AddUser extends State<AddUser> {
           })
           .then((value) => value
               .collection('chargerType')
-              .add({'chargerType': chargerType}).then((v) => value
+              .add({'chargerType': chargerTypes}).then((v) => value
                   .collection('subscriptions')
                   .add({'subscriptions': subscriptions})))
           .catchError((error) => print("Failed to add user: $error"));
@@ -260,7 +269,7 @@ class _AddUser extends State<AddUser> {
                 children: [
                   Container(
                     //street
-                    width: 180,
+                    width: screenWidth / 2.25,
                     padding: inputPadding,
                     child: TextFormField(
                         controller: newStreet,
@@ -272,7 +281,7 @@ class _AddUser extends State<AddUser> {
                   ),
                   Container(
                     // city
-                    width: 180,
+                    width: screenWidth / 2.25,
                     padding: inputPadding,
                     child: TextFormField(
                         controller: newCity,
@@ -287,7 +296,7 @@ class _AddUser extends State<AddUser> {
                 children: [
                   Container(
                     // state
-                    width: 70,
+                    width: screenWidth / 4.5,
                     padding: inputPadding,
                     child: TextFormField(
                         controller: newState,
@@ -296,11 +305,15 @@ class _AddUser extends State<AddUser> {
                             hintText: 'State', counterText: ""),
                         maxLength: 2,
                         textInputAction: TextInputAction.next,
+                        onChanged: (value) => {
+                              if (newState.text.length == 2)
+                                {FocusScope.of(context).nextFocus()}
+                            },
                         validator: _validateField),
                   ),
                   Container(
                     // zip
-                    width: 140,
+                    width: screenWidth / 3,
                     padding: inputPadding,
                     child: TextFormField(
                         controller: newZip,
@@ -314,11 +327,15 @@ class _AddUser extends State<AddUser> {
                           FilteringTextInputFormatter.digitsOnly
                         ],
                         textInputAction: TextInputAction.next,
+                        onChanged: (value) => {
+                              if (newZip.text.length == 5)
+                                {FocusScope.of(context).nextFocus()}
+                            },
                         validator: _validateField),
                   ),
                   Container(
                     // country
-                    width: 140,
+                    width: screenWidth / 3,
                     padding: inputPadding,
                     child: TextFormField(
                         controller: newCountry,
@@ -354,7 +371,7 @@ class _AddUser extends State<AddUser> {
                   ),
                   Container(
                       // expiration month
-                      width: 60,
+                      width: screenWidth / 7,
                       padding: const EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 10.0),
                       child: TextFormField(
                           controller: newExpirMon,
@@ -367,11 +384,15 @@ class _AddUser extends State<AddUser> {
                             FilteringTextInputFormatter.digitsOnly
                           ],
                           textInputAction: TextInputAction.next,
+                          onChanged: (value) => {
+                                if (newExpirMon.text.length == 2)
+                                  {FocusScope.of(context).nextFocus()}
+                              },
                           validator: _validateField)),
                   const Text("/"),
                   Container(
                       // expiration year
-                      width: 60,
+                      width: screenWidth / 6,
                       padding: const EdgeInsets.fromLTRB(5.0, 10.0, 10.0, 10.0),
                       child: TextFormField(
                           controller: newExpirYr,
@@ -384,10 +405,14 @@ class _AddUser extends State<AddUser> {
                             FilteringTextInputFormatter.digitsOnly
                           ],
                           textInputAction: TextInputAction.next,
+                          onChanged: (value) => {
+                                if (newExpirYr.text.length == 4)
+                                  {FocusScope.of(context).nextFocus()}
+                              },
                           validator: _validateField)),
                   Container(
                     // cvv
-                    width: 60,
+                    width: screenWidth / 6,
                     padding: inputPadding,
                     child: TextFormField(
                         controller: newCvv,
@@ -400,24 +425,129 @@ class _AddUser extends State<AddUser> {
                           FilteringTextInputFormatter.digitsOnly
                         ],
                         textInputAction: TextInputAction.next,
+                        onChanged: (value) => {
+                              if (newCvv.text.length == 3)
+                                {FocusScope.of(context).nextFocus()}
+                            },
                         validator: _validateField),
                   )
                 ],
               ),
               Container(
+                padding: inputPadding,
+                child: RichText(
+                    text: const TextSpan(
+                        text: 'Charger Ports:',
+                        style: TextStyle(color: Colors.black, fontSize: 24))),
+              ),
+              Row(children: [
+                // row of charger buttons. change background color on selection and reduce button size
+                // push all selected buttons to charger array
+                // images are from: https://chargehub.com/en/electric-car-charging-guide.html
+                Column(
+                  children: [
+                    IconButton(
+                        padding:
+                            const EdgeInsets.fromLTRB(10.0, 10.0, 20.0, 10.0),
+                        iconSize: 90,
+                        color: Colors.blue,
+                        onPressed: () => {
+                              setState(() {
+                                _j1772Selected = !_j1772Selected;
+                              })
+                            },
+                        icon: Image.asset(
+                          'assets/images/Plug-Icon-J1772.png',
+                          color: _j1772Selected ? Colors.blue : Colors.black,
+                        )),
+                    RichText(
+                        text: const TextSpan(
+                            text: 'J1772',
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.black)))
+                  ],
+                ),
+                Column(
+                  children: [
+                    IconButton(
+                        padding:
+                            const EdgeInsets.fromLTRB(10.0, 10.0, 20.0, 10.0),
+                        iconSize: 90,
+                        onPressed: () => {
+                              setState(() {
+                                _chademoSelected = !_chademoSelected;
+                              })
+                            },
+                        icon: Image.asset('assets/images/Plug-Icon-CHAdeMO.png',
+                            color:
+                                _chademoSelected ? Colors.blue : Colors.black)),
+                    RichText(
+                        text: const TextSpan(
+                            text: 'CHAdeMO',
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.black)))
+                  ],
+                ),
+                Column(
+                  children: [
+                    IconButton(
+                        padding:
+                            const EdgeInsets.fromLTRB(10.0, 10.0, 20.0, 10.0),
+                        iconSize: 90,
+                        onPressed: () => {
+                              setState(() {
+                                _saeComboSelected = !_saeComboSelected;
+                              })
+                            },
+                        icon: Image.asset(
+                            'assets/images/Plug-Icon-J1772-Combo.png',
+                            color: _saeComboSelected
+                                ? Colors.blue
+                                : Colors.black)),
+                    RichText(
+                        text: const TextSpan(
+                            text: 'SAE Combo CCS',
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.black)))
+                  ],
+                ),
+                /*IconButton(
+                    padding: const EdgeInsets.fromLTRB(10.0, 10.0, 20.0, 10.0),
+                    iconSize: 90,
+                    onPressed: () => print("J1772"),
+                    icon: Image.asset('assets/images/Plug-Icon-J1772.png')),
+                IconButton(
+                    padding: const EdgeInsets.fromLTRB(5.0, 10.0, 20.0, 10.0),
+                    iconSize: 90,
+                    onPressed: () => print("CHAdeMO"),
+                    icon: Image.asset('assets/images/Plug-Icon-CHAdeMO.png')),
+                IconButton(
+                  padding: const EdgeInsets.fromLTRB(5.0, 10.0, 20.0, 10.0),
+                  iconSize: 90,
+                  onPressed: () => print("SAE Combo CCS"),
+                  icon: Image.asset('assets/images/Plug-Icon-J1772-Combo.png'),
+                ),*/
+              ]),
+
+              /*Container(
                 // charger. look into onSubmitted field to keep ongoing list
-                width: 280,
+                width: screenWidth,
                 padding: inputPadding,
                 child: TextFormField(
-                    controller: newChargerType,
-                    //autocorrect: false,
-                    decoration: const InputDecoration(hintText: 'Charger Type'),
-                    textInputAction: TextInputAction.next,
-                    validator: _validateField),
-              ),
+                  controller: newChargerType,
+                  //autocorrect: false,
+                  decoration: const InputDecoration(hintText: 'Charger Type'),
+                  textInputAction: TextInputAction.go,
+                  validator: _validateField,
+                  onEditingComplete: () => {
+                    chargerTypes.add(newChargerType.text),
+                    newChargerType.clear()
+                  },
+                ),
+              ),*/
               Container(
                 // subscriptions. look into onSubmitted field to keep ongoing list
-                width: 280,
+                width: screenWidth,
                 padding: inputPadding,
                 child: TextFormField(
                     controller: newSubscriptions,
@@ -432,7 +562,7 @@ class _AddUser extends State<AddUser> {
                   child: ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        _addUser();
+                        _AddPID();
                       }
                     },
                     child: const Text("Sign Up"),
@@ -444,7 +574,7 @@ class _AddUser extends State<AddUser> {
                     child: const Text("Maps Screen"),
                   )),
               /*TextButton(
-                  onPressed: addUser,
+                  onPressed: AddPID,
                   child: const Text("Add User")), // submit button
               TextButton(
                   onPressed: () => goToMaps(context),
@@ -453,4 +583,4 @@ class _AddUser extends State<AddUser> {
           )),
     );
   } // build
-} // _AddUserState
+} // _AddPIDState

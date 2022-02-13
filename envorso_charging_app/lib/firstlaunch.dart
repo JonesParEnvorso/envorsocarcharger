@@ -1,8 +1,7 @@
 import 'package:envorso_charging_app/speech_recognition.dart';
 import 'package:flutter/material.dart';
-import 'newUser.dart';
+import 'newUserEmail.dart';
 
-//void main() => runApp(const MyApp());
 void main() {
   runApp(const MyApp());
 }
@@ -17,8 +16,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-      ),
-      //home: const ,
+      ),      
     );
   }
 }
@@ -40,22 +38,16 @@ class _FirstLaunch extends State<FirstLaunch> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        
         body: Padding(
             padding: const EdgeInsets.all(10),
             child: ListView(
               children: <Widget>[
                 Container(
                   alignment: Alignment.center,
-                  padding: const EdgeInsets.all(10),
-                  child: Row(children: <Widget>[
-                    Align(
-                      alignment: Alignment.center,
-                      child: Image.asset(
-                        'assets/images/ENRoute-logo.png',
-                        width: 150,
-                      ),
-                    )
-                  ]),
+                  child: Image.asset(
+                    'assets/images/ENRoute-logo.png',
+                  ),
                 ),
                 Container(
                     alignment: Alignment.centerLeft,
@@ -98,18 +90,27 @@ class _FirstLaunch extends State<FirstLaunch> {
                   },
                   child: const Text(
                     'Forgot Password?',
+                    style: TextStyle(
+                      color: Color(0xff096B72 )
+                    )
                   ),
                 ),
-                Row(
+                // What is commented out below is the buttons for Google and Apple login
+                // Keep commented out until we can implement those features. 
+                
+                /*Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       ElevatedButton(
-                        onPressed: null,
+                        onPressed: null,                      
                         style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all(Colors.black),
+                            MaterialStateProperty.all(Colors.black), 
                         ),
                         child: Row(children: <Widget>[
+                          SizedBox(
+                            width: 20,
+                          ),
                           Image.asset(
                             'assets/images/apple_icon.png',
                             width: 15,
@@ -120,7 +121,11 @@ class _FirstLaunch extends State<FirstLaunch> {
                           ),
                           Text("Apple",
                               style:
-                                  TextStyle(fontSize: 15, color: Colors.white)),
+                                  TextStyle(fontSize: 15, color: Colors.white)
+                          ),
+                          SizedBox(
+                            width: 20,
+                          ),
                         ]),
                       ),
                       ElevatedButton(
@@ -130,6 +135,9 @@ class _FirstLaunch extends State<FirstLaunch> {
                               MaterialStateProperty.all(Colors.black),
                         ),
                         child: Row(children: <Widget>[
+                          SizedBox(
+                            width: 20,
+                          ),
                           Image.asset(
                             'assets/images/google_logo.png',
                             width: 15,
@@ -142,15 +150,25 @@ class _FirstLaunch extends State<FirstLaunch> {
                               style: TextStyle(
                                 fontSize: 15,
                                 color: Colors.white,
-                              )),
+                              )
+                              ),
+                              SizedBox(
+                            width: 20,
+                          ),
                         ]),
                       ),
                     ]),
+                SizedBox(
+                  height: 15
+                ),*/
                 Container(
                     height: 50,
                     padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                     child: ElevatedButton(
                       child: const Text('Login'),
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Color(0xff096B72)),
+                      ),
                       onPressed: () {
                         print(nameController.text);
                         print(passwordController.text);
@@ -162,7 +180,10 @@ class _FirstLaunch extends State<FirstLaunch> {
                     TextButton(
                       child: const Text(
                         'Sign up!',
-                        style: TextStyle(fontSize: 20),
+                        style: TextStyle(
+                          fontSize: 20, 
+                          color: Color(0xff096B72),
+                          ),
                       ),
                       onPressed: () => goToSignUp(context),
                     )
