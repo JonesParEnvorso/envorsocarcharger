@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-      ),      
+      ),
     );
   }
 }
@@ -38,7 +38,6 @@ class _FirstLaunch extends State<FirstLaunch> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        
         body: Padding(
             padding: const EdgeInsets.all(10),
             child: ListView(
@@ -88,16 +87,12 @@ class _FirstLaunch extends State<FirstLaunch> {
                   onPressed: () {
                     //forgot password screen
                   },
-                  child: const Text(
-                    'Forgot Password?',
-                    style: TextStyle(
-                      color: Color(0xff096B72 )
-                    )
-                  ),
+                  child: const Text('Forgot Password?',
+                      style: TextStyle(color: Color(0xff096B72))),
                 ),
                 // What is commented out below is the buttons for Google and Apple login
-                // Keep commented out until we can implement those features. 
-                
+                // Keep commented out until we can implement those features.
+
                 /*Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
@@ -167,11 +162,12 @@ class _FirstLaunch extends State<FirstLaunch> {
                     child: ElevatedButton(
                       child: const Text('Login'),
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Color(0xff096B72)),
+                        backgroundColor:
+                            MaterialStateProperty.all(Color(0xff096B72)),
                       ),
                       onPressed: () {
-                        print(nameController.text);
-                        print(passwordController.text);
+                        //print(nameController.text);
+                        //print(passwordController.text);
                       },
                     )),
                 Row(
@@ -181,9 +177,9 @@ class _FirstLaunch extends State<FirstLaunch> {
                       child: const Text(
                         'Sign up!',
                         style: TextStyle(
-                          fontSize: 20, 
+                          fontSize: 20,
                           color: Color(0xff096B72),
-                          ),
+                        ),
                       ),
                       onPressed: () => goToSignUp(context),
                     )
