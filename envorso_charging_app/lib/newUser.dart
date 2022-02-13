@@ -351,7 +351,7 @@ class _AddPID extends State<AddPID> {
                     // country
                     width: screenWidth / 3,
                     padding: inputPadding,
-                    
+
                     // WILL BE DROP DOWN
 
                     /*child: DropdownButton(
@@ -368,9 +368,9 @@ class _AddPID extends State<AddPID> {
                     controller: newCard,
                     //autocorrect: false,
                     decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Credit Card #',
-                        ),
+                      border: OutlineInputBorder(),
+                      labelText: 'Credit Card #',
+                    ),
                     keyboardType: TextInputType.number,
                     // accepts numbers only
                     inputFormatters: <TextInputFormatter>[
