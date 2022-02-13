@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'newUser.dart';
 import 'firstlaunch.dart';
+import 'speech_recognition.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
