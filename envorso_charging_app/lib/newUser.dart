@@ -220,6 +220,7 @@ class _AddPID extends State<AddPID> {
     }
 
     // ignore for now
+
     /*int curMonth = DateTime.now().month;
     int curYear = DateTime.now().year;
     Future<void> _selectDate(BuildContext context) async {
@@ -249,21 +250,6 @@ class _AddPID extends State<AddPID> {
                     'User Info',
                     style: TextStyle(fontSize: 20),
                   )),
-              /*Container(
-                // name
-                width: screenWidth,
-                padding: inputPadding,
-                child: TextFormField(
-                    controller: newName,
-                    //autocorrect: false,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'First Name Last Name',
-                    ),
-                    keyboardType: TextInputType.name,
-                    textInputAction: TextInputAction.next,
-                    validator: _validateField),
-              ),*/
               Container(
                 // email
                 width: screenWidth,
@@ -295,27 +281,27 @@ class _AddPID extends State<AddPID> {
                       ],
                       textInputAction: TextInputAction.next,
                       validator: _validateField)),
+
+              // Home Street
+              Container(
+                width: screenWidth / 2.25,
+                padding: inputPadding,
+                child: TextFormField(
+                    controller: newStreet,
+                    //autocorrect: false,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Home street',
+                    ),
+                    keyboardType: TextInputType.streetAddress,
+                    textInputAction: TextInputAction.next,
+                    validator: _validateField),
+              ),
               Row(
-                // rows to make things look pretty / to save on screen space
-                children: [
-                  Container(
-                    //street
-                    width: screenWidth / 2.25,
-                    padding: inputPadding,
-                    child: TextFormField(
-                        controller: newStreet,
-                        //autocorrect: false,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Home street',
-                        ),
-                        keyboardType: TextInputType.streetAddress,
-                        textInputAction: TextInputAction.next,
-                        validator: _validateField),
-                  ),
+                children: <Widget> [
                   Container(
                     // city
-                    width: screenWidth / 2.25,
+                    width: screenWidth / 1.75,
                     padding: inputPadding,
                     child: TextFormField(
                         controller: newCity,
@@ -326,25 +312,11 @@ class _AddPID extends State<AddPID> {
                         ),
                         textInputAction: TextInputAction.next,
                         validator: _validateField),
-                  )
-                ],
-              ),
-              Row(
-                children: [
-                  Container(
-                    // state
-                    width: screenWidth / 4.5,
-                    padding: inputPadding,
 
-                    // WILL BE DROP DOWN
-
-                    /*child: DropdownButton(
-                      value: selectedValue, 
-
-                    )*/
                   ),
-                  Container(
-                    // zip
+
+                  /*Container(
+                    //ZIP
                     width: screenWidth / 3,
                     padding: inputPadding,
                     child: TextFormField(
@@ -366,35 +338,27 @@ class _AddPID extends State<AddPID> {
                                 {FocusScope.of(context).nextFocus()}
                             },
                         validator: _validateField),
-                  ),
-                  Container(
-                    // country
-                    width: screenWidth / 3,
-                    padding: inputPadding,
-
-                    // WILL BE DROP DOWN
-
-                    /*child: DropdownButton(
-
-                       ),*/
-                  )
-                ],
+                  ),*/
+                ], // end children
               ),
               Container(
                 child: CreditCardForm(
                   formKey: formKey,
                   obscureCvv: true,
                   obscureNumber: true,
+                  cardHolderName: cardHolderName,
                   cardNumber: cardNumber,
                   cvvCode: cvvCode,
                   isHolderNameVisible: true,
                   isCardNumberVisible: true,
                   isExpiryDateVisible: true,
-                  cardHolderName: cardHolderName,
+                  
                   expiryDate: expiryDate,
-                  themeColor: Colors.blue,
+                  themeColor: Color(0xff096B72),
                   textColor: Colors.black,
+
                   cardHolderDecoration: InputDecoration(
+                    border: OutlineInputBorder(),
                     hintStyle: const TextStyle(color: Colors.black),
                     labelStyle: const TextStyle(color: Colors.black),
                     focusedBorder: border,
@@ -403,6 +367,7 @@ class _AddPID extends State<AddPID> {
                     hintText: 'First Name Last Name',
                   ),
                   cardNumberDecoration: InputDecoration(
+                    border: OutlineInputBorder(),
                     labelText: 'CC Number',
                     hintText: 'XXXX XXXX XXXX XXXX',
                     hintStyle: const TextStyle(color: Colors.black),
@@ -411,24 +376,27 @@ class _AddPID extends State<AddPID> {
                     enabledBorder: border,
                   ),
                   expiryDateDecoration: InputDecoration(
+                    border: OutlineInputBorder(),
                     hintStyle: const TextStyle(color: Colors.black),
                     labelStyle: const TextStyle(color: Colors.black),
                     focusedBorder: border,
                     enabledBorder: border,
-                    labelText: 'Expired Date',
+                    labelText: 'Exp. Date',
                     hintText: 'XX/XX',
                   ),
                   cvvCodeDecoration: InputDecoration(
+                    border: OutlineInputBorder(),
                     hintStyle: const TextStyle(color: Colors.black),
                     labelStyle: const TextStyle(color: Colors.black),
                     focusedBorder: border,
                     enabledBorder: border,
                     labelText: 'CVV',
                     hintText: 'XXX',
-                  ),                  
+                  ),
                   onCreditCardModelChange: onCreditCardModelChange,
                 ),
               ),
+
               Container(
                 padding: inputPadding,
                 child: RichText(
