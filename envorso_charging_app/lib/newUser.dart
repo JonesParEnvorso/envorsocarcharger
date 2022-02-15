@@ -38,8 +38,13 @@ class AddPID extends StatefulWidget {
 }
 
 class _AddPID extends State<AddPID> {
+
+  List<CheckBoxListTileModel> checkBoxListTileModel = CheckBoxListTileModel.getImgs();
+
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _formKey = GlobalKey();
+
+  final List<String> _selectedItems = [];
 
   // address consists of: city, state, street, zip
   final newCity = TextEditingController();
@@ -219,24 +224,6 @@ class _AddPID extends State<AddPID> {
       return null;
     }
 
-    // ignore for now
-
-    /*int curMonth = DateTime.now().month;
-    int curYear = DateTime.now().year;
-    Future<void> _selectDate(BuildContext context) async {
-      final DateTime? selected = await showDatePicker(
-          context: context,
-          initialDate: DateTime(curYear, curMonth),
-          firstDate: DateTime(curYear, curMonth),
-          lastDate: DateTime(2050));
-      if (selected != null && selected != DateTime(curYear, curMonth)) {
-        setState(() {
-          curYear = selected.year;
-          curMonth = selected.month;
-        });
-      }
-    } // _selectDate */
-
     return Scaffold(
       body: Form(
           key: _formKey,
@@ -298,10 +285,10 @@ class _AddPID extends State<AddPID> {
                     validator: _validateField),
               ),
               Row(
-                children: <Widget> [
+                children: <Widget>[
                   Container(
                     // city
-                    width: screenWidth / 1.75,
+                    width: screenWidth / 1.35,
                     padding: inputPadding,
                     child: TextFormField(
                         controller: newCity,
@@ -312,12 +299,10 @@ class _AddPID extends State<AddPID> {
                         ),
                         textInputAction: TextInputAction.next,
                         validator: _validateField),
-
                   ),
-
-                  /*Container(
+                  Container(
                     //ZIP
-                    width: screenWidth / 3,
+                    width: screenWidth / 4,
                     padding: inputPadding,
                     child: TextFormField(
                         controller: newZip,
@@ -325,6 +310,7 @@ class _AddPID extends State<AddPID> {
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'ZIP',
+                          counterText: '',
                         ),
                         keyboardType: TextInputType.number,
                         maxLength: 5,
@@ -338,9 +324,15 @@ class _AddPID extends State<AddPID> {
                                 {FocusScope.of(context).nextFocus()}
                             },
                         validator: _validateField),
-                  ),*/
+                  ),
                 ], // end children
               ),
+              TextButton(
+                onPressed: () => {},
+                child: const Text('Why is Credit Card info needed?',
+                    style: TextStyle(color: Color(0xff096B72))),
+              ),
+              // CREDIT CARD INFORMATION
               Container(
                 child: CreditCardForm(
                   formKey: formKey,
@@ -352,11 +344,9 @@ class _AddPID extends State<AddPID> {
                   isHolderNameVisible: true,
                   isCardNumberVisible: true,
                   isExpiryDateVisible: true,
-                  
                   expiryDate: expiryDate,
                   themeColor: Color(0xff096B72),
                   textColor: Colors.black,
-
                   cardHolderDecoration: InputDecoration(
                     border: OutlineInputBorder(),
                     hintStyle: const TextStyle(color: Colors.black),
@@ -396,156 +386,80 @@ class _AddPID extends State<AddPID> {
                   onCreditCardModelChange: onCreditCardModelChange,
                 ),
               ),
+              Container(
+               alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.all(10),
+                  child: const Text(
+                    'Plug types:',
+                    style: TextStyle(fontSize: 20),
+                  )
+              ),
+              ListView.builder(
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemCount: checkBoxListTileModel.length,
+                itemBuilder: (BuildContext context, int index){
+               // ignore: unnecessary_new
+               return Card(
+                // ignore: unnecessary_new
+                child: new Container(
+                  padding: EdgeInsets.all(10.0),
+                  child: Column(
+                    children: <Widget> [
+                      // ignore: unnecessary_new
+                      new CheckboxListTile(
+                        onChanged: (bool? val){
+                          itemChange(val, index);
+                        },
+                        activeColor: Color(0xff096B72),
+                        dense: true,
+                        title: Text(
+                          checkBoxListTileModel[index].title,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.5,
+                          ),
+    
+                        ),
+                        value: checkBoxListTileModel[index].isCheck,
+                        secondary: Container(
+                          height: 50,
+                          width: 50,
+                          child: Image.asset(
+                            checkBoxListTileModel[index].img,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        
+                        )
+                    ],
+                  ),
+                ),
+              );
+              }),
 
               Container(
-                padding: inputPadding,
-                child: RichText(
-                    text: const TextSpan(
-                        text: 'Charger Ports:',
-                        style: TextStyle(color: Colors.black, fontSize: 24))),
-              ),
-              Row(children: [
-                // row of charger buttons. change background color on selection and reduce button size
-                // push all selected buttons to charger array
-                // images are from: https://chargehub.com/en/electric-car-charging-guide.html
-                Column(
-                  children: [
-                    IconButton(
-                        padding:
-                            const EdgeInsets.fromLTRB(10.0, 10.0, 20.0, 10.0),
-                        iconSize: 90,
-                        color: Colors.blue,
-                        onPressed: () => {
-                              setState(() {
-                                _j1772Selected = !_j1772Selected;
-                              })
-                            },
-                        icon: Image.asset(
-                          'assets/images/Plug-Icon-J1772.png',
-                          color: _j1772Selected ? Colors.blue : Colors.black,
-                        )),
-                    RichText(
-                        text: const TextSpan(
-                            text: 'J1772',
-                            style:
-                                TextStyle(fontSize: 16, color: Colors.black)))
-                  ],
-                ),
-                Column(
-                  children: [
-                    IconButton(
-                        padding:
-                            const EdgeInsets.fromLTRB(10.0, 10.0, 20.0, 10.0),
-                        iconSize: 90,
-                        onPressed: () => {
-                              setState(() {
-                                _chademoSelected = !_chademoSelected;
-                              })
-                            },
-                        icon: Image.asset('assets/images/Plug-Icon-CHAdeMO.png',
-                            color:
-                                _chademoSelected ? Colors.blue : Colors.black)),
-                    RichText(
-                        text: const TextSpan(
-                            text: 'CHAdeMO',
-                            style:
-                                TextStyle(fontSize: 16, color: Colors.black)))
-                  ],
-                ),
-                Column(
-                  children: [
-                    IconButton(
-                        padding:
-                            const EdgeInsets.fromLTRB(10.0, 10.0, 20.0, 10.0),
-                        iconSize: 90,
-                        onPressed: () => {
-                              setState(() {
-                                _saeComboSelected = !_saeComboSelected;
-                              })
-                            },
-                        icon: Image.asset(
-                            'assets/images/Plug-Icon-J1772-Combo.png',
-                            color: _saeComboSelected
-                                ? Colors.blue
-                                : Colors.black)),
-                    RichText(
-                        text: const TextSpan(
-                            text: 'SAE Combo CCS',
-                            style:
-                                TextStyle(fontSize: 16, color: Colors.black)))
-                  ],
-                ),
-                /*IconButton(
-                    padding: const EdgeInsets.fromLTRB(10.0, 10.0, 20.0, 10.0),
-                    iconSize: 90,
-                    onPressed: () => print("J1772"),
-                    icon: Image.asset('assets/images/Plug-Icon-J1772.png')),
-                IconButton(
-                    padding: const EdgeInsets.fromLTRB(5.0, 10.0, 20.0, 10.0),
-                    iconSize: 90,
-                    onPressed: () => print("CHAdeMO"),
-                    icon: Image.asset('assets/images/Plug-Icon-CHAdeMO.png')),
-                IconButton(
-                  padding: const EdgeInsets.fromLTRB(5.0, 10.0, 20.0, 10.0),
-                  iconSize: 90,
-                  onPressed: () => print("SAE Combo CCS"),
-                  icon: Image.asset('assets/images/Plug-Icon-J1772-Combo.png'),
-                ),*/
-              ]),
+                  // continue button
 
-              /*Container(
-                // charger. look into onSubmitted field to keep ongoing list
-                width: screenWidth,
-                padding: inputPadding,
-                child: TextFormField(
-                  controller: newChargerType,
-                  //autocorrect: false,
-                  decoration: const InputDecoration(hintText: 'Charger Type'),
-                  textInputAction: TextInputAction.go,
-                  validator: _validateField,
-                  onEditingComplete: () => {
-                    chargerTypes.add(newChargerType.text),
-                    newChargerType.clear()
-                  },
-                ),
-              ),*/
-              Container(
-                // subscriptions. look into onSubmitted field to keep ongoing list
-                width: screenWidth,
-                padding: inputPadding,
-                child: TextFormField(
-                    controller: newSubscriptions,
-                    //autocorrect: false,
-                    decoration:
-                        const InputDecoration(hintText: 'Subscriptions'),
-                    textInputAction: TextInputAction.done,
-                    validator: _validateField),
-              ),
-              Padding(
-                  padding: inputPadding,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        _AddPID();
-                      }
-                    },
-                    child: const Text("Sign Up"),
-                  )),
-              Padding(
                   padding: inputPadding,
                   child: ElevatedButton(
                     onPressed: () => goToMaps(context),
-                    child: const Text("Maps Screen"),
+                    child: const Text("Continue"),
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(Color(0xff096B72)),
+                    ),
                   )),
-              /*TextButton(
-                  onPressed: AddPID,
-                  child: const Text("Add User")), // submit button
-              TextButton(
-                  onPressed: () => goToMaps(context),
-                  child: const Text("Maps Screen")),*/ // navigation button
             ],
           )),
     );
+  }
+
+  void itemChange(bool? val, int index) {
+    setState(() {
+      checkBoxListTileModel[index].isCheck = val;
+    });
   }
 
   void onCreditCardModelChange(CreditCardModel? creditCardModel) {
@@ -559,3 +473,34 @@ class _AddPID extends State<AddPID> {
   } // build
 } // _AddPIDState
 
+class CheckBoxListTileModel{
+  int imgId;
+  String img;
+  String title;
+  bool? isCheck;
+
+  CheckBoxListTileModel({required this.imgId, required this.img, required this.title, required this.isCheck});
+  
+  static List <CheckBoxListTileModel> getImgs(){
+    return <CheckBoxListTileModel>[
+      CheckBoxListTileModel(
+        imgId: 1,
+        img: 'assets/images/Plug-Icon-CHAdeMO.png',
+        title: 'CHAdeMo',
+        isCheck: false,
+      ),
+      CheckBoxListTileModel(
+        imgId: 2,
+        img: 'assets/images/Plug-Icon-J1772.png',
+        title: 'J1772',
+        isCheck: false,
+      ),
+      CheckBoxListTileModel(
+        imgId: 3,
+        img: 'assets/images/Plug-Icon-J1772-Combo.png',
+        title: 'J1772 Combo',
+        isCheck: false,
+      )
+    ];
+  }
+}
