@@ -25,21 +25,26 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const AddPID(),
+      home: const AddPID(
+        documentId: "",
+      ),
     );
   }
 }
 
 // create new user from user input
 class AddPID extends StatefulWidget {
-  const AddPID({Key? key}) : super(key: key);
+  const AddPID({Key? key, required this.documentId}) : super(key: key);
+
+  final String documentId;
+
   @override
   _AddPID createState() => _AddPID();
 }
 
 class _AddPID extends State<AddPID> {
-
-  List<CheckBoxListTileModel> checkBoxListTileModel = CheckBoxListTileModel.getImgs();
+  List<CheckBoxListTileModel> checkBoxListTileModel =
+      CheckBoxListTileModel.getImgs();
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _formKey = GlobalKey();
@@ -184,38 +189,46 @@ class _AddPID extends State<AddPID> {
 
       CollectionReference users =
           FirebaseFirestore.instance.collection('users');
-
-      await users
-          .add({
-            'firstName': firstName,
-            'lastName': lastName,
-            'phoneNumber': phoneNumber,
-            'countryCode':
-                '+1', // default to +1 since we are only focusing on USA
-            'address': {
-              // address is a map
-              "city": city,
-              "street": street,
-              "state": state,
-              "zip": zip,
-            },
-            //"chargerType": chargerType,
-            "creditCard": {
-              // credit card is also a map
-              "num": creditCard,
-              "exp": expir,
-              "cvv": cvv,
-            },
-            //"subscriptions": subscriptions,
-            "email": email,
-          })
-          .then((value) => value
+      DocumentReference newUser =
+          FirebaseFirestore.instance.collection('users').doc(widget.documentId);
+      await newUser.update({
+        'firstName': firstName,
+        'lastName': lastName,
+        'phoneNumber': phoneNumber,
+        'countryCode': '+1', // default to +1 since we are only focusing on USA
+        'address': {
+          // address is a map
+          "city": city,
+          "street": street,
+          "state": state,
+          "zip": zip,
+        },
+        //"chargerType": chargerType,
+        "creditCard": {
+          // credit card is also a map
+          "num": creditCard,
+          "exp": expir,
+          "cvv": cvv,
+        },
+        //"subscriptions": subscriptions,
+        "email": email,
+      });
+      /*.then((value) => value
               .collection('chargerType')
               .add({'chargerType': chargerTypes}).then((v) => value
                   .collection('subscriptions')
                   .add({'subscriptions': subscriptions})))
-          .catchError((error) => print("Failed to add user: $error"));
-    }
+          .catchError((error) => print("Failed to add user: $error"));*/
+
+      await newUser
+          .collection('chargerType')
+          .add({'chargerType': chargerTypes});
+      await newUser
+          .collection('subscriptions')
+          .add({'subscriptions': subscriptions});
+
+      goToMaps(context);
+    } // _AddPID
 
     _validateField(String? value) {
       if (value == null || value.isEmpty) {
@@ -387,64 +400,64 @@ class _AddPID extends State<AddPID> {
                 ),
               ),
               Container(
-               alignment: Alignment.centerLeft,
+                  alignment: Alignment.centerLeft,
                   padding: const EdgeInsets.all(10),
                   child: const Text(
-                    'Plug types:',
+                    'Plug types (Can Add Later):',
                     style: TextStyle(fontSize: 20),
-                  )
-              ),
+                  )),
               ListView.builder(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemCount: checkBoxListTileModel.length,
-                itemBuilder: (BuildContext context, int index){
-               // ignore: unnecessary_new
-               return Card(
-                // ignore: unnecessary_new
-                child: new Container(
-                  padding: EdgeInsets.all(10.0),
-                  child: Column(
-                    children: <Widget> [
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: checkBoxListTileModel.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    // ignore: unnecessary_new
+                    return Card(
                       // ignore: unnecessary_new
-                      new CheckboxListTile(
-                        onChanged: (bool? val){
-                          itemChange(val, index);
-                        },
-                        activeColor: Color(0xff096B72),
-                        dense: true,
-                        title: Text(
-                          checkBoxListTileModel[index].title,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.5,
-                          ),
-    
+                      child: new Container(
+                        padding: EdgeInsets.all(10.0),
+                        child: Column(
+                          children: <Widget>[
+                            // ignore: unnecessary_new
+                            new CheckboxListTile(
+                              onChanged: (bool? val) {
+                                itemChange(val, index);
+                              },
+                              activeColor: Color(0xff096B72),
+                              dense: true,
+                              title: Text(
+                                checkBoxListTileModel[index].title,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                              value: checkBoxListTileModel[index].isCheck,
+                              secondary: Container(
+                                height: 50,
+                                width: 50,
+                                child: Image.asset(
+                                  checkBoxListTileModel[index].img,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            )
+                          ],
                         ),
-                        value: checkBoxListTileModel[index].isCheck,
-                        secondary: Container(
-                          height: 50,
-                          width: 50,
-                          child: Image.asset(
-                            checkBoxListTileModel[index].img,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        
-                        )
-                    ],
-                  ),
-                ),
-              );
-              }),
+                      ),
+                    );
+                  }),
 
               Container(
                   // continue button
-
                   padding: inputPadding,
                   child: ElevatedButton(
-                    onPressed: () => goToMaps(context),
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        _AddPID();
+                      }
+                    },
                     child: const Text("Continue"),
                     style: ButtonStyle(
                       backgroundColor:
@@ -473,15 +486,19 @@ class _AddPID extends State<AddPID> {
   } // build
 } // _AddPIDState
 
-class CheckBoxListTileModel{
+class CheckBoxListTileModel {
   int imgId;
   String img;
   String title;
   bool? isCheck;
 
-  CheckBoxListTileModel({required this.imgId, required this.img, required this.title, required this.isCheck});
-  
-  static List <CheckBoxListTileModel> getImgs(){
+  CheckBoxListTileModel(
+      {required this.imgId,
+      required this.img,
+      required this.title,
+      required this.isCheck});
+
+  static List<CheckBoxListTileModel> getImgs() {
     return <CheckBoxListTileModel>[
       CheckBoxListTileModel(
         imgId: 1,
