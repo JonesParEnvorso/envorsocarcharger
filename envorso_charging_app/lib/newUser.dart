@@ -38,8 +38,8 @@ class AddPID extends StatefulWidget {
 }
 
 class _AddPID extends State<AddPID> {
-
-  List<CheckBoxListTileModel> checkBoxListTileModel = CheckBoxListTileModel.getImgs();
+  List<CheckBoxListTileModel> checkBoxListTileModel =
+      CheckBoxListTileModel.getImgs();
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _formKey = GlobalKey();
@@ -90,8 +90,11 @@ class _AddPID extends State<AddPID> {
     final leftEdge = MediaQuery.of(context).padding.left;
     final rightEdge = MediaQuery.of(context).padding.right;
 
+    String dropdownvalue = "State";
+    var states = ['State', 'CA'];
+
     // padding around the text entry boxes
-    const inputPadding = EdgeInsets.all(10.0);
+    const inputPadding = EdgeInsets.all(5);
 
     goToMaps(BuildContext context) {
       Navigator.push(
@@ -232,7 +235,7 @@ class _AddPID extends State<AddPID> {
               // text entries
               Container(
                   alignment: Alignment.centerLeft,
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(5),
                   child: const Text(
                     'User Info',
                     style: TextStyle(fontSize: 20),
@@ -288,7 +291,7 @@ class _AddPID extends State<AddPID> {
                 children: <Widget>[
                   Container(
                     // city
-                    width: screenWidth / 1.35,
+                    width: screenWidth / 2,
                     padding: inputPadding,
                     child: TextFormField(
                         controller: newCity,
@@ -325,6 +328,38 @@ class _AddPID extends State<AddPID> {
                             },
                         validator: _validateField),
                   ),
+                  DecoratedBox(
+                    
+                    decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        side: BorderSide(width: 1.0, style: BorderStyle.solid, color: Colors.grey),
+                    ),
+                    ),
+                    
+                    child: DropdownButton(
+                      // Initial Value
+                      value: dropdownvalue,
+
+                      // Down Arrow Icon
+                      icon: const Icon(Icons.keyboard_arrow_down),
+
+                      // Array list of items
+                      items: states.map((String states) {
+                        return DropdownMenuItem(
+                          value: states,
+                          child: Text(states),
+                        );
+                      }).toList(),
+                      // After selecting the desired option,it will
+                      // change button value to selected value
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          dropdownvalue = newValue!;
+                        });
+                      },
+                    ),
+                  )
                 ], // end children
               ),
               TextButton(
@@ -387,57 +422,54 @@ class _AddPID extends State<AddPID> {
                 ),
               ),
               Container(
-               alignment: Alignment.centerLeft,
+                  alignment: Alignment.centerLeft,
                   padding: const EdgeInsets.all(10),
                   child: const Text(
                     'Plug types:',
                     style: TextStyle(fontSize: 20),
-                  )
-              ),
+                  )),
               ListView.builder(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemCount: checkBoxListTileModel.length,
-                itemBuilder: (BuildContext context, int index){
-               // ignore: unnecessary_new
-               return Card(
-                // ignore: unnecessary_new
-                child: new Container(
-                  padding: EdgeInsets.all(10.0),
-                  child: Column(
-                    children: <Widget> [
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: checkBoxListTileModel.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    // ignore: unnecessary_new
+                    return Card(
                       // ignore: unnecessary_new
-                      new CheckboxListTile(
-                        onChanged: (bool? val){
-                          itemChange(val, index);
-                        },
-                        activeColor: Color(0xff096B72),
-                        dense: true,
-                        title: Text(
-                          checkBoxListTileModel[index].title,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.5,
-                          ),
-    
+                      child: new Container(
+                        padding: EdgeInsets.all(5),
+                        child: Column(
+                          children: <Widget>[
+                            // ignore: unnecessary_new
+                            new CheckboxListTile(
+                              onChanged: (bool? val) {
+                                itemChange(val, index);
+                              },
+                              activeColor: Color(0xff096B72),
+                              dense: true,
+                              title: Text(
+                                checkBoxListTileModel[index].title,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                              value: checkBoxListTileModel[index].isCheck,
+                              secondary: Container(
+                                height: 50,
+                                width: 50,
+                                child: Image.asset(
+                                  checkBoxListTileModel[index].img,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            )
+                          ],
                         ),
-                        value: checkBoxListTileModel[index].isCheck,
-                        secondary: Container(
-                          height: 50,
-                          width: 50,
-                          child: Image.asset(
-                            checkBoxListTileModel[index].img,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        
-                        )
-                    ],
-                  ),
-                ),
-              );
-              }),
+                      ),
+                    );
+                  }),
 
               Container(
                   // continue button
@@ -473,15 +505,19 @@ class _AddPID extends State<AddPID> {
   } // build
 } // _AddPIDState
 
-class CheckBoxListTileModel{
+class CheckBoxListTileModel {
   int imgId;
   String img;
   String title;
   bool? isCheck;
 
-  CheckBoxListTileModel({required this.imgId, required this.img, required this.title, required this.isCheck});
-  
-  static List <CheckBoxListTileModel> getImgs(){
+  CheckBoxListTileModel(
+      {required this.imgId,
+      required this.img,
+      required this.title,
+      required this.isCheck});
+
+  static List<CheckBoxListTileModel> getImgs() {
     return <CheckBoxListTileModel>[
       CheckBoxListTileModel(
         imgId: 1,
