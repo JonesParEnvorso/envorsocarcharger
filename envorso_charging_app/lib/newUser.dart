@@ -95,8 +95,11 @@ class _AddPID extends State<AddPID> {
     final leftEdge = MediaQuery.of(context).padding.left;
     final rightEdge = MediaQuery.of(context).padding.right;
 
+    String dropdownvalue = "State";
+    var states = ['State', 'CA'];
+
     // padding around the text entry boxes
-    const inputPadding = EdgeInsets.all(10.0);
+    const inputPadding = EdgeInsets.all(5);
 
     goToMaps(BuildContext context) {
       Navigator.push(
@@ -245,7 +248,7 @@ class _AddPID extends State<AddPID> {
               // text entries
               Container(
                   alignment: Alignment.centerLeft,
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(5),
                   child: const Text(
                     'User Info',
                     style: TextStyle(fontSize: 20),
@@ -301,7 +304,7 @@ class _AddPID extends State<AddPID> {
                 children: <Widget>[
                   Container(
                     // city
-                    width: screenWidth / 1.35,
+                    width: screenWidth / 2,
                     padding: inputPadding,
                     child: TextFormField(
                         controller: newCity,
@@ -338,6 +341,39 @@ class _AddPID extends State<AddPID> {
                             },
                         validator: _validateField),
                   ),
+                  DecoratedBox(
+                    decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        side: BorderSide(
+                            width: 1.0,
+                            style: BorderStyle.solid,
+                            color: Colors.grey),
+                      ),
+                    ),
+                    child: DropdownButton(
+                      // Initial Value
+                      value: dropdownvalue,
+
+                      // Down Arrow Icon
+                      icon: const Icon(Icons.keyboard_arrow_down),
+
+                      // Array list of items
+                      items: states.map((String states) {
+                        return DropdownMenuItem(
+                          value: states,
+                          child: Text(states),
+                        );
+                      }).toList(),
+                      // After selecting the desired option,it will
+                      // change button value to selected value
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          dropdownvalue = newValue!;
+                        });
+                      },
+                    ),
+                  )
                 ], // end children
               ),
               TextButton(
