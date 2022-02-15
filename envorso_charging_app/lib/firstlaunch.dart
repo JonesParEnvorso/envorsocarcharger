@@ -1,6 +1,7 @@
 import 'package:envorso_charging_app/speech_recognition.dart';
 import 'package:flutter/material.dart';
 import 'newUserEmail.dart';
+import 'mapScreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,10 +14,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'First Launch',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-      ),      
+      ),
     );
   }
 }
@@ -34,11 +35,13 @@ class _FirstLaunch extends State<FirstLaunch> {
   goToSignUp(BuildContext context) {
     Navigator.push(context, MaterialPageRoute(builder: (context) => AddUser()));
   }
+  goToMap(BuildContext context){
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MapScreen()));
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        
         body: Padding(
             padding: const EdgeInsets.all(10),
             child: ListView(
@@ -88,16 +91,13 @@ class _FirstLaunch extends State<FirstLaunch> {
                   onPressed: () {
                     //forgot password screen
                   },
-                  child: const Text(
-                    'Forgot Password?',
-                    style: TextStyle(
-                      color: Color(0xff096B72 )
-                    )
-                  ),
+                  child: const Text('Forgot Password?',
+                      style: TextStyle(color: Color(0xff096B72))),
                 ),
+
                 // What is commented out below is the buttons for Google and Apple login
-                // Keep commented out until we can implement those features. 
-                
+                // Keep commented out until we can implement those features.
+
                 /*Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
@@ -167,12 +167,10 @@ class _FirstLaunch extends State<FirstLaunch> {
                     child: ElevatedButton(
                       child: const Text('Login'),
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Color(0xff096B72)),
+                        backgroundColor:
+                            MaterialStateProperty.all(Color(0xff096B72)),
                       ),
-                      onPressed: () {
-                        print(nameController.text);
-                        print(passwordController.text);
-                      },
+                      onPressed: () => goToMap(context) ,
                     )),
                 Row(
                   children: <Widget>[
@@ -181,9 +179,9 @@ class _FirstLaunch extends State<FirstLaunch> {
                       child: const Text(
                         'Sign up!',
                         style: TextStyle(
-                          fontSize: 20, 
+                          fontSize: 20,
                           color: Color(0xff096B72),
-                          ),
+                        ),
                       ),
                       onPressed: () => goToSignUp(context),
                     )

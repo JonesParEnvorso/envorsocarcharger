@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'firebase_options.dart';
 import 'mapScreen.dart';
+import 'package:flutter_credit_card/flutter_credit_card.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,20 +25,31 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const AddPID(),
+      home: const AddPID(
+        documentId: "",
+      ),
     );
   }
 }
 
 // create new user from user input
 class AddPID extends StatefulWidget {
-  const AddPID({Key? key}) : super(key: key);
+  const AddPID({Key? key, required this.documentId}) : super(key: key);
+
+  final String documentId;
+
   @override
   _AddPID createState() => _AddPID();
 }
 
 class _AddPID extends State<AddPID> {
+  List<CheckBoxListTileModel> checkBoxListTileModel =
+      CheckBoxListTileModel.getImgs();
+
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _formKey = GlobalKey();
+
+  final List<String> _selectedItems = [];
 
   // address consists of: city, state, street, zip
   final newCity = TextEditingController();
@@ -54,6 +66,14 @@ class _AddPID extends State<AddPID> {
   final newName = TextEditingController();
   final newEmail = TextEditingController();
   final newPhone = TextEditingController();
+
+  String cardNumber = '';
+  String expiryDate = '';
+  String cardHolderName = '';
+  String cvvCode = '';
+  bool isCvvFocused = false;
+  bool useGlassMorphism = false;
+  bool useBackgroundImage = false;
 
   // chargerType and Subscriptions still need to be fully updated
   // charger type will be array
@@ -75,17 +95,28 @@ class _AddPID extends State<AddPID> {
     final leftEdge = MediaQuery.of(context).padding.left;
     final rightEdge = MediaQuery.of(context).padding.right;
 
+    String dropdownvalue = "State";
+    var states = ['State', 'CA'];
+
     // padding around the text entry boxes
-    const inputPadding = EdgeInsets.all(10.0);
+    const inputPadding = EdgeInsets.all(5);
 
     goToMaps(BuildContext context) {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => const MapScreen()));
     }
 
+    OutlineInputBorder? border;
+
     @override
     void initState() {
       super.initState();
+      border = OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.grey.withOpacity(0.7),
+          width: 2.0,
+        ),
+      );
     }
 
     @override
@@ -111,14 +142,16 @@ class _AddPID extends State<AddPID> {
 
     _AddPID() async {
       //String name = newName.text; // split name into first and last
+
+      final GlobalKey<FormState> formKey = GlobalKey<FormState>();
       String firstName;
       String lastName;
-      if (!newName.text.contains(" ")) {
-        firstName = newName.text;
+      if (!cardHolderName.contains(" ")) {
+        firstName = cardHolderName;
         lastName = "";
       } else {
-        firstName = newName.text.substring(0, newName.text.indexOf(" "));
-        lastName = newName.text.substring(newName.text.indexOf(" ") + 1);
+        firstName = cardHolderName.substring(0, cardHolderName.indexOf(" "));
+        lastName = cardHolderName.substring(cardHolderName.indexOf(" ") + 1);
       }
       String email = newEmail.text;
       String phoneNumber = newPhone.text;
@@ -126,9 +159,9 @@ class _AddPID extends State<AddPID> {
       String street = newStreet.text;
       String state = newState.text;
       String zip = newZip.text;
-      String creditCard = newCard.text;
-      String expir = newExpirMon.text + "/" + newExpirYr.text;
-      String cvv = newCvv.text;
+      String creditCard = cardNumber;
+      String expir = expiryDate;
+      String cvv = cvvCode;
       //String chargerType = newChargerType.text;
       if (_j1772Selected) {
         chargerTypes.add('J1772');
@@ -144,7 +177,6 @@ class _AddPID extends State<AddPID> {
       // clear text entries
       newName.clear();
       newPhone.clear();
-      newCard.clear();
       newChargerType.clear();
       newSubscriptions.clear();
       newEmail.clear();
@@ -153,44 +185,48 @@ class _AddPID extends State<AddPID> {
       newCity.clear();
       newZip.clear();
       newCountry.clear();
-      newExpirMon.clear();
-      newExpirYr.clear();
-      newCvv.clear();
+      cardHolderName = '';
+      cardNumber = '';
+      expiryDate = '';
+      cvvCode = '';
 
-      CollectionReference users =
-          FirebaseFirestore.instance.collection('users');
+      DocumentReference newUser =
+          FirebaseFirestore.instance.collection('users').doc(widget.documentId);
 
-      await users
-          .add({
-            'firstName': firstName,
-            'lastName': lastName,
-            'phoneNumber': phoneNumber,
-            'countryCode':
-                '+1', // default to +1 since we are only focusing on USA
-            'address': {
-              // address is a map
-              "city": city,
-              "street": street,
-              "state": state,
-              "zip": zip,
-            },
-            //"chargerType": chargerType,
-            "creditCard": {
-              // credit card is also a map
-              "num": creditCard,
-              "exp": expir,
-              "cvv": cvv,
-            },
-            //"subscriptions": subscriptions,
-            "email": email,
-          })
-          .then((value) => value
-              .collection('chargerType')
-              .add({'chargerType': chargerTypes}).then((v) => value
-                  .collection('subscriptions')
-                  .add({'subscriptions': subscriptions})))
-          .catchError((error) => print("Failed to add user: $error"));
-    }
+      await newUser.update({
+        'firstName': firstName,
+        'lastName': lastName,
+        'phoneNumber': phoneNumber,
+        'countryCode': '+1', // default to +1 since we are only focusing on USA
+        'address': {
+          // address is a map
+          "city": city,
+          "street": street,
+          "state": state,
+          "zip": zip,
+        },
+        //"chargerType": chargerType,
+        "creditCard": {
+          // credit card is also a map
+          "num": creditCard,
+          "exp": expir,
+          "cvv": cvv,
+        },
+        //"subscriptions": subscriptions,
+        "email": email,
+      }).catchError((error) => print("Update failed: $error"));
+
+      /*await newUser
+          .collection('chargerType')
+          .add({'chargerType': chargerTypes}).catchError(
+              (error) => print("Update failed: $error"));
+      await newUser
+          .collection('subscriptions')
+          .add({'subscriptions': subscriptions}).catchError(
+              (error) => print("Update failed: $error"));*/
+
+      goToMaps(context);
+    } // _AddPID
 
     _validateField(String? value) {
       if (value == null || value.isEmpty) {
@@ -199,52 +235,29 @@ class _AddPID extends State<AddPID> {
       return null;
     }
 
-    // ignore for now
-    /*int curMonth = DateTime.now().month;
-    int curYear = DateTime.now().year;
-    Future<void> _selectDate(BuildContext context) async {
-      final DateTime? selected = await showDatePicker(
-          context: context,
-          initialDate: DateTime(curYear, curMonth),
-          firstDate: DateTime(curYear, curMonth),
-          lastDate: DateTime(2050));
-      if (selected != null && selected != DateTime(curYear, curMonth)) {
-        setState(() {
-          curYear = selected.year;
-          curMonth = selected.month;
-        });
-      }
-    } // _selectDate */
-
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Add User"),
-      ),
       body: Form(
           key: _formKey,
           child: ListView(
             children: <Widget>[
               // text entries
               Container(
-                // name
-                width: screenWidth,
-                padding: inputPadding,
-                child: TextFormField(
-                    controller: newName,
-                    //autocorrect: false,
-                    decoration: const InputDecoration(hintText: 'Name'),
-                    keyboardType: TextInputType.name,
-                    textInputAction: TextInputAction.next,
-                    validator: _validateField),
-              ),
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.all(5),
+                  child: const Text(
+                    'User Info',
+                    style: TextStyle(fontSize: 20),
+                  )),
               Container(
                 // email
                 width: screenWidth,
                 padding: inputPadding,
                 child: TextFormField(
                     controller: newEmail,
-                    //autocorrect: false,
-                    decoration: const InputDecoration(hintText: 'Email'),
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Username',
+                    ),
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
                     validator: _validateField),
@@ -256,70 +269,60 @@ class _AddPID extends State<AddPID> {
                   child: TextFormField(
                       controller: newPhone,
                       //autocorrect: false,
-                      decoration:
-                          const InputDecoration(hintText: 'Phone Number'),
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Phone Number',
+                      ),
                       keyboardType: TextInputType.phone,
                       inputFormatters: <TextInputFormatter>[
                         FilteringTextInputFormatter.digitsOnly
                       ],
                       textInputAction: TextInputAction.next,
                       validator: _validateField)),
+
+              // Home Street
+              Container(
+                width: screenWidth / 2.25,
+                padding: inputPadding,
+                child: TextFormField(
+                    controller: newStreet,
+                    //autocorrect: false,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Home street',
+                    ),
+                    keyboardType: TextInputType.streetAddress,
+                    textInputAction: TextInputAction.next,
+                    validator: _validateField),
+              ),
               Row(
-                // rows to make things look pretty / to save on screen space
-                children: [
-                  Container(
-                    //street
-                    width: screenWidth / 2.25,
-                    padding: inputPadding,
-                    child: TextFormField(
-                        controller: newStreet,
-                        //autocorrect: false,
-                        decoration: const InputDecoration(hintText: 'Street'),
-                        keyboardType: TextInputType.streetAddress,
-                        textInputAction: TextInputAction.next,
-                        validator: _validateField),
-                  ),
+                children: <Widget>[
                   Container(
                     // city
-                    width: screenWidth / 2.25,
+                    width: screenWidth / 2,
                     padding: inputPadding,
                     child: TextFormField(
                         controller: newCity,
                         //autocorrect: false,
-                        decoration: const InputDecoration(hintText: 'City'),
-                        textInputAction: TextInputAction.next,
-                        validator: _validateField),
-                  )
-                ],
-              ),
-              Row(
-                children: [
-                  Container(
-                    // state
-                    width: screenWidth / 4.5,
-                    padding: inputPadding,
-                    child: TextFormField(
-                        controller: newState,
-                        //autocorrect: false,
                         decoration: const InputDecoration(
-                            hintText: 'State', counterText: ""),
-                        maxLength: 2,
+                          border: OutlineInputBorder(),
+                          labelText: 'City',
+                        ),
                         textInputAction: TextInputAction.next,
-                        onChanged: (value) => {
-                              if (newState.text.length == 2)
-                                {FocusScope.of(context).nextFocus()}
-                            },
                         validator: _validateField),
                   ),
                   Container(
-                    // zip
-                    width: screenWidth / 3,
+                    //ZIP
+                    width: screenWidth / 4,
                     padding: inputPadding,
                     child: TextFormField(
                         controller: newZip,
                         //autocorrect: false,
                         decoration: const InputDecoration(
-                            hintText: 'ZIP', counterText: ""),
+                          border: OutlineInputBorder(),
+                          labelText: 'ZIP',
+                          counterText: '',
+                        ),
                         keyboardType: TextInputType.number,
                         maxLength: 5,
                         // accepts numbers only
@@ -333,254 +336,220 @@ class _AddPID extends State<AddPID> {
                             },
                         validator: _validateField),
                   ),
-                  Container(
-                    // country
-                    width: screenWidth / 3,
-                    padding: inputPadding,
-                    child: TextFormField(
-                        controller: newCountry,
-                        //autocorrect: false,
-                        decoration: const InputDecoration(hintText: 'Country'),
-                        textInputAction: TextInputAction.next,
-                        validator: _validateField),
-                  )
-                ],
-              ),
-              Container(
-                // credit card
-                width: screenWidth,
-                padding: inputPadding,
-                child: TextFormField(
-                    controller: newCard,
-                    //autocorrect: false,
-                    decoration:
-                        const InputDecoration(hintText: 'Credit Card Number'),
-                    keyboardType: TextInputType.number,
-                    // accepts numbers only
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly
-                    ],
-                    textInputAction: TextInputAction.next,
-                    validator: _validateField),
-              ),
-              Row(
-                children: [
-                  Container(
-                    padding: inputPadding,
-                    child: const Text("Expiration"),
-                  ),
-                  Container(
-                      // expiration month
-                      width: screenWidth / 7,
-                      padding: const EdgeInsets.fromLTRB(10.0, 10.0, 0.0, 10.0),
-                      child: TextFormField(
-                          controller: newExpirMon,
-                          //autocorrect: false,
-                          decoration: const InputDecoration(
-                              hintText: 'MM', counterText: ""),
-                          maxLength: 2,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
-                          textInputAction: TextInputAction.next,
-                          onChanged: (value) => {
-                                if (newExpirMon.text.length == 2)
-                                  {FocusScope.of(context).nextFocus()}
-                              },
-                          validator: _validateField)),
-                  const Text("/"),
-                  Container(
-                      // expiration year
-                      width: screenWidth / 6,
-                      padding: const EdgeInsets.fromLTRB(5.0, 10.0, 10.0, 10.0),
-                      child: TextFormField(
-                          controller: newExpirYr,
-                          //autocorrect: false,
-                          decoration: const InputDecoration(
-                              hintText: 'YYYY', counterText: ""),
-                          maxLength: 4,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
-                          textInputAction: TextInputAction.next,
-                          onChanged: (value) => {
-                                if (newExpirYr.text.length == 4)
-                                  {FocusScope.of(context).nextFocus()}
-                              },
-                          validator: _validateField)),
-                  Container(
-                    // cvv
-                    width: screenWidth / 6,
-                    padding: inputPadding,
-                    child: TextFormField(
-                        controller: newCvv,
-                        //autocorrect: false,
-                        decoration: const InputDecoration(
-                            hintText: 'CVV', counterText: ""),
-                        maxLength: 3,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                        textInputAction: TextInputAction.next,
-                        onChanged: (value) => {
-                              if (newCvv.text.length == 3)
-                                {FocusScope.of(context).nextFocus()}
-                            },
-                        validator: _validateField),
-                  )
-                ],
-              ),
-              Container(
-                padding: inputPadding,
-                child: RichText(
-                    text: const TextSpan(
-                        text: 'Charger Ports:',
-                        style: TextStyle(color: Colors.black, fontSize: 24))),
-              ),
-              Row(children: [
-                // row of charger buttons. change background color on selection and reduce button size
-                // push all selected buttons to charger array
-                // images are from: https://chargehub.com/en/electric-car-charging-guide.html
-                Column(
-                  children: [
-                    IconButton(
-                        padding:
-                            const EdgeInsets.fromLTRB(10.0, 10.0, 20.0, 10.0),
-                        iconSize: 90,
-                        color: Colors.blue,
-                        onPressed: () => {
-                              setState(() {
-                                _j1772Selected = !_j1772Selected;
-                              })
-                            },
-                        icon: Image.asset(
-                          'assets/images/Plug-Icon-J1772.png',
-                          color: _j1772Selected ? Colors.blue : Colors.black,
-                        )),
-                    RichText(
-                        text: const TextSpan(
-                            text: 'J1772',
-                            style:
-                                TextStyle(fontSize: 16, color: Colors.black)))
-                  ],
-                ),
-                Column(
-                  children: [
-                    IconButton(
-                        padding:
-                            const EdgeInsets.fromLTRB(10.0, 10.0, 20.0, 10.0),
-                        iconSize: 90,
-                        onPressed: () => {
-                              setState(() {
-                                _chademoSelected = !_chademoSelected;
-                              })
-                            },
-                        icon: Image.asset('assets/images/Plug-Icon-CHAdeMO.png',
-                            color:
-                                _chademoSelected ? Colors.blue : Colors.black)),
-                    RichText(
-                        text: const TextSpan(
-                            text: 'CHAdeMO',
-                            style:
-                                TextStyle(fontSize: 16, color: Colors.black)))
-                  ],
-                ),
-                Column(
-                  children: [
-                    IconButton(
-                        padding:
-                            const EdgeInsets.fromLTRB(10.0, 10.0, 20.0, 10.0),
-                        iconSize: 90,
-                        onPressed: () => {
-                              setState(() {
-                                _saeComboSelected = !_saeComboSelected;
-                              })
-                            },
-                        icon: Image.asset(
-                            'assets/images/Plug-Icon-J1772-Combo.png',
-                            color: _saeComboSelected
-                                ? Colors.blue
-                                : Colors.black)),
-                    RichText(
-                        text: const TextSpan(
-                            text: 'SAE Combo CCS',
-                            style:
-                                TextStyle(fontSize: 16, color: Colors.black)))
-                  ],
-                ),
-                /*IconButton(
-                    padding: const EdgeInsets.fromLTRB(10.0, 10.0, 20.0, 10.0),
-                    iconSize: 90,
-                    onPressed: () => print("J1772"),
-                    icon: Image.asset('assets/images/Plug-Icon-J1772.png')),
-                IconButton(
-                    padding: const EdgeInsets.fromLTRB(5.0, 10.0, 20.0, 10.0),
-                    iconSize: 90,
-                    onPressed: () => print("CHAdeMO"),
-                    icon: Image.asset('assets/images/Plug-Icon-CHAdeMO.png')),
-                IconButton(
-                  padding: const EdgeInsets.fromLTRB(5.0, 10.0, 20.0, 10.0),
-                  iconSize: 90,
-                  onPressed: () => print("SAE Combo CCS"),
-                  icon: Image.asset('assets/images/Plug-Icon-J1772-Combo.png'),
-                ),*/
-              ]),
+                  DecoratedBox(
+                    decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        side: BorderSide(
+                            width: 1.0,
+                            style: BorderStyle.solid,
+                            color: Colors.grey),
+                      ),
+                    ),
+                    child: DropdownButton(
+                      // Initial Value
+                      value: dropdownvalue,
 
-              /*Container(
-                // charger. look into onSubmitted field to keep ongoing list
-                width: screenWidth,
-                padding: inputPadding,
-                child: TextFormField(
-                  controller: newChargerType,
-                  //autocorrect: false,
-                  decoration: const InputDecoration(hintText: 'Charger Type'),
-                  textInputAction: TextInputAction.go,
-                  validator: _validateField,
-                  onEditingComplete: () => {
-                    chargerTypes.add(newChargerType.text),
-                    newChargerType.clear()
-                  },
-                ),
-              ),*/
-              Container(
-                // subscriptions. look into onSubmitted field to keep ongoing list
-                width: screenWidth,
-                padding: inputPadding,
-                child: TextFormField(
-                    controller: newSubscriptions,
-                    //autocorrect: false,
-                    decoration:
-                        const InputDecoration(hintText: 'Subscriptions'),
-                    textInputAction: TextInputAction.done,
-                    validator: _validateField),
+                      // Down Arrow Icon
+                      icon: const Icon(Icons.keyboard_arrow_down),
+
+                      // Array list of items
+                      items: states.map((String states) {
+                        return DropdownMenuItem(
+                          value: states,
+                          child: Text(states),
+                        );
+                      }).toList(),
+                      // After selecting the desired option,it will
+                      // change button value to selected value
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          dropdownvalue = newValue!;
+                        });
+                      },
+                    ),
+                  )
+                ], // end children
               ),
-              Padding(
+              TextButton(
+                onPressed: () => {},
+                child: const Text('Why is Credit Card info needed?',
+                    style: TextStyle(color: Color(0xff096B72))),
+              ),
+              // CREDIT CARD INFORMATION
+              Container(
+                child: CreditCardForm(
+                  formKey: formKey,
+                  obscureCvv: true,
+                  obscureNumber: true,
+                  cardHolderName: cardHolderName,
+                  cardNumber: cardNumber,
+                  cvvCode: cvvCode,
+                  isHolderNameVisible: true,
+                  isCardNumberVisible: true,
+                  isExpiryDateVisible: true,
+                  expiryDate: expiryDate,
+                  themeColor: Color(0xff096B72),
+                  textColor: Colors.black,
+                  cardHolderDecoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintStyle: const TextStyle(color: Colors.black),
+                    labelStyle: const TextStyle(color: Colors.black),
+                    focusedBorder: border,
+                    enabledBorder: border,
+                    labelText: 'Card Holder',
+                    hintText: 'First Name Last Name',
+                  ),
+                  cardNumberDecoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'CC Number',
+                    hintText: 'XXXX XXXX XXXX XXXX',
+                    hintStyle: const TextStyle(color: Colors.black),
+                    labelStyle: const TextStyle(color: Colors.black),
+                    focusedBorder: border,
+                    enabledBorder: border,
+                  ),
+                  expiryDateDecoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintStyle: const TextStyle(color: Colors.black),
+                    labelStyle: const TextStyle(color: Colors.black),
+                    focusedBorder: border,
+                    enabledBorder: border,
+                    labelText: 'Exp. Date',
+                    hintText: 'XX/XX',
+                  ),
+                  cvvCodeDecoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintStyle: const TextStyle(color: Colors.black),
+                    labelStyle: const TextStyle(color: Colors.black),
+                    focusedBorder: border,
+                    enabledBorder: border,
+                    labelText: 'CVV',
+                    hintText: 'XXX',
+                  ),
+                  onCreditCardModelChange: onCreditCardModelChange,
+                ),
+              ),
+              Container(
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.all(10),
+                  child: const Text(
+                    'Plug types (Can Add Later):',
+                    style: TextStyle(fontSize: 20),
+                  )),
+              ListView.builder(
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: checkBoxListTileModel.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    // ignore: unnecessary_new
+                    return Card(
+                      // ignore: unnecessary_new
+                      child: new Container(
+                        padding: EdgeInsets.all(10.0),
+                        child: Column(
+                          children: <Widget>[
+                            // ignore: unnecessary_new
+                            new CheckboxListTile(
+                              onChanged: (bool? val) {
+                                itemChange(val, index);
+                              },
+                              activeColor: Color(0xff096B72),
+                              dense: true,
+                              title: Text(
+                                checkBoxListTileModel[index].title,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                              value: checkBoxListTileModel[index].isCheck,
+                              secondary: Container(
+                                height: 50,
+                                width: 50,
+                                child: Image.asset(
+                                  checkBoxListTileModel[index].img,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  }),
+
+              Container(
+                  // continue button
                   padding: inputPadding,
                   child: ElevatedButton(
                     onPressed: () {
-                      if (_formKey.currentState!.validate()) {
+                      if (_formKey.currentState!.validate() &&
+                          formKey.currentState!.validate()) {
                         _AddPID();
                       }
                     },
-                    child: const Text("Sign Up"),
+                    child: const Text("Continue"),
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(Color(0xff096B72)),
+                    ),
                   )),
-              Padding(
-                  padding: inputPadding,
-                  child: ElevatedButton(
-                    onPressed: () => goToMaps(context),
-                    child: const Text("Maps Screen"),
-                  )),
-              /*TextButton(
-                  onPressed: AddPID,
-                  child: const Text("Add User")), // submit button
-              TextButton(
-                  onPressed: () => goToMaps(context),
-                  child: const Text("Maps Screen")),*/ // navigation button
             ],
           )),
     );
+  }
+
+  void itemChange(bool? val, int index) {
+    setState(() {
+      checkBoxListTileModel[index].isCheck = val;
+    });
+  }
+
+  void onCreditCardModelChange(CreditCardModel? creditCardModel) {
+    setState(() {
+      cardNumber = creditCardModel!.cardNumber;
+      expiryDate = creditCardModel.expiryDate;
+      cardHolderName = creditCardModel.cardHolderName;
+      cvvCode = creditCardModel.cvvCode;
+      isCvvFocused = creditCardModel.isCvvFocused;
+    });
   } // build
 } // _AddPIDState
+
+class CheckBoxListTileModel {
+  int imgId;
+  String img;
+  String title;
+  bool? isCheck;
+
+  CheckBoxListTileModel(
+      {required this.imgId,
+      required this.img,
+      required this.title,
+      required this.isCheck});
+
+  static List<CheckBoxListTileModel> getImgs() {
+    return <CheckBoxListTileModel>[
+      CheckBoxListTileModel(
+        imgId: 1,
+        img: 'assets/images/Plug-Icon-CHAdeMO.png',
+        title: 'CHAdeMo',
+        isCheck: false,
+      ),
+      CheckBoxListTileModel(
+        imgId: 2,
+        img: 'assets/images/Plug-Icon-J1772.png',
+        title: 'J1772',
+        isCheck: false,
+      ),
+      CheckBoxListTileModel(
+        imgId: 3,
+        img: 'assets/images/Plug-Icon-J1772-Combo.png',
+        title: 'J1772 Combo',
+        isCheck: false,
+      )
+    ];
+  }
+}
