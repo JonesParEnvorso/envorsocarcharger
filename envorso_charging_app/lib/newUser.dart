@@ -146,12 +146,12 @@ class _AddPID extends State<AddPID> {
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
       String firstName;
       String lastName;
-      if (!newName.text.contains(" ")) {
-        firstName = newName.text;
+      if (!cardHolderName.contains(" ")) {
+        firstName = cardHolderName;
         lastName = "";
       } else {
-        firstName = newName.text.substring(0, newName.text.indexOf(" "));
-        lastName = newName.text.substring(newName.text.indexOf(" ") + 1);
+        firstName = cardHolderName.substring(0, cardHolderName.indexOf(" "));
+        lastName = cardHolderName.substring(cardHolderName.indexOf(" ") + 1);
       }
       String email = newEmail.text;
       String phoneNumber = newPhone.text;
@@ -159,9 +159,9 @@ class _AddPID extends State<AddPID> {
       String street = newStreet.text;
       String state = newState.text;
       String zip = newZip.text;
-      String creditCard = newCard.text;
-      String expir = newExpirMon.text + "/" + newExpirYr.text;
-      String cvv = newCvv.text;
+      String creditCard = cardNumber;
+      String expir = expiryDate;
+      String cvv = cvvCode;
       //String chargerType = newChargerType.text;
       if (_j1772Selected) {
         chargerTypes.add('J1772');
@@ -177,7 +177,6 @@ class _AddPID extends State<AddPID> {
       // clear text entries
       newName.clear();
       newPhone.clear();
-      newCard.clear();
       newChargerType.clear();
       newSubscriptions.clear();
       newEmail.clear();
@@ -186,14 +185,14 @@ class _AddPID extends State<AddPID> {
       newCity.clear();
       newZip.clear();
       newCountry.clear();
-      newExpirMon.clear();
-      newExpirYr.clear();
-      newCvv.clear();
+      cardHolderName = '';
+      cardNumber = '';
+      expiryDate = '';
+      cvvCode = '';
 
-      CollectionReference users =
-          FirebaseFirestore.instance.collection('users');
       DocumentReference newUser =
           FirebaseFirestore.instance.collection('users').doc(widget.documentId);
+
       await newUser.update({
         'firstName': firstName,
         'lastName': lastName,
@@ -215,20 +214,16 @@ class _AddPID extends State<AddPID> {
         },
         //"subscriptions": subscriptions,
         "email": email,
-      });
-      /*.then((value) => value
-              .collection('chargerType')
-              .add({'chargerType': chargerTypes}).then((v) => value
-                  .collection('subscriptions')
-                  .add({'subscriptions': subscriptions})))
-          .catchError((error) => print("Failed to add user: $error"));*/
+      }).catchError((error) => print("Update failed: $error"));
 
-      await newUser
+      /*await newUser
           .collection('chargerType')
-          .add({'chargerType': chargerTypes});
+          .add({'chargerType': chargerTypes}).catchError(
+              (error) => print("Update failed: $error"));
       await newUser
           .collection('subscriptions')
-          .add({'subscriptions': subscriptions});
+          .add({'subscriptions': subscriptions}).catchError(
+              (error) => print("Update failed: $error"));*/
 
       goToMaps(context);
     } // _AddPID
@@ -490,7 +485,8 @@ class _AddPID extends State<AddPID> {
                   padding: inputPadding,
                   child: ElevatedButton(
                     onPressed: () {
-                      if (_formKey.currentState!.validate()) {
+                      if (_formKey.currentState!.validate() &&
+                          formKey.currentState!.validate()) {
                         _AddPID();
                       }
                     },
