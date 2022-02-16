@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'newUserEmail.dart';
 import 'mapScreen.dart';
 
-
 void main() {
   runApp(const MyApp());
 }
@@ -30,13 +29,122 @@ class ServicesList extends StatefulWidget {
 }
 
 class _ServicesList extends State<ServicesList> {
- @override
+  List<CheckBoxListTileModel> checkBoxListTileModel =
+      CheckBoxListTileModel.getServices();
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Padding(
-          padding: const EdgeInsets.all(10),
-          child: ListView(
+      padding: const EdgeInsets.all(10),
+      child: ListView.builder(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          itemCount: checkBoxListTileModel.length,
+          itemBuilder: (BuildContext context, int index) {
+            // ignore: unnecessary_new
+            return Card(
+              // ignore: unnecessary_new
+              child: new Container(
+                padding: EdgeInsets.all(10.0),
+                child: Column(
+                  children: <Widget>[
+                    // ignore: unnecessary_new
+                    new CheckboxListTile(
+                      onChanged: (bool? val) {
+                        itemChange(val, index);
+                      },
+                      activeColor: Color(0xff096B72),
+                      dense: true,
+                      title: Text(
+                        checkBoxListTileModel[index].title,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      value: checkBoxListTileModel[index].isCheck,
+                      secondary: Container(
+                        height: 50,
+                        width: 50,
+                        child: Row(
+                          children: <Widget>[
+                         Icon(
+                          Icons.stars,
+                          color: Color(0xff096B72),
+                        ),
+                        Icon(
+                          Icons.monetization_on,
+                          color: Color(0xff096B72),
+                        )],
+                      )),
+                    )
+                  ],
+                ),
+              ),
+            );
+          }),
+    ));
+  }
 
-          )
-        ));
-}}
+  void itemChange(bool? val, int index) {
+    setState(() {
+      checkBoxListTileModel[index].isCheck = val;
+    });
+  }
+}
+
+class CheckBoxListTileModel {
+  int id;
+  bool local;
+  bool money;
+  String title;
+  bool? isCheck;
+
+  CheckBoxListTileModel(
+      {required this.id,
+      required this.local,
+      required this.money,
+      required this.title,
+      required this.isCheck});
+  static List<CheckBoxListTileModel> getServices() {
+    return <CheckBoxListTileModel>[
+      CheckBoxListTileModel(
+        id: 1,
+        local: false,
+        money: true,
+        title: 'ChargePoint',
+        isCheck: false,
+      ),
+      CheckBoxListTileModel(
+        id: 2,
+        local: false,
+        money: true,
+        title: 'Electrify America',
+        isCheck: false,
+      ),
+      CheckBoxListTileModel(
+        id: 3,
+        local: true,
+        money: true,
+        title: 'Greenlots',
+        isCheck: false,
+      ),
+      CheckBoxListTileModel(
+        id: 4,
+        local: true,
+        money: false,
+        title: 'Electrical Vehicle Charging Station',
+        isCheck: false,
+      ),
+      CheckBoxListTileModel(
+        id: 5,
+        local: true,
+        money: true,
+        title: 'Webasto',
+        isCheck: true,
+      )
+    ];
+  }
+}
