@@ -51,13 +51,12 @@ class _ServicesList extends State<ServicesList> {
                   style: TextStyle(fontSize: 20),
                 )),
             Container(
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      'Fees apply',
-                      style: TextStyle(fontSize: 15),
-                    ),
-                  ])),
+                child: Row(children: <Widget>[
+              Text(
+                'Fees apply',
+                style: TextStyle(fontSize: 15),
+              ),
+            ])),
             ListView.builder(
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
@@ -91,12 +90,12 @@ class _ServicesList extends State<ServicesList> {
                                 width: 50,
                                 child: Row(
                                   children: [
-                                   
-                                      Icon(
-                                        Icons.stars,
-                                        color: checkBoxListTileModel[index].local ? Color(0xff096B72) : Colors.white,
-                                      ),
-                                    
+                                    Icon(
+                                      Icons.stars,
+                                      color: checkBoxListTileModel[index].local
+                                          ? Color(0xff096B72)
+                                          : Colors.white,
+                                    ),
                                     if (checkBoxListTileModel[index].money) ...[
                                       Icon(
                                         Icons.monetization_on,
