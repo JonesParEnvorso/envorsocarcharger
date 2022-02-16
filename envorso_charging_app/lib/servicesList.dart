@@ -32,12 +32,25 @@ class _ServicesList extends State<ServicesList> {
   List<CheckBoxListTileModel> checkBoxListTileModel =
       CheckBoxListTileModel.getServices();
 
+ goToMap(BuildContext context){
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MapScreen()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Padding(
       padding: const EdgeInsets.all(10),
-      child: ListView.builder(
+      child: ListView(
+        children: <Widget>[
+          Container(
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.all(5),
+                  child: const Text(
+                    'Services',
+                    style: TextStyle(fontSize: 20),
+                  )),
+          ListView.builder(
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
           itemCount: checkBoxListTileModel.length,
@@ -66,26 +79,44 @@ class _ServicesList extends State<ServicesList> {
                       ),
                       value: checkBoxListTileModel[index].isCheck,
                       secondary: Container(
-                        height: 50,
-                        width: 50,
-                        child: Row(
-                          children: <Widget>[
-                         Icon(
-                          Icons.stars,
-                          color: Color(0xff096B72),
-                        ),
-                        Icon(
-                          Icons.monetization_on,
-                          color: Color(0xff096B72),
-                        )],
-                      )),
+                          height: 50,
+                          width: 50,
+                          child: Row(
+                            children: [
+                              if (checkBoxListTileModel[index].local) ...[
+                                Icon(
+                                  Icons.stars,
+                                  color: Color(0xff096B72),
+                                ),
+                              ],
+                              if (checkBoxListTileModel[index].money) ...[
+                                Icon(
+                                  Icons.monetization_on,
+                                  color: Color(0xffffce44),
+                                ),
+                              ],
+                            ],
+                          )),
                     )
+                  
                   ],
                 ),
               ),
             );
           }),
-    ));
+          Container(
+                  // continue button
+                  
+                  child: ElevatedButton(
+                    onPressed: () => goToMap(context),
+                    child: const Text("Continue"),
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(Color(0xff096B72)),
+                    ),
+                  )),
+          ])),
+    );
   }
 
   void itemChange(bool? val, int index) {
@@ -129,14 +160,14 @@ class CheckBoxListTileModel {
         local: true,
         money: true,
         title: 'Greenlots',
-        isCheck: false,
+        isCheck: true,
       ),
       CheckBoxListTileModel(
         id: 4,
         local: true,
         money: false,
         title: 'Electrical Vehicle Charging Station',
-        isCheck: false,
+        isCheck: true,
       ),
       CheckBoxListTileModel(
         id: 5,
