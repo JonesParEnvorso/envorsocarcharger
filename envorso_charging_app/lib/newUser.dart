@@ -451,8 +451,12 @@ class _AddPID extends State<AddPID> {
                     validator: _validateField),
               ),
               Container(
-                // User's name
-                // Required
+                // Credit Card Number
+                // optional
+                // NEED TO DO
+                  // limit digits
+                  // private? 
+                  // Add hint text
                 width: screenWidth,
                 padding: inputPadding,
                 child: TextFormField(
@@ -465,92 +469,47 @@ class _AddPID extends State<AddPID> {
                     textInputAction: TextInputAction.next,
                     validator: _validateField),
               ),
-               Row(
-                children: <Widget>[
-                  Container(
-                    // expiration date
-                    width: screenWidth / 2,
-                    padding: inputPadding,
-                    child: TextFormField(
-                        //controller: ,
-                        //autocorrect: false,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Exp. Date',
-                        ),
-                        textInputAction: TextInputAction.next,
-                        validator: _validateField),
-                  ),
-                  Container(
-                    // cvv
-                    width: screenWidth / 2,
-                    padding: inputPadding,
-                    child: TextFormField(
-                        //controller: newCity,
-                        //autocorrect: false,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'CVV',
-                        ),
-                        textInputAction: TextInputAction.next,
-                        validator: _validateField),
-                  ),
-                  ]),
-
-              // CREDIT CARD INFORMATION
-              /*Container(
-                child: CreditCardForm(
-                  formKey: formKey,
-                  obscureCvv: true,
-                  obscureNumber: true,
-                  cardHolderName: cardHolderName,
-                  cardNumber: cardNumber,
-                  cvvCode: cvvCode,
-                  isHolderNameVisible: true,
-                  isCardNumberVisible: true,
-                  isExpiryDateVisible: true,
-                  expiryDate: expiryDate,
-                  themeColor: const Color(0xff096B72),
-                  textColor: Colors.black,
-                  cardHolderDecoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    hintStyle: const TextStyle(color: Colors.black),
-                    labelStyle: const TextStyle(color: Colors.black),
-                    focusedBorder: border,
-                    enabledBorder: border,
-                    labelText: 'Name',
-                    hintText: 'First Name Last Name',
-                  ),
-                  cardNumberDecoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    labelText: 'CC Number',
-                    hintText: 'XXXX XXXX XXXX XXXX',
-                    hintStyle: const TextStyle(color: Colors.black),
-                    labelStyle: const TextStyle(color: Colors.black),
-                    focusedBorder: border,
-                    enabledBorder: border,
-                  ),
-                  expiryDateDecoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    hintStyle: const TextStyle(color: Colors.black),
-                    labelStyle: const TextStyle(color: Colors.black),
-                    focusedBorder: border,
-                    enabledBorder: border,
-                    labelText: 'Exp. Date',
-                    hintText: 'XX/XX',
-                  ),
-                  cvvCodeDecoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    hintStyle: const TextStyle(color: Colors.black),
-                    labelStyle: const TextStyle(color: Colors.black),
-                    focusedBorder: border,
-                    enabledBorder: border,
-                    labelText: 'CVV',
-                    hintText: 'XXX',
-                  ),
-                  onCreditCardModelChange: onCreditCardModelChange,
+              Row(children: <Widget>[
+                Container(
+                  // expiration date
+                  // NEED TO DO
+                    // Include '/' after first two digits automatically
+                    // limit to 4 inputs (5 if I can't figure out ^)
+                  width: screenWidth / 2,
+                  padding: inputPadding,
+                  child: TextFormField(
+                      
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Exp. Date',
+                      ),
+                      keyboardType: TextInputType.datetime,
+                      
+                      textInputAction: TextInputAction.next,
+                      validator: _validateField),
                 ),
-              ),*/
+                Container(
+                  // cvv
+                  // NEED TO DO: 
+                    // Limit to 4 number
+                    // make private
+                  width: screenWidth / 2,
+                  padding: inputPadding,
+                  child: TextFormField(
+                      
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'CVV',
+                      ),
+                      textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly
+                      ],
+                      validator: _validateField),
+                ),
+              ]),
+
               Container(
                   alignment: Alignment.centerLeft,
                   padding: const EdgeInsets.all(10),
