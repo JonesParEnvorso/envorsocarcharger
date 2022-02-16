@@ -435,8 +435,70 @@ class _AddPID extends State<AddPID> {
                 child: const Text('Why is Credit Card info needed?',
                     style: TextStyle(color: Color(0xff096B72))),
               ),
-              // CREDIT CARD INFORMATION
               Container(
+                // User's name
+                // Required
+                width: screenWidth,
+                padding: inputPadding,
+                child: TextFormField(
+                    controller: newName,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'First Name Last Name',
+                    ),
+                    //keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                    validator: _validateField),
+              ),
+              Container(
+                // User's name
+                // Required
+                width: screenWidth,
+                padding: inputPadding,
+                child: TextFormField(
+                    controller: newCard,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'CC number',
+                    ),
+                    //keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                    validator: _validateField),
+              ),
+               Row(
+                children: <Widget>[
+                  Container(
+                    // expiration date
+                    width: screenWidth / 2,
+                    padding: inputPadding,
+                    child: TextFormField(
+                        //controller: ,
+                        //autocorrect: false,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Exp. Date',
+                        ),
+                        textInputAction: TextInputAction.next,
+                        validator: _validateField),
+                  ),
+                  Container(
+                    // cvv
+                    width: screenWidth / 2,
+                    padding: inputPadding,
+                    child: TextFormField(
+                        //controller: newCity,
+                        //autocorrect: false,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'CVV',
+                        ),
+                        textInputAction: TextInputAction.next,
+                        validator: _validateField),
+                  ),
+                  ]),
+
+              // CREDIT CARD INFORMATION
+              /*Container(
                 child: CreditCardForm(
                   formKey: formKey,
                   obscureCvv: true,
@@ -488,7 +550,7 @@ class _AddPID extends State<AddPID> {
                   ),
                   onCreditCardModelChange: onCreditCardModelChange,
                 ),
-              ),
+              ),*/
               Container(
                   alignment: Alignment.centerLeft,
                   padding: const EdgeInsets.all(10),
