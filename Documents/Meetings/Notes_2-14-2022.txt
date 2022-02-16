@@ -1,0 +1,32 @@
+********
+Meeting minutes:
+********
+Meeting with Vajda
+Attendence: All but Kirsten (unwell)
+-------------------------------
+
+Discussed internship.
+the nwent over midterm presentation.
+talked about linkedin and building your profile.
+
+
+Richard
+done - worked on getting the backend end of adding new users and sign up working.M
+	making sure it properly sends and parses to firebase
+do - double check kirstend's UI is working on the backend and doing user authentification.
+
+Craig
+done - working on getting navigation working. exhausted our efforts on finding a solution.
+do - navigation will be implemented.
+
+Joe
+done - got the void listening to work.
+do - figure out how this works with android
+
+Lucas
+done - worked on building a custom class for charger data
+do - finish custom class
+
++++++++++
+Met for 60  Minutes
++++++++++

@@ -43,11 +43,11 @@ class Chargers {
   }
 
   //Change the search range of chargers
-  void changeRange(int miles) {
+  void changeRange(int miles) async {
     range = miles / 69.00;
   }
 
-  void printChargers() {
+  void printChargers() async {
     print(chargers.length);
     for (int i = 0; i < chargers.length; i++) {
       print(chargers.elementAt(i)['name']);
@@ -55,32 +55,25 @@ class Chargers {
   }
 
   //order the list of chargers by price
-  void orderPrice() {}
+  void orderPrice() async {
+    List<Map<String, dynamic>> temp = [];
+  }
 
   //order the list of chargers by Charger type
-  void orderCharger() {}
+  void orderCharger() {
+    List<Map<String, dynamic>> temp = [];
+  }
 
   //order the list of chargers by Distance from user
-  void orderDistance() {}
+  void orderDistance() {
+    List<Map<String, dynamic>> temp = [];
+  }
 
   //order the list of chargers by membership status
   void orderMembership(List<String> mems) {}
 
   //order the list of chargers by charging Speed
-  void orderSpeed() {}
-}
-
-class Addition {
-  List<Map<String, dynamic>> a = [];
-
-  Addition(a) {}
-
-  void add() {
-    var b = {'1': 1, '2': "Hello", '3': 3.14159};
-    a.add(b);
-  }
-
-  void printNum() {
-    print("num is " + a.toString());
+  void orderSpeed() {
+    List<Map<String, dynamic>> temp = [];
   }
 }
