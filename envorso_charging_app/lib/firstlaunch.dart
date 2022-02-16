@@ -2,6 +2,7 @@ import 'package:envorso_charging_app/speech_recognition.dart';
 import 'package:flutter/material.dart';
 import 'newUserEmail.dart';
 import 'mapScreen.dart';
+import 'servicesList.dart';
 
 void main() {
   runApp(const MyApp());
@@ -37,6 +38,9 @@ class _FirstLaunch extends State<FirstLaunch> {
   }
   goToMap(BuildContext context){
     Navigator.push(context, MaterialPageRoute(builder: (context) => MapScreen()));
+  }
+  goToServices(BuildContext context){
+    Navigator.push(context, MaterialPageRoute(builder: (context) => ServicesList()));
   }
 
   @override
@@ -188,6 +192,17 @@ class _FirstLaunch extends State<FirstLaunch> {
                   ],
                   mainAxisAlignment: MainAxisAlignment.center,
                 ),
+                Container(
+                    height: 50,
+                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: ElevatedButton(
+                      child: const Text('SERVICES SKIP TEMP'),
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Color(0xff096B72)),
+                      ),
+                      onPressed: () => goToServices(context) ,
+                    )),
               ],
             )));
   }

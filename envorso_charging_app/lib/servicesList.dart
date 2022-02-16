@@ -32,89 +32,95 @@ class _ServicesList extends State<ServicesList> {
   List<CheckBoxListTileModel> checkBoxListTileModel =
       CheckBoxListTileModel.getServices();
 
- goToMap(BuildContext context){
-    Navigator.push(context, MaterialPageRoute(builder: (context) => MapScreen()));
+  goToMap(BuildContext context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => MapScreen()));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Padding(
-      padding: const EdgeInsets.all(10),
-      child: ListView(
-        children: <Widget>[
-          Container(
-                  alignment: Alignment.centerLeft,
-                  padding: const EdgeInsets.all(5),
-                  child: const Text(
-                    'Services',
-                    style: TextStyle(fontSize: 20),
-                  )),
-          ListView.builder(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemCount: checkBoxListTileModel.length,
-          itemBuilder: (BuildContext context, int index) {
-            // ignore: unnecessary_new
-            return Card(
-              // ignore: unnecessary_new
-              child: new Container(
-                padding: EdgeInsets.all(10.0),
-                child: Column(
+      body: Padding(
+          padding: const EdgeInsets.all(10),
+          child: ListView(children: <Widget>[
+            Container(
+                alignment: Alignment.centerLeft,
+                padding: const EdgeInsets.all(5),
+                child: const Text(
+                  'Services',
+                  style: TextStyle(fontSize: 20),
+                )),
+            Container(
+                child: Row(
                   children: <Widget>[
-                    // ignore: unnecessary_new
-                    new CheckboxListTile(
-                      onChanged: (bool? val) {
-                        itemChange(val, index);
-                      },
-                      activeColor: Color(0xff096B72),
-                      dense: true,
-                      title: Text(
-                        checkBoxListTileModel[index].title,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                      value: checkBoxListTileModel[index].isCheck,
-                      secondary: Container(
-                          height: 50,
-                          width: 50,
-                          child: Row(
-                            children: [
-                              if (checkBoxListTileModel[index].local) ...[
-                                Icon(
-                                  Icons.stars,
-                                  color: Color(0xff096B72),
-                                ),
-                              ],
-                              if (checkBoxListTileModel[index].money) ...[
-                                Icon(
-                                  Icons.monetization_on,
-                                  color: Color(0xffffce44),
-                                ),
-                              ],
-                            ],
-                          )),
-                    )
-                  
-                  ],
-                ),
-              ),
-            );
-          }),
-          Container(
-                  // continue button
-                  
-                  child: ElevatedButton(
-                    onPressed: () => goToMap(context),
-                    child: const Text("Continue"),
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(Color(0xff096B72)),
+                    Text(
+                      'Fees apply',
+                      style: TextStyle(fontSize: 15),
                     ),
-                  )),
+                  ])),
+            ListView.builder(
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemCount: checkBoxListTileModel.length,
+                itemBuilder: (BuildContext context, int index) {
+                  // ignore: unnecessary_new
+                  return Card(
+                    // ignore: unnecessary_new
+                    child: new Container(
+                      padding: EdgeInsets.all(10.0),
+                      child: Column(
+                        children: <Widget>[
+                          // ignore: unnecessary_new
+                          new CheckboxListTile(
+                            onChanged: (bool? val) {
+                              itemChange(val, index);
+                            },
+                            activeColor: Color(0xff096B72),
+                            dense: true,
+                            title: Text(
+                              checkBoxListTileModel[index].title,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            value: checkBoxListTileModel[index].isCheck,
+                            secondary: Container(
+                                height: 50,
+                                width: 50,
+                                child: Row(
+                                  children: [
+                                   
+                                      Icon(
+                                        Icons.stars,
+                                        color: checkBoxListTileModel[index].local ? Color(0xff096B72) : Colors.white,
+                                      ),
+                                    
+                                    if (checkBoxListTileModel[index].money) ...[
+                                      Icon(
+                                        Icons.monetization_on,
+                                        color: Color(0xffffce44),
+                                      ),
+                                    ],
+                                  ],
+                                )),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                }),
+            Container(
+                // continue button
+
+                child: ElevatedButton(
+              onPressed: () => goToMap(context),
+              child: const Text("Continue"),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Color(0xff096B72)),
+              ),
+            )),
           ])),
     );
   }
