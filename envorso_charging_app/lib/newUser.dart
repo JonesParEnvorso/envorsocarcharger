@@ -7,10 +7,10 @@ import 'servicesList.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  /*WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-  );
+  );*/
   runApp(const MyApp());
 }
 
@@ -43,7 +43,7 @@ class AddPID extends StatefulWidget {
 }
 
 class _AddPID extends State<AddPID> {
-  String dropdownvalue = 'State';
+  String newState = 'State';
   List<String> states = [
     'State',
     'AL',
@@ -118,7 +118,6 @@ class _AddPID extends State<AddPID> {
   // address consists of: city, state, street, zip
   final newCity = TextEditingController();
   final newStreet = TextEditingController();
-  final newState = TextEditingController();
   final newZip = TextEditingController();
   final newCountry = TextEditingController();
   // card consists of: number, expiration, and cvv
@@ -163,8 +162,9 @@ class _AddPID extends State<AddPID> {
     const inputPadding = EdgeInsets.all(5);
 
     goToServices(BuildContext context) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const ServicesList()));
+      // add documentId as a field to the next page
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const ServicesList()));
     }
 
     OutlineInputBorder? border;
@@ -188,7 +188,6 @@ class _AddPID extends State<AddPID> {
       newPhone.dispose();
       newCity.dispose();
       newStreet.dispose();
-      newState.dispose();
       newZip.dispose();
       newCountry.dispose();
       newCard.dispose();
@@ -201,7 +200,7 @@ class _AddPID extends State<AddPID> {
       super.dispose();
     }
 
-    _AddPID() async {
+    Future<void> _addPID() {
       //String name = newName.text; // split name into first and last
 
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -218,7 +217,7 @@ class _AddPID extends State<AddPID> {
       String phoneNumber = newPhone.text;
       String city = newCity.text;
       String street = newStreet.text;
-      String state = newState.text;
+      String state = newState;
       String zip = newZip.text;
       String creditCard = cardNumber;
       String expir = expiryDate;
@@ -233,15 +232,47 @@ class _AddPID extends State<AddPID> {
       if (_saeComboSelected) {
         chargerTypes.add('SAE Combo CCS');
       }
-      String subscriptions = newSubscriptions.text; // needs to be array
 
+      DocumentReference newUser =
+          FirebaseFirestore.instance.collection('users').doc(widget.documentId);
+
+      return newUser
+          .set({
+            'firstName': firstName,
+            'lastName': lastName,
+            'phoneNumber': phoneNumber,
+            'countryCode':
+                '+1', // default to +1 since we are only focusing on USA
+            'address': {
+              // address is a map
+              "city": city,
+              "street": street,
+              "state": state,
+              "zip": zip,
+            },
+            "creditCard": {
+              // credit card is also a map
+              "num": creditCard,
+              "exp": expir,
+              "cvv": cvv,
+            },
+            "email": email,
+          }, SetOptions(merge: true))
+          .then((value) => newUser
+              .collection('chargerType')
+              .add({'chargerType': chargerTypes}))
+          .catchError((Object error) => Future.error(Exception("$error")));
+    } // _AddPID
+
+    _handleInput() {
+      _addPID();
       // clear text entries
       newName.clear();
       newPhone.clear();
       newChargerType.clear();
       newSubscriptions.clear();
       newEmail.clear();
-      newState.clear();
+      newState = 'State';
       newStreet.clear();
       newCity.clear();
       newZip.clear();
@@ -250,44 +281,8 @@ class _AddPID extends State<AddPID> {
       cardNumber = '';
       expiryDate = '';
       cvvCode = '';
-
-      DocumentReference newUser =
-          FirebaseFirestore.instance.collection('users').doc(widget.documentId);
-
-      await newUser.update({
-        'firstName': firstName,
-        'lastName': lastName,
-        'phoneNumber': phoneNumber,
-        'countryCode': '+1', // default to +1 since we are only focusing on USA
-        'address': {
-          // address is a map
-          "city": city,
-          "street": street,
-          "state": state,
-          "zip": zip,
-        },
-        //"chargerType": chargerType,
-        "creditCard": {
-          // credit card is also a map
-          "num": creditCard,
-          "exp": expir,
-          "cvv": cvv,
-        },
-        //"subscriptions": subscriptions,
-        "email": email,
-      }).catchError((error) => print("Update failed: $error"));
-
-      /*await newUser
-          .collection('chargerType')
-          .add({'chargerType': chargerTypes}).catchError(
-              (error) => print("Update failed: $error"));
-      await newUser
-          .collection('subscriptions')
-          .add({'subscriptions': subscriptions}).catchError(
-              (error) => print("Update failed: $error"));*/
-
       goToServices(context);
-    } // _AddPID
+    }
 
     _validateField(String? value) {
       if (value == null || value.isEmpty) {
@@ -398,9 +393,10 @@ class _AddPID extends State<AddPID> {
                         validator: _validateField),
                   ),
                   Container(
-                    margin: EdgeInsets.all(5.0),
+                    // state dropdown
+                    margin: const EdgeInsets.all(5.0),
                     height: 60,
-                    decoration: ShapeDecoration(
+                    decoration: const ShapeDecoration(
                       shape: RoundedRectangleBorder(
                         //dimensions: EdgeInsetsGeometry(50),
                         borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -414,11 +410,10 @@ class _AddPID extends State<AddPID> {
                       child: ButtonTheme(
                         alignedDropdown: true,
                         child: DropdownButton(
-                          value: dropdownvalue,
-
-                          onChanged: (newValue) {
+                          value: newState,
+                          onChanged: (String? newValue) {
                             setState(() {
-                              //dropdownvalue = newValue;
+                              newState = newValue!;
                             });
                           },
                           // Down Arrow Icon
@@ -457,10 +452,10 @@ class _AddPID extends State<AddPID> {
                   isCardNumberVisible: true,
                   isExpiryDateVisible: true,
                   expiryDate: expiryDate,
-                  themeColor: Color(0xff096B72),
+                  themeColor: const Color(0xff096B72),
                   textColor: Colors.black,
                   cardHolderDecoration: InputDecoration(
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                     hintStyle: const TextStyle(color: Colors.black),
                     labelStyle: const TextStyle(color: Colors.black),
                     focusedBorder: border,
@@ -469,7 +464,7 @@ class _AddPID extends State<AddPID> {
                     hintText: 'First Name Last Name',
                   ),
                   cardNumberDecoration: InputDecoration(
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                     labelText: 'CC Number',
                     hintText: 'XXXX XXXX XXXX XXXX',
                     hintStyle: const TextStyle(color: Colors.black),
@@ -478,7 +473,7 @@ class _AddPID extends State<AddPID> {
                     enabledBorder: border,
                   ),
                   expiryDateDecoration: InputDecoration(
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                     hintStyle: const TextStyle(color: Colors.black),
                     labelStyle: const TextStyle(color: Colors.black),
                     focusedBorder: border,
@@ -487,7 +482,7 @@ class _AddPID extends State<AddPID> {
                     hintText: 'XX/XX',
                   ),
                   cvvCodeDecoration: InputDecoration(
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                     hintStyle: const TextStyle(color: Colors.black),
                     labelStyle: const TextStyle(color: Colors.black),
                     focusedBorder: border,
@@ -514,7 +509,7 @@ class _AddPID extends State<AddPID> {
                     return Card(
                       // ignore: unnecessary_new
                       child: new Container(
-                        padding: EdgeInsets.all(10.0),
+                        padding: const EdgeInsets.all(10.0),
                         child: Column(
                           children: <Widget>[
                             // ignore: unnecessary_new
@@ -526,7 +521,7 @@ class _AddPID extends State<AddPID> {
                               dense: true,
                               title: Text(
                                 checkBoxListTileModel[index].title,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 0.5,
@@ -554,8 +549,9 @@ class _AddPID extends State<AddPID> {
                   child: ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate() &&
-                          formKey.currentState!.validate()) {
-                        _AddPID();
+                          newState != 'State') {
+                        //_addPID();
+                        _handleInput();
                       }
                     },
                     child: const Text("Continue"),
@@ -570,6 +566,13 @@ class _AddPID extends State<AddPID> {
   }
 
   void itemChange(bool? val, int index) {
+    if (index == 1) {
+      _chademoSelected = !_chademoSelected;
+    } else if (index == 2) {
+      _j1772Selected = !_j1772Selected;
+    } else {
+      _saeComboSelected = !_saeComboSelected;
+    }
     setState(() {
       checkBoxListTileModel[index].isCheck = val;
     });
