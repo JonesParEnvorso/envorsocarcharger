@@ -142,8 +142,6 @@ class _AddPID extends State<AddPID> {
   // charger type will be array
   final newChargerType = TextEditingController();
   final List<String> chargerTypes = <String>[];
-  // subscriptions will be array
-  final newSubscriptions = TextEditingController();
 
   bool _j1772Selected = false;
   bool _chademoSelected = false;
@@ -195,7 +193,6 @@ class _AddPID extends State<AddPID> {
       newExpirYr.dispose();
       newCvv.dispose();
       newChargerType.dispose();
-      newSubscriptions.dispose();
 
       super.dispose();
     }
@@ -270,7 +267,6 @@ class _AddPID extends State<AddPID> {
       newName.clear();
       newPhone.clear();
       newChargerType.clear();
-      newSubscriptions.clear();
       newEmail.clear();
       newState = 'State';
       newStreet.clear();
