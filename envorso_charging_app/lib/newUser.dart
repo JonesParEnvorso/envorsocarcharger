@@ -465,7 +465,7 @@ class _AddPID extends State<AddPID> {
                     labelStyle: const TextStyle(color: Colors.black),
                     focusedBorder: border,
                     enabledBorder: border,
-                    labelText: 'Card Holder',
+                    labelText: 'Name',
                     hintText: 'First Name Last Name',
                   ),
                   cardNumberDecoration: InputDecoration(
