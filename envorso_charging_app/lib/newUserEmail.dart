@@ -74,7 +74,7 @@ class _AddUser extends State<AddUser> {
           "email": email,
           "password": password,
         })
-        .then((value) => curUser = value.toString())
+        .then((value) => curUser = value.id)
         .catchError((error) => print("Failed to add user: $error"));
 
     goToPID(context);
