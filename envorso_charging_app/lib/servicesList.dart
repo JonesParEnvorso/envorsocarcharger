@@ -51,12 +51,38 @@ class _ServicesList extends State<ServicesList> {
                   style: TextStyle(fontSize: 20),
                 )),
             Container(
-                child: Row(children: <Widget>[
-              Text(
-                'Fees apply',
-                style: TextStyle(fontSize: 15),
-              ),
-            ])),
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(10),
+                margin: EdgeInsets.all(10),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        Icons.stars,
+                        color: Color(0xff096B72),
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        'Local',
+                        style: TextStyle(fontSize: 15),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Icon(
+                        Icons.monetization_on,
+                        color: Color(0xffCFB406),
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        'Fees apply',
+                        style: TextStyle(fontSize: 15),
+                      ),
+                    ])),
             ListView.builder(
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
@@ -99,7 +125,7 @@ class _ServicesList extends State<ServicesList> {
                                     if (checkBoxListTileModel[index].money) ...[
                                       Icon(
                                         Icons.monetization_on,
-                                        color: Color(0xffffce44),
+                                        color: Color(0xffCFB406),
                                       ),
                                     ],
                                   ],

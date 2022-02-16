@@ -192,7 +192,7 @@ class _FirstLaunch extends State<FirstLaunch> {
                   ],
                   mainAxisAlignment: MainAxisAlignment.center,
                 ),
-                Container(
+               /* Container(
                     height: 50,
                     padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                     child: ElevatedButton(
@@ -202,7 +202,7 @@ class _FirstLaunch extends State<FirstLaunch> {
                             MaterialStateProperty.all(Color(0xff096B72)),
                       ),
                       onPressed: () => goToServices(context) ,
-                    )),
+                    )),*/
               ],
             )));
   }
