@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'firebase_options.dart';
-import 'mapScreen.dart';
+import 'servicesList.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
 
 void main() async {
@@ -162,9 +162,9 @@ class _AddPID extends State<AddPID> {
     // padding around the text entry boxes
     const inputPadding = EdgeInsets.all(5);
 
-    goToMaps(BuildContext context) {
+    goToServices(BuildContext context) {
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const MapScreen()));
+          context, MaterialPageRoute(builder: (context) => const ServicesList()));
     }
 
     OutlineInputBorder? border;
@@ -286,7 +286,7 @@ class _AddPID extends State<AddPID> {
           .add({'subscriptions': subscriptions}).catchError(
               (error) => print("Update failed: $error"));*/
 
-      goToMaps(context);
+      goToServices(context);
     } // _AddPID
 
     _validateField(String? value) {
