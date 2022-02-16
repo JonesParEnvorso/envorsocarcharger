@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'firebase_options.dart';
-import 'mapScreen.dart';
+import 'servicesList.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  /*WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-  );
+  );*/
   runApp(const MyApp());
 }
 
@@ -25,26 +25,99 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const AddPID(),
+      home: const AddPID(
+        documentId: "",
+      ),
     );
   }
 }
 
 // create new user from user input
 class AddPID extends StatefulWidget {
-  const AddPID({Key? key}) : super(key: key);
+  const AddPID({Key? key, required this.documentId}) : super(key: key);
+
+  final String documentId;
+
   @override
   _AddPID createState() => _AddPID();
 }
 
 class _AddPID extends State<AddPID> {
+  String newState = 'State';
+  List<String> states = [
+    'State',
+    'AL',
+    'AK',
+    'AS',
+    'AZ',
+    'AR',
+    'CA',
+    'CO',
+    'CT',
+    'DE',
+    'DC',
+    'FM',
+    'FL',
+    'GA',
+    'GU',
+    'HI',
+    'ID',
+    'IL',
+    'IN',
+    'IA',
+    'KS',
+    'KY',
+    'LA',
+    'ME',
+    'MH',
+    'MD',
+    'MA',
+    'MI',
+    'MN',
+    'MS',
+    'MO',
+    'MT',
+    'NE',
+    'NV',
+    'NH',
+    'NJ',
+    'NM',
+    'NY',
+    'NC',
+    'ND',
+    'MP',
+    'OH',
+    'OK',
+    'OR',
+    'PW',
+    'PA',
+    'PR',
+    'RI',
+    'SC',
+    'SD',
+    'TN',
+    'TX',
+    'UT',
+    'VT',
+    'VI',
+    'VA',
+    'WA',
+    'WV',
+    'WI',
+    'WY'
+  ];
+
+  List<CheckBoxListTileModel> checkBoxListTileModel =
+      CheckBoxListTileModel.getImgs();
+
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _formKey = GlobalKey();
+
+  final List<String> _selectedItems = [];
 
   // address consists of: city, state, street, zip
   final newCity = TextEditingController();
   final newStreet = TextEditingController();
-  final newState = TextEditingController();
   final newZip = TextEditingController();
   final newCountry = TextEditingController();
   // card consists of: number, expiration, and cvv
@@ -69,8 +142,6 @@ class _AddPID extends State<AddPID> {
   // charger type will be array
   final newChargerType = TextEditingController();
   final List<String> chargerTypes = <String>[];
-  // subscriptions will be array
-  final newSubscriptions = TextEditingController();
 
   bool _j1772Selected = false;
   bool _chademoSelected = false;
@@ -86,11 +157,12 @@ class _AddPID extends State<AddPID> {
     final rightEdge = MediaQuery.of(context).padding.right;
 
     // padding around the text entry boxes
-    const inputPadding = EdgeInsets.all(10.0);
+    const inputPadding = EdgeInsets.all(5);
 
-    goToMaps(BuildContext context) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const MapScreen()));
+    goToServices(BuildContext context) {
+      // add documentId as a field to the next page
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const ServicesList()));
     }
 
     OutlineInputBorder? border;
@@ -114,7 +186,6 @@ class _AddPID extends State<AddPID> {
       newPhone.dispose();
       newCity.dispose();
       newStreet.dispose();
-      newState.dispose();
       newZip.dispose();
       newCountry.dispose();
       newCard.dispose();
@@ -122,33 +193,32 @@ class _AddPID extends State<AddPID> {
       newExpirYr.dispose();
       newCvv.dispose();
       newChargerType.dispose();
-      newSubscriptions.dispose();
 
       super.dispose();
     }
 
-    _AddPID() async {
+    Future<void> _addPID() {
       //String name = newName.text; // split name into first and last
 
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
       String firstName;
       String lastName;
-      if (!newName.text.contains(" ")) {
-        firstName = newName.text;
+      if (!cardHolderName.contains(" ")) {
+        firstName = cardHolderName;
         lastName = "";
       } else {
-        firstName = newName.text.substring(0, newName.text.indexOf(" "));
-        lastName = newName.text.substring(newName.text.indexOf(" ") + 1);
+        firstName = cardHolderName.substring(0, cardHolderName.indexOf(" "));
+        lastName = cardHolderName.substring(cardHolderName.indexOf(" ") + 1);
       }
       String email = newEmail.text;
       String phoneNumber = newPhone.text;
       String city = newCity.text;
       String street = newStreet.text;
-      String state = newState.text;
+      String state = newState;
       String zip = newZip.text;
-      String creditCard = newCard.text;
-      String expir = newExpirMon.text + "/" + newExpirYr.text;
-      String cvv = newCvv.text;
+      String creditCard = cardNumber;
+      String expir = expiryDate;
+      String cvv = cvvCode;
       //String chargerType = newChargerType.text;
       if (_j1772Selected) {
         chargerTypes.add('J1772');
@@ -159,29 +229,12 @@ class _AddPID extends State<AddPID> {
       if (_saeComboSelected) {
         chargerTypes.add('SAE Combo CCS');
       }
-      String subscriptions = newSubscriptions.text; // needs to be array
 
-      // clear text entries
-      newName.clear();
-      newPhone.clear();
-      newCard.clear();
-      newChargerType.clear();
-      newSubscriptions.clear();
-      newEmail.clear();
-      newState.clear();
-      newStreet.clear();
-      newCity.clear();
-      newZip.clear();
-      newCountry.clear();
-      newExpirMon.clear();
-      newExpirYr.clear();
-      newCvv.clear();
+      DocumentReference newUser =
+          FirebaseFirestore.instance.collection('users').doc(widget.documentId);
 
-      CollectionReference users =
-          FirebaseFirestore.instance.collection('users');
-
-      await users
-          .add({
+      return newUser
+          .set({
             'firstName': firstName,
             'lastName': lastName,
             'phoneNumber': phoneNumber,
@@ -194,22 +247,37 @@ class _AddPID extends State<AddPID> {
               "state": state,
               "zip": zip,
             },
-            //"chargerType": chargerType,
             "creditCard": {
               // credit card is also a map
               "num": creditCard,
               "exp": expir,
               "cvv": cvv,
             },
-            //"subscriptions": subscriptions,
             "email": email,
-          })
-          .then((value) => value
+          }, SetOptions(merge: true))
+          .then((value) => newUser
               .collection('chargerType')
-              .add({'chargerType': chargerTypes}).then((v) => value
-                  .collection('subscriptions')
-                  .add({'subscriptions': subscriptions})))
-          .catchError((error) => print("Failed to add user: $error"));
+              .add({'chargerType': chargerTypes}))
+          .catchError((Object error) => Future.error(Exception("$error")));
+    } // _AddPID
+
+    _handleInput() {
+      _addPID();
+      // clear text entries
+      newName.clear();
+      newPhone.clear();
+      newChargerType.clear();
+      newEmail.clear();
+      newState = 'State';
+      newStreet.clear();
+      newCity.clear();
+      newZip.clear();
+      newCountry.clear();
+      cardHolderName = '';
+      cardNumber = '';
+      expiryDate = '';
+      cvvCode = '';
+      goToServices(context);
     }
 
     _validateField(String? value) {
@@ -219,24 +287,6 @@ class _AddPID extends State<AddPID> {
       return null;
     }
 
-    // ignore for now
-
-    /*int curMonth = DateTime.now().month;
-    int curYear = DateTime.now().year;
-    Future<void> _selectDate(BuildContext context) async {
-      final DateTime? selected = await showDatePicker(
-          context: context,
-          initialDate: DateTime(curYear, curMonth),
-          firstDate: DateTime(curYear, curMonth),
-          lastDate: DateTime(2050));
-      if (selected != null && selected != DateTime(curYear, curMonth)) {
-        setState(() {
-          curYear = selected.year;
-          curMonth = selected.month;
-        });
-      }
-    } // _selectDate */
-
     return Scaffold(
       body: Form(
           key: _formKey,
@@ -245,7 +295,7 @@ class _AddPID extends State<AddPID> {
               // text entries
               Container(
                   alignment: Alignment.centerLeft,
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(5),
                   child: const Text(
                     'User Info',
                     style: TextStyle(fontSize: 20),
@@ -298,10 +348,10 @@ class _AddPID extends State<AddPID> {
                     validator: _validateField),
               ),
               Row(
-                children: <Widget> [
+                children: <Widget>[
                   Container(
                     // city
-                    width: screenWidth / 1.75,
+                    width: screenWidth / 2,
                     padding: inputPadding,
                     child: TextFormField(
                         controller: newCity,
@@ -312,12 +362,10 @@ class _AddPID extends State<AddPID> {
                         ),
                         textInputAction: TextInputAction.next,
                         validator: _validateField),
-
                   ),
-
-                  /*Container(
+                  Container(
                     //ZIP
-                    width: screenWidth / 3,
+                    width: screenWidth / 4,
                     padding: inputPadding,
                     child: TextFormField(
                         controller: newZip,
@@ -325,6 +373,7 @@ class _AddPID extends State<AddPID> {
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'ZIP',
+                          counterText: '',
                         ),
                         keyboardType: TextInputType.number,
                         maxLength: 5,
@@ -338,9 +387,55 @@ class _AddPID extends State<AddPID> {
                                 {FocusScope.of(context).nextFocus()}
                             },
                         validator: _validateField),
-                  ),*/
+                  ),
+                  Container(
+                    // state dropdown
+                    margin: const EdgeInsets.all(5.0),
+                    height: 60,
+                    decoration: const ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                        //dimensions: EdgeInsetsGeometry(50),
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                        side: BorderSide(
+                            width: 1.0,
+                            style: BorderStyle.solid,
+                            color: Colors.grey),
+                      ),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: ButtonTheme(
+                        alignedDropdown: true,
+                        child: DropdownButton(
+                          value: newState,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              newState = newValue!;
+                            });
+                          },
+                          // Down Arrow Icon
+                          icon: const Icon(Icons.keyboard_arrow_down),
+
+                          // Array list of items
+                          items: states.map((states) {
+                            return DropdownMenuItem(
+                              value: states,
+                              child: new Text(states),
+                            );
+                          }).toList(),
+                          // After selecting the desired option,it will
+                          // change button value to selected value
+                        ),
+                      ),
+                    ),
+                  )
                 ], // end children
               ),
+              TextButton(
+                onPressed: () => {},
+                child: const Text('Why is Credit Card info needed?',
+                    style: TextStyle(color: Color(0xff096B72))),
+              ),
+              // CREDIT CARD INFORMATION
               Container(
                 child: CreditCardForm(
                   formKey: formKey,
@@ -352,22 +447,20 @@ class _AddPID extends State<AddPID> {
                   isHolderNameVisible: true,
                   isCardNumberVisible: true,
                   isExpiryDateVisible: true,
-                  
                   expiryDate: expiryDate,
-                  themeColor: Color(0xff096B72),
+                  themeColor: const Color(0xff096B72),
                   textColor: Colors.black,
-
                   cardHolderDecoration: InputDecoration(
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                     hintStyle: const TextStyle(color: Colors.black),
                     labelStyle: const TextStyle(color: Colors.black),
                     focusedBorder: border,
                     enabledBorder: border,
-                    labelText: 'Card Holder',
+                    labelText: 'Name',
                     hintText: 'First Name Last Name',
                   ),
                   cardNumberDecoration: InputDecoration(
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                     labelText: 'CC Number',
                     hintText: 'XXXX XXXX XXXX XXXX',
                     hintStyle: const TextStyle(color: Colors.black),
@@ -376,7 +469,7 @@ class _AddPID extends State<AddPID> {
                     enabledBorder: border,
                   ),
                   expiryDateDecoration: InputDecoration(
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                     hintStyle: const TextStyle(color: Colors.black),
                     labelStyle: const TextStyle(color: Colors.black),
                     focusedBorder: border,
@@ -385,7 +478,7 @@ class _AddPID extends State<AddPID> {
                     hintText: 'XX/XX',
                   ),
                   cvvCodeDecoration: InputDecoration(
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                     hintStyle: const TextStyle(color: Colors.black),
                     labelStyle: const TextStyle(color: Colors.black),
                     focusedBorder: border,
@@ -396,156 +489,89 @@ class _AddPID extends State<AddPID> {
                   onCreditCardModelChange: onCreditCardModelChange,
                 ),
               ),
+              Container(
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.all(10),
+                  child: const Text(
+                    'Plug types (Can Add Later):',
+                    style: TextStyle(fontSize: 20),
+                  )),
+              ListView.builder(
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: checkBoxListTileModel.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    // ignore: unnecessary_new
+                    return Card(
+                      // ignore: unnecessary_new
+                      child: new Container(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(
+                          children: <Widget>[
+                            // ignore: unnecessary_new
+                            new CheckboxListTile(
+                              onChanged: (bool? val) {
+                                itemChange(val, index);
+                              },
+                              activeColor: Color(0xff096B72),
+                              dense: true,
+                              title: Text(
+                                checkBoxListTileModel[index].title,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                              value: checkBoxListTileModel[index].isCheck,
+                              secondary: Container(
+                                height: 50,
+                                width: 50,
+                                child: Image.asset(
+                                  checkBoxListTileModel[index].img,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  }),
 
               Container(
-                padding: inputPadding,
-                child: RichText(
-                    text: const TextSpan(
-                        text: 'Charger Ports:',
-                        style: TextStyle(color: Colors.black, fontSize: 24))),
-              ),
-              Row(children: [
-                // row of charger buttons. change background color on selection and reduce button size
-                // push all selected buttons to charger array
-                // images are from: https://chargehub.com/en/electric-car-charging-guide.html
-                Column(
-                  children: [
-                    IconButton(
-                        padding:
-                            const EdgeInsets.fromLTRB(10.0, 10.0, 20.0, 10.0),
-                        iconSize: 90,
-                        color: Colors.blue,
-                        onPressed: () => {
-                              setState(() {
-                                _j1772Selected = !_j1772Selected;
-                              })
-                            },
-                        icon: Image.asset(
-                          'assets/images/Plug-Icon-J1772.png',
-                          color: _j1772Selected ? Colors.blue : Colors.black,
-                        )),
-                    RichText(
-                        text: const TextSpan(
-                            text: 'J1772',
-                            style:
-                                TextStyle(fontSize: 16, color: Colors.black)))
-                  ],
-                ),
-                Column(
-                  children: [
-                    IconButton(
-                        padding:
-                            const EdgeInsets.fromLTRB(10.0, 10.0, 20.0, 10.0),
-                        iconSize: 90,
-                        onPressed: () => {
-                              setState(() {
-                                _chademoSelected = !_chademoSelected;
-                              })
-                            },
-                        icon: Image.asset('assets/images/Plug-Icon-CHAdeMO.png',
-                            color:
-                                _chademoSelected ? Colors.blue : Colors.black)),
-                    RichText(
-                        text: const TextSpan(
-                            text: 'CHAdeMO',
-                            style:
-                                TextStyle(fontSize: 16, color: Colors.black)))
-                  ],
-                ),
-                Column(
-                  children: [
-                    IconButton(
-                        padding:
-                            const EdgeInsets.fromLTRB(10.0, 10.0, 20.0, 10.0),
-                        iconSize: 90,
-                        onPressed: () => {
-                              setState(() {
-                                _saeComboSelected = !_saeComboSelected;
-                              })
-                            },
-                        icon: Image.asset(
-                            'assets/images/Plug-Icon-J1772-Combo.png',
-                            color: _saeComboSelected
-                                ? Colors.blue
-                                : Colors.black)),
-                    RichText(
-                        text: const TextSpan(
-                            text: 'SAE Combo CCS',
-                            style:
-                                TextStyle(fontSize: 16, color: Colors.black)))
-                  ],
-                ),
-                /*IconButton(
-                    padding: const EdgeInsets.fromLTRB(10.0, 10.0, 20.0, 10.0),
-                    iconSize: 90,
-                    onPressed: () => print("J1772"),
-                    icon: Image.asset('assets/images/Plug-Icon-J1772.png')),
-                IconButton(
-                    padding: const EdgeInsets.fromLTRB(5.0, 10.0, 20.0, 10.0),
-                    iconSize: 90,
-                    onPressed: () => print("CHAdeMO"),
-                    icon: Image.asset('assets/images/Plug-Icon-CHAdeMO.png')),
-                IconButton(
-                  padding: const EdgeInsets.fromLTRB(5.0, 10.0, 20.0, 10.0),
-                  iconSize: 90,
-                  onPressed: () => print("SAE Combo CCS"),
-                  icon: Image.asset('assets/images/Plug-Icon-J1772-Combo.png'),
-                ),*/
-              ]),
-
-              /*Container(
-                // charger. look into onSubmitted field to keep ongoing list
-                width: screenWidth,
-                padding: inputPadding,
-                child: TextFormField(
-                  controller: newChargerType,
-                  //autocorrect: false,
-                  decoration: const InputDecoration(hintText: 'Charger Type'),
-                  textInputAction: TextInputAction.go,
-                  validator: _validateField,
-                  onEditingComplete: () => {
-                    chargerTypes.add(newChargerType.text),
-                    newChargerType.clear()
-                  },
-                ),
-              ),*/
-              Container(
-                // subscriptions. look into onSubmitted field to keep ongoing list
-                width: screenWidth,
-                padding: inputPadding,
-                child: TextFormField(
-                    controller: newSubscriptions,
-                    //autocorrect: false,
-                    decoration:
-                        const InputDecoration(hintText: 'Subscriptions'),
-                    textInputAction: TextInputAction.done,
-                    validator: _validateField),
-              ),
-              Padding(
+                  // continue button
                   padding: inputPadding,
                   child: ElevatedButton(
                     onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        _AddPID();
+                      if (_formKey.currentState!.validate() &&
+                          newState != 'State') {
+                        //_addPID();
+                        _handleInput();
                       }
                     },
-                    child: const Text("Sign Up"),
+                    child: const Text("Continue"),
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(Color(0xff096B72)),
+                    ),
                   )),
-              Padding(
-                  padding: inputPadding,
-                  child: ElevatedButton(
-                    onPressed: () => goToMaps(context),
-                    child: const Text("Maps Screen"),
-                  )),
-              /*TextButton(
-                  onPressed: AddPID,
-                  child: const Text("Add User")), // submit button
-              TextButton(
-                  onPressed: () => goToMaps(context),
-                  child: const Text("Maps Screen")),*/ // navigation button
             ],
           )),
     );
+  }
+
+  void itemChange(bool? val, int index) {
+    if (index == 1) {
+      _chademoSelected = !_chademoSelected;
+    } else if (index == 2) {
+      _j1772Selected = !_j1772Selected;
+    } else {
+      _saeComboSelected = !_saeComboSelected;
+    }
+    setState(() {
+      checkBoxListTileModel[index].isCheck = val;
+    });
   }
 
   void onCreditCardModelChange(CreditCardModel? creditCardModel) {
@@ -559,3 +585,38 @@ class _AddPID extends State<AddPID> {
   } // build
 } // _AddPIDState
 
+class CheckBoxListTileModel {
+  int imgId;
+  String img;
+  String title;
+  bool? isCheck;
+
+  CheckBoxListTileModel(
+      {required this.imgId,
+      required this.img,
+      required this.title,
+      required this.isCheck});
+
+  static List<CheckBoxListTileModel> getImgs() {
+    return <CheckBoxListTileModel>[
+      CheckBoxListTileModel(
+        imgId: 1,
+        img: 'assets/images/Plug-Icon-CHAdeMO.png',
+        title: 'CHAdeMo',
+        isCheck: false,
+      ),
+      CheckBoxListTileModel(
+        imgId: 2,
+        img: 'assets/images/Plug-Icon-J1772.png',
+        title: 'J1772',
+        isCheck: false,
+      ),
+      CheckBoxListTileModel(
+        imgId: 3,
+        img: 'assets/images/Plug-Icon-J1772-Combo.png',
+        title: 'J1772 Combo',
+        isCheck: false,
+      )
+    ];
+  }
+}
