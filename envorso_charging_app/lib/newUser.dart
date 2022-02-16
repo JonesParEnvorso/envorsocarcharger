@@ -514,7 +514,7 @@ class _AddPID extends State<AddPID> {
                   alignment: Alignment.centerLeft,
                   padding: const EdgeInsets.all(10),
                   child: const Text(
-                    'Plug types (Can Add Later):',
+                    'Plug types:',
                     style: TextStyle(fontSize: 20),
                   )),
               ListView.builder(
