@@ -43,6 +43,70 @@ class AddPID extends StatefulWidget {
 }
 
 class _AddPID extends State<AddPID> {
+  String dropdownvalue = 'State';
+  List<String> states = [
+    'State',
+    'AL',
+    'AK',
+    'AS',
+    'AZ',
+    'AR',
+    'CA',
+    'CO',
+    'CT',
+    'DE',
+    'DC',
+    'FM',
+    'FL',
+    'GA',
+    'GU',
+    'HI',
+    'ID',
+    'IL',
+    'IN',
+    'IA',
+    'KS',
+    'KY',
+    'LA',
+    'ME',
+    'MH',
+    'MD',
+    'MA',
+    'MI',
+    'MN',
+    'MS',
+    'MO',
+    'MT',
+    'NE',
+    'NV',
+    'NH',
+    'NJ',
+    'NM',
+    'NY',
+    'NC',
+    'ND',
+    'MP',
+    'OH',
+    'OK',
+    'OR',
+    'PW',
+    'PA',
+    'PR',
+    'RI',
+    'SC',
+    'SD',
+    'TN',
+    'TX',
+    'UT',
+    'VT',
+    'VI',
+    'VA',
+    'WA',
+    'WV',
+    'WI',
+    'WY'
+  ];
+
   List<CheckBoxListTileModel> checkBoxListTileModel =
       CheckBoxListTileModel.getImgs();
 
@@ -94,70 +158,6 @@ class _AddPID extends State<AddPID> {
     final statusBarHeight = MediaQuery.of(context).padding.top;
     final leftEdge = MediaQuery.of(context).padding.left;
     final rightEdge = MediaQuery.of(context).padding.right;
-
-    String dropdownvalue = "State";
-    var states = [
-      'State',
-      'AL',
-      'AK',
-      'AS',
-      'AZ',
-      'AR',
-      'CA',
-      'CO',
-      'CT',
-      'DE',
-      'DC',
-      'FM',
-      'FL',
-      'GA',
-      'GU',
-      'HI',
-      'ID',
-      'IL',
-      'IN',
-      'IA',
-      'KS',
-      'KY',
-      'LA',
-      'ME',
-      'MH',
-      'MD',
-      'MA',
-      'MI',
-      'MN',
-      'MS',
-      'MO',
-      'MT',
-      'NE',
-      'NV',
-      'NH',
-      'NJ',
-      'NM',
-      'NY',
-      'NC',
-      'ND',
-      'MP',
-      'OH',
-      'OK',
-      'OR',
-      'PW',
-      'PA',
-      'PR',
-      'RI',
-      'SC',
-      'SD',
-      'TN',
-      'TX',
-      'UT',
-      'VT',
-      'VI',
-      'VA',
-      'WA',
-      'WV',
-      'WI',
-      'WY'
-    ];
 
     // padding around the text entry boxes
     const inputPadding = EdgeInsets.all(5);
@@ -416,23 +416,23 @@ class _AddPID extends State<AddPID> {
                         child: DropdownButton(
                           value: dropdownvalue,
 
+                          onChanged: (newValue) {
+                            setState(() {
+                              //dropdownvalue = newValue;
+                            });
+                          },
                           // Down Arrow Icon
                           icon: const Icon(Icons.keyboard_arrow_down),
 
                           // Array list of items
-                          items: states.map((String states) {
+                          items: states.map((states) {
                             return DropdownMenuItem(
                               value: states,
-                              child: Text(states),
+                              child: new Text(states),
                             );
                           }).toList(),
                           // After selecting the desired option,it will
                           // change button value to selected value
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              dropdownvalue = newValue!;
-                            });
-                          },
                         ),
                       ),
                     ),
