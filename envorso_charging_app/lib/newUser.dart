@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'firebase_options.dart';
-import 'mapScreen.dart';
+import 'servicesList.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
 
 void main() async {
@@ -43,6 +43,70 @@ class AddPID extends StatefulWidget {
 }
 
 class _AddPID extends State<AddPID> {
+  String dropdownvalue = 'State';
+  List<String> states = [
+    'State',
+    'AL',
+    'AK',
+    'AS',
+    'AZ',
+    'AR',
+    'CA',
+    'CO',
+    'CT',
+    'DE',
+    'DC',
+    'FM',
+    'FL',
+    'GA',
+    'GU',
+    'HI',
+    'ID',
+    'IL',
+    'IN',
+    'IA',
+    'KS',
+    'KY',
+    'LA',
+    'ME',
+    'MH',
+    'MD',
+    'MA',
+    'MI',
+    'MN',
+    'MS',
+    'MO',
+    'MT',
+    'NE',
+    'NV',
+    'NH',
+    'NJ',
+    'NM',
+    'NY',
+    'NC',
+    'ND',
+    'MP',
+    'OH',
+    'OK',
+    'OR',
+    'PW',
+    'PA',
+    'PR',
+    'RI',
+    'SC',
+    'SD',
+    'TN',
+    'TX',
+    'UT',
+    'VT',
+    'VI',
+    'VA',
+    'WA',
+    'WV',
+    'WI',
+    'WY'
+  ];
+
   List<CheckBoxListTileModel> checkBoxListTileModel =
       CheckBoxListTileModel.getImgs();
 
@@ -95,15 +159,12 @@ class _AddPID extends State<AddPID> {
     final leftEdge = MediaQuery.of(context).padding.left;
     final rightEdge = MediaQuery.of(context).padding.right;
 
-    String dropdownvalue = "State";
-    var states = ['State', 'CA'];
-
     // padding around the text entry boxes
     const inputPadding = EdgeInsets.all(5);
 
-    goToMaps(BuildContext context) {
+    goToServices(BuildContext context) {
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const MapScreen()));
+          context, MaterialPageRoute(builder: (context) => const ServicesList()));
     }
 
     OutlineInputBorder? border;
@@ -225,7 +286,7 @@ class _AddPID extends State<AddPID> {
           .add({'subscriptions': subscriptions}).catchError(
               (error) => print("Update failed: $error"));*/
 
-      goToMaps(context);
+      goToServices(context);
     } // _AddPID
 
     _validateField(String? value) {
@@ -336,37 +397,44 @@ class _AddPID extends State<AddPID> {
                             },
                         validator: _validateField),
                   ),
-                  DecoratedBox(
+                  Container(
+                    margin: EdgeInsets.all(5.0),
+                    height: 60,
                     decoration: ShapeDecoration(
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        //dimensions: EdgeInsetsGeometry(50),
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
                         side: BorderSide(
                             width: 1.0,
                             style: BorderStyle.solid,
                             color: Colors.grey),
                       ),
                     ),
-                    child: DropdownButton(
-                      // Initial Value
-                      value: dropdownvalue,
+                    child: DropdownButtonHideUnderline(
+                      child: ButtonTheme(
+                        alignedDropdown: true,
+                        child: DropdownButton(
+                          value: dropdownvalue,
 
-                      // Down Arrow Icon
-                      icon: const Icon(Icons.keyboard_arrow_down),
+                          onChanged: (newValue) {
+                            setState(() {
+                              //dropdownvalue = newValue;
+                            });
+                          },
+                          // Down Arrow Icon
+                          icon: const Icon(Icons.keyboard_arrow_down),
 
-                      // Array list of items
-                      items: states.map((String states) {
-                        return DropdownMenuItem(
-                          value: states,
-                          child: Text(states),
-                        );
-                      }).toList(),
-                      // After selecting the desired option,it will
-                      // change button value to selected value
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          dropdownvalue = newValue!;
-                        });
-                      },
+                          // Array list of items
+                          items: states.map((states) {
+                            return DropdownMenuItem(
+                              value: states,
+                              child: new Text(states),
+                            );
+                          }).toList(),
+                          // After selecting the desired option,it will
+                          // change button value to selected value
+                        ),
+                      ),
                     ),
                   )
                 ], // end children
@@ -397,7 +465,7 @@ class _AddPID extends State<AddPID> {
                     labelStyle: const TextStyle(color: Colors.black),
                     focusedBorder: border,
                     enabledBorder: border,
-                    labelText: 'Card Holder',
+                    labelText: 'Name',
                     hintText: 'First Name Last Name',
                   ),
                   cardNumberDecoration: InputDecoration(
