@@ -2,6 +2,7 @@ import 'package:envorso_charging_app/speech_recognition.dart';
 import 'package:flutter/material.dart';
 import 'newUserEmail.dart';
 import 'mapScreen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,7 +24,9 @@ class MyApp extends StatelessWidget {
 }
 
 class ServicesList extends StatefulWidget {
-  const ServicesList({Key? key}) : super(key: key);
+  const ServicesList({Key? key, required this.documentId}) : super(key: key);
+
+  final String documentId;
   @override
   _ServicesList createState() => _ServicesList();
 }
@@ -37,8 +40,26 @@ class _ServicesList extends State<ServicesList> {
         context, MaterialPageRoute(builder: (context) => MapScreen()));
   }
 
+  // list to store service data
+  final List<String> services = <String>[];
+
   @override
   Widget build(BuildContext context) {
+    Future<void> _addServices() {
+      for (int i = 0; i < checkBoxListTileModel.length; i++) {
+        if (checkBoxListTileModel[i].isCheck == true) {
+          services.add(checkBoxListTileModel[i].title);
+        }
+      }
+      DocumentReference newUser =
+          FirebaseFirestore.instance.collection('users').doc(widget.documentId);
+
+      return newUser
+          .collection('services')
+          .add({'services': services}).catchError(
+              (Object error) => Future.error(Exception("$error")));
+    }
+
     return Scaffold(
       body: Padding(
           padding: const EdgeInsets.all(10),
@@ -52,8 +73,8 @@ class _ServicesList extends State<ServicesList> {
                 )),
             Container(
                 alignment: Alignment.center,
-                padding: EdgeInsets.all(10),
-                margin: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
+                margin: const EdgeInsets.all(10),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -92,7 +113,7 @@ class _ServicesList extends State<ServicesList> {
                   return Card(
                     // ignore: unnecessary_new
                     child: new Container(
-                      padding: EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(10.0),
                       child: Column(
                         children: <Widget>[
                           // ignore: unnecessary_new
@@ -100,11 +121,11 @@ class _ServicesList extends State<ServicesList> {
                             onChanged: (bool? val) {
                               itemChange(val, index);
                             },
-                            activeColor: Color(0xff096B72),
+                            activeColor: const Color(0xff096B72),
                             dense: true,
                             title: Text(
                               checkBoxListTileModel[index].title,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 0.5,
@@ -119,11 +140,11 @@ class _ServicesList extends State<ServicesList> {
                                     Icon(
                                       Icons.stars,
                                       color: checkBoxListTileModel[index].local
-                                          ? Color(0xff096B72)
+                                          ? const Color(0xff096B72)
                                           : Colors.white,
                                     ),
                                     if (checkBoxListTileModel[index].money) ...[
-                                      Icon(
+                                      const Icon(
                                         Icons.monetization_on,
                                         color: Color(0xffCFB406),
                                       ),
@@ -138,9 +159,8 @@ class _ServicesList extends State<ServicesList> {
                 }),
             Container(
                 // continue button
-
                 child: ElevatedButton(
-              onPressed: () => goToMap(context),
+              onPressed: () => _addServices(),
               child: const Text("Continue"),
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Color(0xff096B72)),
