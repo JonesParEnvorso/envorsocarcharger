@@ -66,7 +66,8 @@ class _ServicesList extends State<ServicesList> {
 
       return newUser
           .collection('services')
-          .add({'services': services}).catchError(
+          .doc('services')
+          .set({'services': services}).catchError(
               (Object error) => Future.error(Exception("$error")));
     }
 

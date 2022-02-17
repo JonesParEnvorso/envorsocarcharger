@@ -267,7 +267,8 @@ class _AddPID extends State<AddPID> {
           )
           .then((value) => newUser
               .collection('chargerType')
-              .add({'chargerType': chargerTypes}))
+              .doc("chargers")
+              .set({'chargerType': chargerTypes}))
           .catchError((Object error) => Future.error(Exception("$error")));
     } // _AddPID
 
