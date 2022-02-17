@@ -493,7 +493,6 @@ class _AddPID extends State<AddPID> {
                 Container(
                   // cvv
                   // NEED TO DO: 
-                    // Limit to 4 number
                     // make private
                   width: screenWidth / 2,
                   padding: inputPadding,
@@ -506,7 +505,8 @@ class _AddPID extends State<AddPID> {
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.number,
                       inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly
+                        FilteringTextInputFormatter.digitsOnly,
+                        new LengthLimitingTextInputFormatter(4)
                       ],
                       validator: _validateField),
                 ),
