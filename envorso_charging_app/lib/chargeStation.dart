@@ -30,16 +30,22 @@ class Chargers {
   Chargers();
 
   //Pull down n < maxSize chargers into a list
-  pullChargers(double lat, double lon) async {
+  Future<List<Map<String, dynamic>>> pullChargers(
+      double lat, double lon) async {
     var querryList = await FirebaseFirestore.instance
         .collection('stations')
         .limit(maxSize)
         .where('city', isEqualTo: "Ellensburg")
         //.where('lon', isLessThan: (lon + range), isGreaterThan: (lon - range))
         .get();
+
+    List<Map<String, dynamic>> res = [];
     for (var docs in querryList.docs) {
       chargers.add(docs.data());
+      res.add(docs.data());
     }
+
+    return res;
   }
 
   //Change the search range of chargers
