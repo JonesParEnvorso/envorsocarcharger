@@ -36,11 +36,19 @@ class _FirstLaunch extends State<FirstLaunch> {
   goToSignUp(BuildContext context) {
     Navigator.push(context, MaterialPageRoute(builder: (context) => AddUser()));
   }
-  goToMap(BuildContext context){
-    Navigator.push(context, MaterialPageRoute(builder: (context) => MapScreen()));
+
+  goToMap(BuildContext context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => MapScreen()));
   }
-  goToServices(BuildContext context){
-    Navigator.push(context, MaterialPageRoute(builder: (context) => ServicesList()));
+
+  goToServices(BuildContext context) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ServicesList(
+                  documentId: 'test',
+                )));
   }
 
   @override
@@ -174,7 +182,7 @@ class _FirstLaunch extends State<FirstLaunch> {
                         backgroundColor:
                             MaterialStateProperty.all(Color(0xff096B72)),
                       ),
-                      onPressed: () => goToMap(context) ,
+                      onPressed: () => goToMap(context),
                     )),
                 Row(
                   children: <Widget>[
@@ -192,7 +200,7 @@ class _FirstLaunch extends State<FirstLaunch> {
                   ],
                   mainAxisAlignment: MainAxisAlignment.center,
                 ),
-                Container(
+                /* Container(
                     height: 50,
                     padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                     child: ElevatedButton(
@@ -202,7 +210,7 @@ class _FirstLaunch extends State<FirstLaunch> {
                             MaterialStateProperty.all(Color(0xff096B72)),
                       ),
                       onPressed: () => goToServices(context) ,
-                    )),
+                    )),*/
               ],
             )));
   }

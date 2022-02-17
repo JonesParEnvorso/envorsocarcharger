@@ -30,13 +30,15 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # Google Maps packages
-  # Send HTTP requests for routing
+
+  # Mapping
   dio: ^4.0.0
-  # Decode polyline strings into lat/long
   flutter_polyline_points: ^0.2.6
-  # Google maps
   google_maps_flutter: ^2.0.2
+  # url_launcher: ^6.0.20
+  location: ^4.3.0
+  map_launcher: ^2.2.0
+  flutter_svg: ^1.0.3
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

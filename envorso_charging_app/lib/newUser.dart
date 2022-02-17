@@ -435,65 +435,89 @@ class _AddPID extends State<AddPID> {
                 child: const Text('Why is Credit Card info needed?',
                     style: TextStyle(color: Color(0xff096B72))),
               ),
-              // CREDIT CARD INFORMATION
               Container(
-                child: CreditCardForm(
-                  formKey: formKey,
-                  obscureCvv: true,
-                  obscureNumber: true,
-                  cardHolderName: cardHolderName,
-                  cardNumber: cardNumber,
-                  cvvCode: cvvCode,
-                  isHolderNameVisible: true,
-                  isCardNumberVisible: true,
-                  isExpiryDateVisible: true,
-                  expiryDate: expiryDate,
-                  themeColor: const Color(0xff096B72),
-                  textColor: Colors.black,
-                  cardHolderDecoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    hintStyle: const TextStyle(color: Colors.black),
-                    labelStyle: const TextStyle(color: Colors.black),
-                    focusedBorder: border,
-                    enabledBorder: border,
-                    labelText: 'Name',
-                    hintText: 'First Name Last Name',
-                  ),
-                  cardNumberDecoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    labelText: 'CC Number',
-                    hintText: 'XXXX XXXX XXXX XXXX',
-                    hintStyle: const TextStyle(color: Colors.black),
-                    labelStyle: const TextStyle(color: Colors.black),
-                    focusedBorder: border,
-                    enabledBorder: border,
-                  ),
-                  expiryDateDecoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    hintStyle: const TextStyle(color: Colors.black),
-                    labelStyle: const TextStyle(color: Colors.black),
-                    focusedBorder: border,
-                    enabledBorder: border,
-                    labelText: 'Exp. Date',
-                    hintText: 'XX/XX',
-                  ),
-                  cvvCodeDecoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    hintStyle: const TextStyle(color: Colors.black),
-                    labelStyle: const TextStyle(color: Colors.black),
-                    focusedBorder: border,
-                    enabledBorder: border,
-                    labelText: 'CVV',
-                    hintText: 'XXX',
-                  ),
-                  onCreditCardModelChange: onCreditCardModelChange,
-                ),
+                // User's name
+                // Required
+                // Think I did this right...
+                width: screenWidth,
+                padding: inputPadding,
+                child: TextFormField(
+                    controller: newName,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'First Name Last Name',
+                    ),
+                    textInputAction: TextInputAction.next,
+                    validator: _validateField),
               ),
+              Container(
+                // Credit Card Number
+                // optional
+                // NEED TO DO
+                // private?
+                width: screenWidth,
+                padding: inputPadding,
+                child: TextFormField(
+                    controller: newCard,
+                    decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'CC number',
+                        hintText: '#### #### #### ####'),
+                    inputFormatters: [
+                      new LengthLimitingTextInputFormatter(16),
+                    ],
+                    //keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                    validator: _validateField),
+              ),
+              Row(children: <Widget>[
+                Container(
+                  // expiration date
+                  
+                  width: screenWidth / 2,
+                  padding: inputPadding,
+                  child: TextFormField(
+                    validator: (String? val){
+                      return (val != null && !val.contains('/')) ? 'Missing /' : null;
+                    },
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Exp. Date',
+                        hintText: 'XX/XX',
+                      ),
+                      keyboardType: TextInputType.datetime,
+                      inputFormatters: [
+                        new LengthLimitingTextInputFormatter(5),
+                      ],
+                      textInputAction: TextInputAction.next,
+                      //validator: _validateField),
+                )),
+                Container(
+                  // cvv
+                  // NEED TO DO:
+                  // make private
+                  width: screenWidth / 2,
+                  padding: inputPadding,
+                  child: TextFormField(
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'CVV',
+                      ),
+                      textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly,
+                        new LengthLimitingTextInputFormatter(4)
+                      ],
+                      validator: _validateField),
+                ),
+              ]),
+
               Container(
                   alignment: Alignment.centerLeft,
                   padding: const EdgeInsets.all(10),
                   child: const Text(
-                    'Plug types (Can Add Later):',
+                    'Plug types:',
                     style: TextStyle(fontSize: 20),
                   )),
               ListView.builder(
