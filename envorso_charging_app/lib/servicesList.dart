@@ -2,6 +2,7 @@ import 'package:envorso_charging_app/speech_recognition.dart';
 import 'package:flutter/material.dart';
 import 'newUserEmail.dart';
 import 'mapScreen.dart';
+import 'chargeStation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() {
@@ -43,6 +44,15 @@ class _ServicesList extends State<ServicesList> {
   // list to store service data
   final List<String> services = <String>[];
 
+  Chargers chargeList = Chargers();
+
+  List<Map<String, dynamic>> chargers = [];
+
+  // fills the list with the result from the database
+  _fillChargerList() async {
+    chargers = await chargeList.pullChargers(46.999883, -120.544755);
+  }
+
   @override
   Widget build(BuildContext context) {
     Future<void> _addServices() {
@@ -58,6 +68,19 @@ class _ServicesList extends State<ServicesList> {
           .collection('services')
           .add({'services': services}).catchError(
               (Object error) => Future.error(Exception("$error")));
+    }
+
+    _printChargers() async {
+      _fillChargerList();
+
+      // prints all keys and values for the query result
+      for (int i = 0; i < chargers.length; i++) {
+        print("List Entry ${i}: ");
+        for (MapEntry e in chargers[i].entries) {
+          print("Key ${e.key}, Value ${e.value}");
+        }
+        print("\n");
+      }
     }
 
     return Scaffold(
@@ -159,13 +182,17 @@ class _ServicesList extends State<ServicesList> {
                 }),
             Container(
                 // continue button
+                // currently is doing nothing other than allowing Richard to test things
                 child: ElevatedButton(
-              onPressed: () => _addServices(),
+              onPressed: () => /*_addServices()*/ _printChargers(),
               child: const Text("Continue"),
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Color(0xff096B72)),
               ),
             )),
+            // REMOVE THIS BUTTON AFTER TESTING
+            ElevatedButton(
+                onPressed: () => goToMap(context), child: const Text("To Map"))
           ])),
     );
   }
