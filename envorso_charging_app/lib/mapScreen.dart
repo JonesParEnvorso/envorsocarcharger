@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+//import 'package:google_maps_flutter/google_maps_flutter.dart';
 //import 'newUser.dart';
 //import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'package:firebase_core/firebase_core.dart';
 //import 'firebase_options.dart';
 //import 'package:url_launcher/url_launcher.dart';
 import 'package:location/location.dart';
-import 'package:map_launcher/map_launcher.dart';
+import 'package:map_launcher/map_launcher.dart' as maplauncher;
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,6 +31,72 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// Leaflet / OpenMap implementation
+class MapScreen extends StatefulWidget {
+  const MapScreen({Key? key}) : super(key: key);
+
+  @override
+  _MapScreenState createState() => _MapScreenState();
+}
+
+class _MapScreenState extends State<MapScreen> {
+  @override
+  Widget build(BuildContext context) {
+    var markers = <Marker>[];
+    markers = [
+      Marker(
+          point: LatLng(46.999843, -120.539261),
+          builder: (ctx) => IconButton(
+              icon: Icon(Icons.location_pin),
+              color: Colors.red,
+              onPressed: () => launchMap())),
+    ];
+
+    return Scaffold(
+        body: Center(
+            child: Container(
+                child: Column(children: [
+      Flexible(
+          child: FlutterMap(
+              options: MapOptions(
+                  interactiveFlags: InteractiveFlag.all &
+                      ~InteractiveFlag.rotate, // Disable rotation
+                  center: LatLng(46.999843, -120.539261),
+                  zoom: 17),
+              layers: [
+            TileLayerOptions(
+              urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+              subdomains: ['a', 'b', 'c'],
+              maxZoom: 20.0,
+              maxNativeZoom: 19.0,
+            ),
+            MarkerLayerOptions(markers: markers)
+          ]))
+    ]))));
+  }
+
+  // Launches a pin in Google Maps (Provide more later)
+  void launchMap() async {
+    final availableMaps = await maplauncher.MapLauncher.installedMaps;
+    await availableMaps.first.showMarker(
+      coords: maplauncher.Coords(46.999843, -120.539261),
+      title: "Charger location",
+      description: "Level 2 charger, Greenlots",
+    );
+
+    if (await maplauncher.MapLauncher.isMapAvailable(
+            maplauncher.MapType.google) !=
+        null) {
+      await maplauncher.MapLauncher.showMarker(
+          mapType: maplauncher.MapType.google,
+          coords: maplauncher.Coords(46.999843, -120.539261),
+          title: "Charger Location",
+          description: "Level 2 charger, Greenlots");
+    }
+  }
+}
+
+/*
 // Google Maps display.
 class MapScreen extends StatefulWidget {
   const MapScreen({Key? key}) : super(key: key);
@@ -223,3 +291,4 @@ class _MapScreenState extends State<MapScreen> {
 */
 
 }
+*/

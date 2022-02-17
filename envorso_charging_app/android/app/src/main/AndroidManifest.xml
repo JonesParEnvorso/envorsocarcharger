@@ -19,6 +19,7 @@
     <!-- Location permission -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 >>>>>>> 8a7e2f325fb2af0bab9069f8d90099b4e321ba89
    <application
         android:label="envorso_charging_app"
