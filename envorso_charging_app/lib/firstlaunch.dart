@@ -44,7 +44,11 @@ class _FirstLaunch extends State<FirstLaunch> {
 
   goToServices(BuildContext context) {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => ServicesList()));
+        context,
+        MaterialPageRoute(
+            builder: (context) => ServicesList(
+                  documentId: 'test',
+                )));
   }
 
   @override
