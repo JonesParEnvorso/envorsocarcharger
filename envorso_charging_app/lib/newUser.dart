@@ -438,6 +438,7 @@ class _AddPID extends State<AddPID> {
               Container(
                 // User's name
                 // Required
+                // Think I did this right...
                 width: screenWidth,
                 padding: inputPadding,
                 child: TextFormField(
@@ -446,7 +447,6 @@ class _AddPID extends State<AddPID> {
                       border: OutlineInputBorder(),
                       labelText: 'First Name Last Name',
                     ),
-                    //keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
                     validator: _validateField),
               ),
@@ -454,9 +454,7 @@ class _AddPID extends State<AddPID> {
                 // Credit Card Number
                 // optional
                 // NEED TO DO
-                  // limit digits
-                  // private? 
-                  // Add hint text
+                  // private?                   
                 width: screenWidth,
                 padding: inputPadding,
                 child: TextFormField(
@@ -464,7 +462,11 @@ class _AddPID extends State<AddPID> {
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'CC number',
+                      hintText: '#### #### #### ####'
                     ),
+                    inputFormatters: [
+                      new LengthLimitingTextInputFormatter(16),
+                    ],
                     //keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
                     validator: _validateField),
