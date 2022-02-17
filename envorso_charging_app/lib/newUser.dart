@@ -122,14 +122,17 @@ class _AddPID extends State<AddPID> {
   final newCountry = TextEditingController();
   // card consists of: number, expiration, and cvv
   final newCard = TextEditingController();
-  final newExpirMon = TextEditingController();
-  final newExpirYr = TextEditingController();
+  final newExpiry = TextEditingController();
   final newCvv = TextEditingController();
 
   final newName = TextEditingController();
-  final newEmail = TextEditingController();
+  final newUsername = TextEditingController();
   final newPhone = TextEditingController();
 
+  bool isCardNumVisible = false;
+  bool isCvvVisible = false;
+
+  // variables below currently do nothing
   String cardNumber = '';
   String expiryDate = '';
   String cardHolderName = '';
@@ -159,10 +162,16 @@ class _AddPID extends State<AddPID> {
     // padding around the text entry boxes
     const inputPadding = EdgeInsets.all(5);
 
+    final String docId = widget.documentId;
+
     goToServices(BuildContext context) {
       // add documentId as a field to the next page
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => const ServicesList()));
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ServicesList(
+                    documentId: docId,
+                  )));
     }
 
     OutlineInputBorder? border;
@@ -170,6 +179,8 @@ class _AddPID extends State<AddPID> {
     @override
     void initState() {
       super.initState();
+      isCardNumVisible = false;
+      isCvvVisible = false;
       border = OutlineInputBorder(
         borderSide: BorderSide(
           color: Colors.grey.withOpacity(0.7),
@@ -182,15 +193,14 @@ class _AddPID extends State<AddPID> {
     void dispose() {
       //_controller.dispose();
       newName.dispose();
-      newEmail.dispose();
+      newUsername.dispose();
       newPhone.dispose();
       newCity.dispose();
       newStreet.dispose();
       newZip.dispose();
       newCountry.dispose();
       newCard.dispose();
-      newExpirMon.dispose();
-      newExpirYr.dispose();
+      newExpiry.dispose();
       newCvv.dispose();
       newChargerType.dispose();
 
@@ -203,23 +213,23 @@ class _AddPID extends State<AddPID> {
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
       String firstName;
       String lastName;
-      if (!cardHolderName.contains(" ")) {
-        firstName = cardHolderName;
+      if (!newName.text.contains(" ")) {
+        firstName = newName.text;
         lastName = "";
       } else {
-        firstName = cardHolderName.substring(0, cardHolderName.indexOf(" "));
-        lastName = cardHolderName.substring(cardHolderName.indexOf(" ") + 1);
+        firstName = newName.text.substring(0, newName.text.indexOf(" "));
+        lastName = newName.text.substring(newName.text.indexOf(" ") + 1);
       }
-      String email = newEmail.text;
+      String username = newUsername.text;
       String phoneNumber = newPhone.text;
       String city = newCity.text;
       String street = newStreet.text;
       String state = newState;
       String zip = newZip.text;
-      String creditCard = cardNumber;
-      String expir = expiryDate;
-      String cvv = cvvCode;
-      //String chargerType = newChargerType.text;
+      String creditCard = newCard.text;
+      String expir = newExpiry.text;
+      String cvv = newCvv.text;
+
       if (_j1772Selected) {
         chargerTypes.add('J1772');
       }
@@ -234,27 +244,29 @@ class _AddPID extends State<AddPID> {
           FirebaseFirestore.instance.collection('users').doc(widget.documentId);
 
       return newUser
-          .set({
-            'firstName': firstName,
-            'lastName': lastName,
-            'phoneNumber': phoneNumber,
-            'countryCode':
-                '+1', // default to +1 since we are only focusing on USA
-            'address': {
-              // address is a map
-              "city": city,
-              "street": street,
-              "state": state,
-              "zip": zip,
-            },
-            "creditCard": {
-              // credit card is also a map
-              "num": creditCard,
-              "exp": expir,
-              "cvv": cvv,
-            },
-            "email": email,
-          }, SetOptions(merge: true))
+          .update(
+            {
+              'firstName': firstName,
+              'lastName': lastName,
+              'phoneNumber': phoneNumber,
+              'countryCode':
+                  '+1', // default to +1 since we are only focusing on USA
+              'address': {
+                // address is a map
+                "city": city,
+                "street": street,
+                "state": state,
+                "zip": zip,
+              },
+              "creditCard": {
+                // credit card is also a map
+                "num": creditCard,
+                "exp": expir,
+                "cvv": cvv,
+              },
+              "username": username,
+            }, /*SetOptions(merge: true)*/
+          )
           .then((value) => newUser
               .collection('chargerType')
               .add({'chargerType': chargerTypes}))
@@ -267,16 +279,19 @@ class _AddPID extends State<AddPID> {
       newName.clear();
       newPhone.clear();
       newChargerType.clear();
-      newEmail.clear();
+      newUsername.clear();
       newState = 'State';
       newStreet.clear();
       newCity.clear();
       newZip.clear();
       newCountry.clear();
-      cardHolderName = '';
-      cardNumber = '';
-      expiryDate = '';
-      cvvCode = '';
+      newExpiry.clear();
+      newCard.clear();
+      newCvv.clear();
+      //cardHolderName = '';
+      //cardNumber = '';
+      //expiryDate = '';
+      //cvvCode = '';
       goToServices(context);
     }
 
@@ -301,11 +316,11 @@ class _AddPID extends State<AddPID> {
                     style: TextStyle(fontSize: 20),
                   )),
               Container(
-                // email
+                // username
                 width: screenWidth,
                 padding: inputPadding,
                 child: TextFormField(
-                    controller: newEmail,
+                    controller: newUsername,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'Username',
@@ -435,51 +450,70 @@ class _AddPID extends State<AddPID> {
                 child: const Text('Why is Credit Card info needed?',
                     style: TextStyle(color: Color(0xff096B72))),
               ),
+              // start of credit card
               Container(
                 // User's name
-                // Required
-                // Think I did this right...
                 width: screenWidth,
                 padding: inputPadding,
                 child: TextFormField(
-                    controller: newName,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'First Name Last Name',
-                    ),
-                    textInputAction: TextInputAction.next,
-                    validator: _validateField),
+                  controller: newName,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'First Name Last Name',
+                  ),
+                  textInputAction: TextInputAction.next,
+                  validator: _validateField,
+                ),
               ),
               Container(
                 // Credit Card Number
-                // optional
-                // NEED TO DO
-                // private?
                 width: screenWidth,
                 padding: inputPadding,
                 child: TextFormField(
-                    controller: newCard,
-                    decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'CC number',
-                        hintText: '#### #### #### ####'),
-                    inputFormatters: [
-                      new LengthLimitingTextInputFormatter(16),
-                    ],
-                    //keyboardType: TextInputType.emailAddress,
-                    textInputAction: TextInputAction.next,
-                    validator: _validateField),
+                  controller: newCard,
+                  obscureText: !isCardNumVisible,
+                  decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
+                    labelText: 'CC number',
+                    hintText: '#### #### #### ####',
+                    counterText: '',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        isCardNumVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: Theme.of(context).primaryColorDark,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          isCardNumVisible = !isCardNumVisible;
+                        });
+                      },
+                    ),
+                  ),
+                  onChanged: (value) => {
+                    if (newCard.text.length == 16)
+                      {FocusScope.of(context).nextFocus()}
+                  },
+                  maxLength: 16,
+                  textInputAction: TextInputAction.next,
+                ),
               ),
               Row(children: <Widget>[
                 Container(
-                  // expiration date
-                  
-                  width: screenWidth / 2,
-                  padding: inputPadding,
-                  child: TextFormField(
-                    validator: (String? val){
-                      return (val != null && !val.contains('/')) ? 'Missing /' : null;
-                    },
+                    // expiration date
+                    width: screenWidth / 2,
+                    padding: inputPadding,
+                    child: TextFormField(
+                      // commented this out because this forces the Exp. Date field to
+                      // have data in it, which isn't necessarily what we want since
+                      // all credit card data is optional, minus the user's name
+                      /*validator: (String? val) {
+                        return (val != null && !val.contains('/'))
+                            ? 'Missing /'
+                            : null;
+                      },*/
+                      controller: newExpiry,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Exp. Date',
@@ -487,32 +521,50 @@ class _AddPID extends State<AddPID> {
                       ),
                       keyboardType: TextInputType.datetime,
                       inputFormatters: [
-                        new LengthLimitingTextInputFormatter(5),
+                        LengthLimitingTextInputFormatter(5),
                       ],
+                      onChanged: (value) => {
+                        if (newExpiry.text.length == 5)
+                          {FocusScope.of(context).nextFocus()}
+                      },
                       textInputAction: TextInputAction.next,
                       //validator: _validateField),
-                )),
+                    )),
                 Container(
                   // cvv
-                  // NEED TO DO:
-                  // make private
                   width: screenWidth / 2,
                   padding: inputPadding,
                   child: TextFormField(
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'CVV',
+                    controller: newCvv,
+                    obscureText: !isCvvVisible,
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      labelText: 'CVV',
+                      counterText: '',
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          isCvvVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Theme.of(context).primaryColorDark,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            isCvvVisible = !isCvvVisible;
+                          });
+                        },
                       ),
-                      textInputAction: TextInputAction.next,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly,
-                        new LengthLimitingTextInputFormatter(4)
-                      ],
-                      validator: _validateField),
+                    ),
+                    textInputAction: TextInputAction.next,
+                    keyboardType: TextInputType.number,
+                    maxLength: 4,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
+                  ),
                 ),
               ]),
-
+              // end of credit card
               Container(
                   alignment: Alignment.centerLeft,
                   padding: const EdgeInsets.all(10),
