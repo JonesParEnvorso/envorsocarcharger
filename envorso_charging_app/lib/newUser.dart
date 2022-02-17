@@ -143,7 +143,6 @@ class _AddPID extends State<AddPID> {
 
   // chargerType and Subscriptions still need to be fully updated
   // charger type will be array
-  final newChargerType = TextEditingController();
   final List<String> chargerTypes = <String>[];
 
   bool _j1772Selected = false;
@@ -202,7 +201,6 @@ class _AddPID extends State<AddPID> {
       newCard.dispose();
       newExpiry.dispose();
       newCvv.dispose();
-      newChargerType.dispose();
 
       super.dispose();
     }
@@ -278,7 +276,6 @@ class _AddPID extends State<AddPID> {
       // clear text entries
       newName.clear();
       newPhone.clear();
-      newChargerType.clear();
       newUsername.clear();
       newState = 'State';
       newStreet.clear();
