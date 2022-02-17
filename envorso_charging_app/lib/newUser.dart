@@ -454,16 +454,15 @@ class _AddPID extends State<AddPID> {
                 // Credit Card Number
                 // optional
                 // NEED TO DO
-                  // private?                   
+                // private?
                 width: screenWidth,
                 padding: inputPadding,
                 child: TextFormField(
                     controller: newCard,
                     decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'CC number',
-                      hintText: '#### #### #### ####'
-                    ),
+                        border: OutlineInputBorder(),
+                        labelText: 'CC number',
+                        hintText: '#### #### #### ####'),
                     inputFormatters: [
                       new LengthLimitingTextInputFormatter(16),
                     ],
@@ -474,30 +473,32 @@ class _AddPID extends State<AddPID> {
               Row(children: <Widget>[
                 Container(
                   // expiration date
-                  // NEED TO DO
-                    // Include '/' after first two digits automatically
-                    // limit to 4 inputs (5 if I can't figure out ^)
+                  
                   width: screenWidth / 2,
                   padding: inputPadding,
                   child: TextFormField(
-                      
+                    validator: (String? val){
+                      return (val != null && !val.contains('/')) ? 'Missing /' : null;
+                    },
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Exp. Date',
+                        hintText: 'XX/XX',
                       ),
                       keyboardType: TextInputType.datetime,
-                      
+                      inputFormatters: [
+                        new LengthLimitingTextInputFormatter(5),
+                      ],
                       textInputAction: TextInputAction.next,
-                      validator: _validateField),
-                ),
+                      //validator: _validateField),
+                )),
                 Container(
                   // cvv
-                  // NEED TO DO: 
-                    // make private
+                  // NEED TO DO:
+                  // make private
                   width: screenWidth / 2,
                   padding: inputPadding,
                   child: TextFormField(
-                      
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'CVV',
