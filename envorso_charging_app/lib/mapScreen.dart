@@ -33,6 +33,9 @@ class MyApp extends StatelessWidget {
 
 // Leaflet / OpenMap implementation
 class MapScreen extends StatefulWidget {
+
+  
+
   const MapScreen({Key? key}) : super(key: key);
 
   @override
@@ -42,6 +45,9 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
     var markers = <Marker>[];
     markers = [
       Marker(
@@ -53,26 +59,80 @@ class _MapScreenState extends State<MapScreen> {
     ];
 
     return Scaffold(
-        body: Center(
-            child: Container(
-                child: Column(children: [
-      Flexible(
-          child: FlutterMap(
-              options: MapOptions(
-                  interactiveFlags: InteractiveFlag.all &
-                      ~InteractiveFlag.rotate, // Disable rotation
-                  center: LatLng(46.999843, -120.539261),
-                  zoom: 17),
-              layers: [
-            TileLayerOptions(
-              urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-              subdomains: ['a', 'b', 'c'],
-              maxZoom: 20.0,
-              maxNativeZoom: 19.0,
-            ),
-            MarkerLayerOptions(markers: markers)
-          ]))
-    ]))));
+        body: Stack(children: [
+      Positioned.fill(
+        child: FlutterMap(
+            options: MapOptions(
+                interactiveFlags: InteractiveFlag.all &
+                    ~InteractiveFlag.rotate, // Disable rotation
+                center: LatLng(46.999843, -120.539261),
+                zoom: 17),
+            layers: [
+              TileLayerOptions(
+                urlTemplate:
+                    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                subdomains: ['a', 'b', 'c'],
+                maxZoom: 20.0,
+                maxNativeZoom: 19.0,
+              ),
+              MarkerLayerOptions(markers: markers)
+            ]),
+      ),
+      Positioned(
+          left: 0,
+          bottom: 10,
+          child: Container(
+              margin: EdgeInsets.all(20),
+              padding: EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  Container(
+                      color: Colors.white,
+                      width: screenWidth /1.15,
+                      child: Row(
+                        children: [
+                          Stack(children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  width: 1.0,
+                                ),
+                                borderRadius: BorderRadius.circular(4.0),
+                              ),
+                              margin: EdgeInsets.all(12),
+                              child: Row(
+                                children: <Widget>[
+                                  Container(
+                                    child: Icon(
+                                      Icons.search,
+                                      color: Colors.grey,
+                                      size: 20,
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 270, 
+                                    child: TextField(
+                                      keyboardType: TextInputType.text,
+                                      decoration: InputDecoration(
+                                       
+                                        hintText: "Search",
+                                        hintStyle:
+                                            TextStyle(color: Colors.grey),
+                                    
+                                    
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            )
+                          ])
+                        ],
+                      ))
+                ],
+              )))
+    ]));
   }
 
   // Launches a pin in Google Maps (Provide more later)
