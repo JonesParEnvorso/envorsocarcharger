@@ -3,19 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
-
-class CharTest {
-  CharTest() {
-    run();
-  }
-  void run() async {
-    print("start");
-    //ellensburg is 46.999883, -120.544755
-    var stations = Chargers();
-    await stations.pullChargers(46.999883, -120.544755);
-    stations.printChargers();
-  }
-}
+import "dart:math";
 
 //This class will pull and store the collection of chagers
 class Chargers {
@@ -26,9 +14,9 @@ class Chargers {
   //the stored list of vehicle chargers
   List<Map<String, dynamic>> chargers = [];
   //the Array of memberships
-  List<String> memberships = [];
+  List<dynamic> memberships = [];
   //the array of car plugs
-  List<String> carPlug = [];
+  List<dynamic> carPlug = [];
   //the map of user info
   Map<String, dynamic> userInfo = {};
 
@@ -41,7 +29,7 @@ class Chargers {
     var querryList = await FirebaseFirestore.instance
         .collection('stations')
         .limit(maxSize)
-        .where('city', isEqualTo: "Ellensburg")
+        //.where('city', isEqualTo: "Ellensburg")
         //.where('lon', isLessThan: (lon + range), isGreaterThan: (lon - range))
         .get();
 
@@ -50,16 +38,32 @@ class Chargers {
       chargers.add(docs.data());
     }
 
+    orderDistance(lat, lon);
+
     return chargers;
   }
 
   //Pulls user data and stores it in the Class feilds.
-  void activateAccount(String key) async {
-    DocumentSnapshot<Map<String, dynamic>> user =
-        await FirebaseFirestore.instance.collection('users').doc(key).get();
+  Future<List<Map<String, dynamic>>> activateAccount(String key) async {
+    DocumentSnapshot<Map<String, dynamic>> userPlug = await FirebaseFirestore
+        .instance
+        .collection('users')
+        .doc(key)
+        .collection("chargerType")
+        .doc('chargers')
+        .get();
+    DocumentSnapshot<Map<String, dynamic>> userMem = await FirebaseFirestore
+        .instance
+        .collection('users')
+        .doc(key)
+        .collection("services")
+        .doc('services')
+        .get();
 
-    carPlug = user['chargerType']['chargers'];
-    memberships = user['services']['services'];
+    carPlug = userPlug['chargerType'];
+    memberships = userMem['services'];
+
+    return chargers;
   }
 
   //set the array of car plugs
@@ -136,13 +140,55 @@ class Chargers {
     return chargers;
   }
 
-  void maskSpeed(List<String> levels) {
-    List<Map<String, dynamic>> temp = [];
+//Remove from the List all charge speeds not specified in the parameter array
+  List<Map<String, dynamic>> maskSpeed(List<String> levels) {
+    if (!levels.contains("level 1")) {
+      for (var n in chargers) {
+        if (!(n["level 2"] > 0 || n["DC fast"] > 0)) {
+          chargers.remove(n);
+        }
+      }
+    }
+    if (!levels.contains("level 2")) {
+      for (var n in chargers) {
+        if (!(n["level 1"] > 0 || n["DC fast"] > 0)) {
+          chargers.remove(n);
+        }
+      }
+    }
+    if (!levels.contains("DC fast")) {
+      for (var n in chargers) {
+        if (!(n["level 2"] > 0 || n["level 1"] > 0)) {
+          chargers.remove(n);
+        }
+      }
+    }
+    return chargers;
   }
 
   //order the list of chargers by charging Speed
-  void orderSpeed() {
-    List<Map<String, dynamic>> temp = [];
+  List<Map<String, dynamic>> orderSpeed() {
+    List<Map<String, dynamic>> lev1 = [];
+    List<Map<String, dynamic>> lev2 = [];
+    List<Map<String, dynamic>> dcFast = [];
+
+    for (var n in chargers) {
+      if (n['DC fast'] > 0) {
+        dcFast.add(n);
+        //chargers.remove(n);
+      } else if (n['level 2'] > 0) {
+        lev2.add(n);
+        //chargers.remove(n);
+      } else if (n['level 1'] > 0) {
+        lev1.add(n);
+        //chargers.remove(n);
+      }
+    }
+    chargers = [];
+    chargers.addAll(dcFast);
+    chargers.addAll(lev2);
+    chargers.addAll(lev1);
+    return chargers;
   }
 
   //order the list of chargers by price
@@ -151,8 +197,27 @@ class Chargers {
   }
 
   //order the list of chargers by Distance from user
-  void orderDistance() {
+  List<Map<String, dynamic>> orderDistance(double lat, double lon) {
     List<Map<String, dynamic>> temp = [];
+    num distanceA = 0;
+    num distanceB = 0;
+    bool isSorted = false;
+
+    while (!isSorted) {
+      isSorted = true;
+
+      for (int i = 1; i < chargers.length; i++) {
+        distanceA =
+            pow(chargers[i - 1]['lat'], 2) + pow(chargers[i - 1]['lon'], 2);
+        distanceB = pow(chargers[i]['lat'], 2) + pow(chargers[i]['lon'], 2);
+        if (distanceB < distanceA) {
+          chargers.insert(i - 1, chargers.elementAt(i));
+          chargers.removeAt(i + 1);
+          isSorted = false;
+        }
+      }
+    }
+    return chargers;
   }
 
   //Debuging tool to print charging station names
@@ -161,5 +226,20 @@ class Chargers {
     for (int i = 0; i < chargers.length; i++) {
       print(chargers.elementAt(i)['name']);
     }
+  }
+}
+
+class Debugger {
+  Debugger() {
+    run();
+  }
+  void run() async {
+    var charger = Chargers();
+    //charger.activateAccount("0fKNcfWsxhrawuATfGUd");
+    await charger.pullChargers(46.9965, 120.5478);
+    await charger.activateAccount("0fKNcfWsxhrawuATfGUd");
+    charger.printChargers();
+    charger.orderSpeed();
+    charger.printChargers();
   }
 }
