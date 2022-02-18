@@ -33,9 +33,6 @@ class MyApp extends StatelessWidget {
 
 // Leaflet / OpenMap implementation
 class MapScreen extends StatefulWidget {
-
-  
-
   const MapScreen({Key? key}) : super(key: key);
 
   @override
@@ -84,52 +81,47 @@ class _MapScreenState extends State<MapScreen> {
           child: Container(
               margin: EdgeInsets.all(20),
               padding: EdgeInsets.all(10),
-              child: Column(
+              child: Row(
                 children: [
                   Container(
-                      color: Colors.white,
-                      width: screenWidth /1.15,
-                      child: Row(
-                        children: [
-                          Stack(children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  width: 1.0,
-                                ),
-                                borderRadius: BorderRadius.circular(4.0),
-                              ),
-                              margin: EdgeInsets.all(12),
-                              child: Row(
-                                children: <Widget>[
-                                  Container(
-                                    child: Icon(
-                                      Icons.search,
-                                      color: Colors.grey,
-                                      size: 20,
-                                    ),
-                                  ),
-                                  Container(
-                                    width: 270, 
-                                    child: TextField(
-                                      keyboardType: TextInputType.text,
-                                      decoration: InputDecoration(
-                                       
-                                        hintText: "Search",
-                                        hintStyle:
-                                            TextStyle(color: Colors.grey),
-                                    
-                                    
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            )
-                          ])
-                        ],
-                      ))
+                      width: screenWidth / 1.18,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: Color(0xff096B72),
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                      ),
+                      child: Row(children: [
+                        Container(
+                          child: TextButton.icon(
+                            icon: Icon(
+                              Icons.search,
+                              color: Colors.grey,
+                            ),
+                            label: Text('Search',
+                                style: TextStyle(color: Colors.grey)),
+                            onPressed: () {
+                              Navigator.of(context).push(_createRoute());
+                            },
+                          ),
+                        ),
+                      Container(
+                      child: ElevatedButton(
+                    onPressed: () {},
+                    child: Icon(Icons.mic),
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all(CircleBorder()),
+                      padding: MaterialStateProperty.all(EdgeInsets.all(20)),
+                      backgroundColor: MaterialStateProperty.all(
+                          Colors.blue), // <-- Button color
+                      overlayColor:
+                          MaterialStateProperty.resolveWith<Color?>((states) {
+                        if (states.contains(MaterialState.pressed))
+                          return Colors.red; // <-- Splash color
+                      }),
+                    ),
+                  )),
+                      ])),
+                  
                 ],
               )))
     ]));
@@ -153,6 +145,48 @@ class _MapScreenState extends State<MapScreen> {
           title: "Charger Location",
           description: "Level 2 charger, Greenlots");
     }
+  }
+}
+
+Route _createRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => const searchPage(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(0.0, 1.0);
+      const end = Offset.zero;
+      const curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
+}
+
+class searchPage extends StatelessWidget {
+  const searchPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Center(
+            child: Column(
+      children: <Widget>[
+        Container(
+            padding: EdgeInsets.only(left: 10),
+            width: 270,
+            child: TextField(
+              keyboardType: TextInputType.text,
+              decoration: InputDecoration(
+                hintText: "Search",
+                hintStyle: TextStyle(color: Colors.grey),
+              ),
+            ))
+      ],
+    )));
   }
 }
 
