@@ -91,8 +91,25 @@ class _MapScreenState extends State<MapScreen> {
                         borderRadius: BorderRadius.all(Radius.circular(20)),
                       ),
                       child: Row(children: [
-                        Container(
+                        SizedBox(
+                          width: 15,
+                        ),
+                        Expanded(
                           child: TextButton.icon(
+                            
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  
+                                )
+                              ),
+                              padding: MaterialStateProperty.all(
+                                  EdgeInsets.fromLTRB(10, 0, 0, 0)),
+                              alignment: Alignment.centerLeft,
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colors.white),
+                            ),
                             icon: Icon(
                               Icons.search,
                               color: Colors.grey,
@@ -104,24 +121,26 @@ class _MapScreenState extends State<MapScreen> {
                             },
                           ),
                         ),
-                      Container(
-                      child: ElevatedButton(
-                    onPressed: () {},
-                    child: Icon(Icons.mic),
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.all(CircleBorder()),
-                      padding: MaterialStateProperty.all(EdgeInsets.all(20)),
-                      backgroundColor: MaterialStateProperty.all(
-                          Colors.blue), // <-- Button color
-                      overlayColor:
-                          MaterialStateProperty.resolveWith<Color?>((states) {
-                        if (states.contains(MaterialState.pressed))
-                          return Colors.red; // <-- Splash color
-                      }),
-                    ),
-                  )),
+                        Container(
+                            child: ElevatedButton(
+                          onPressed: () {},
+                          child: Icon(Icons.mic),
+                          style: ButtonStyle(
+                            
+                            shape: MaterialStateProperty.all(CircleBorder()),
+                            padding:
+                                MaterialStateProperty.all(EdgeInsets.all(8)),
+                            backgroundColor: MaterialStateProperty.all(
+                                Color(0xff732015)), // <-- Button color
+                            overlayColor:
+                                MaterialStateProperty.resolveWith<Color?>(
+                                    (states) {
+                              if (states.contains(MaterialState.pressed))
+                                return Colors.black; // <-- Splash color
+                            }),
+                          ),
+                        )),
                       ])),
-                  
                 ],
               )))
     ]));
