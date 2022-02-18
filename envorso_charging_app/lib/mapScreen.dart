@@ -96,14 +96,12 @@ class _MapScreenState extends State<MapScreen> {
                         ),
                         Expanded(
                           child: TextButton.icon(
-                            
                             style: ButtonStyle(
-                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15.0),
-                                  
-                                )
-                              ),
+                              shape: MaterialStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                              )),
                               padding: MaterialStateProperty.all(
                                   EdgeInsets.fromLTRB(10, 0, 0, 0)),
                               alignment: Alignment.centerLeft,
@@ -126,7 +124,6 @@ class _MapScreenState extends State<MapScreen> {
                           onPressed: () {},
                           child: Icon(Icons.mic),
                           style: ButtonStyle(
-                            
                             shape: MaterialStateProperty.all(CircleBorder()),
                             padding:
                                 MaterialStateProperty.all(EdgeInsets.all(8)),
