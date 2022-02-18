@@ -20,14 +20,16 @@ class CharTest {
 //This class will pull and store the collection of chagers
 class Chargers {
   //the max number of chargers being pulled at any given time
-  int maxSize = 15;
+  int maxSize = 10;
   //the max range of the chargers being querried
   double range = 0.042478;
 
   List<Map<String, dynamic>> chargers = [];
 
+  String userKey = "";
+
   //Constructor
-  Chargers();
+  Chargers() {}
 
   //Pull down n < maxSize chargers into a list
   Future<List<Map<String, dynamic>>> pullChargers(
@@ -49,15 +51,12 @@ class Chargers {
   }
 
   //Change the search range of chargers
-  void changeRange(int miles) async {
+  void changeRange(int miles) {
     range = miles / 69.00;
   }
 
-  void printChargers() async {
-    print(chargers.length);
-    for (int i = 0; i < chargers.length; i++) {
-      print(chargers.elementAt(i)['name']);
-    }
+  void changeMaxSize(int size) {
+    maxSize = size;
   }
 
   //order the list of chargers by price
@@ -81,5 +80,12 @@ class Chargers {
   //order the list of chargers by charging Speed
   void orderSpeed() {
     List<Map<String, dynamic>> temp = [];
+  }
+
+  void printChargers() async {
+    print(chargers.length);
+    for (int i = 0; i < chargers.length; i++) {
+      print(chargers.elementAt(i)['name']);
+    }
   }
 }
