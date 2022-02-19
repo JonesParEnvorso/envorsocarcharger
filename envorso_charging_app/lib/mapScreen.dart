@@ -75,9 +75,12 @@ class _MapScreenState extends State<MapScreen> {
               MarkerLayerOptions(markers: markers)
             ]),
       ),
+
+      // THIS IS ALL SEARCH BAR STUFF PLEASE DON'T TOUCH D:
+      // If you do touch, please contact Kirsten, its sensitive :)
       Positioned(
           left: 0,
-          bottom: 10,
+          bottom: 0,
           child: Container(
               margin: EdgeInsets.all(20),
               padding: EdgeInsets.all(10),
