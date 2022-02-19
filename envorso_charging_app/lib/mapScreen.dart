@@ -269,6 +269,13 @@ class searchPage extends StatelessWidget {
                   }),
                 ),
               )),
+              // NEED TO DO 
+                // ON FOCUS ON THIS ELEMENT WHEN SELECTING SEARCH FROM Map PAGE
+                // Have Back button go back to map page
+                // Mic does nothin
+                // make a list of starred then recent locations
+                // when location is clicked, it goes to map screen with location focused
+                
               Container(
                   padding: EdgeInsets.all(1),
                   width: 250,
