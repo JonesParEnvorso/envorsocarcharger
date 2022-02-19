@@ -251,15 +251,57 @@ class searchPage extends StatelessWidget {
             child: Column(
       children: <Widget>[
         Container(
-            padding: EdgeInsets.only(left: 10),
-            width: 270,
-            child: TextField(
-              keyboardType: TextInputType.text,
-              decoration: InputDecoration(
-                hintText: "Search",
-                hintStyle: TextStyle(color: Colors.grey),
-              ),
-            ))
+            padding: EdgeInsets.fromLTRB(10, 30, 0, 0),
+            child: Row(children: [
+              Container(
+                  child: ElevatedButton(
+                onPressed: () {},
+                child: Icon(Icons.arrow_back),
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all(CircleBorder()),
+                  padding: MaterialStateProperty.all(EdgeInsets.all(8)),
+                  backgroundColor: MaterialStateProperty.all(
+                      Color(0xff096B72)), // Button color
+                  overlayColor:
+                      MaterialStateProperty.resolveWith<Color?>((states) {
+                    if (states.contains(MaterialState.pressed))
+                      return Colors.black; // Splash color
+                  }),
+                ),
+              )),
+              Container(
+                  padding: EdgeInsets.all(1),
+                  width: 250,
+                  child: TextField(
+                    
+                    keyboardType: TextInputType.text,
+                    
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.search),
+                      hintText: "Search",
+                      hintStyle: TextStyle(color: Colors.grey),
+                      border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(25.0)
+                    ),
+                    ),
+                  )),
+                  Container(
+                  child: ElevatedButton(
+                onPressed: () {},
+                child: Icon(Icons.mic),
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all(CircleBorder()),
+                  padding: MaterialStateProperty.all(EdgeInsets.all(8)),
+                  backgroundColor: MaterialStateProperty.all(
+                      Color(0xff732015)), // Button color
+                  overlayColor:
+                      MaterialStateProperty.resolveWith<Color?>((states) {
+                    if (states.contains(MaterialState.pressed))
+                      return Colors.black; // Splash color
+                  }),
+                ),
+              )),
+            ])),          
       ],
     )));
   }
