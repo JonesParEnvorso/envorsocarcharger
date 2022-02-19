@@ -1,16 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'firebase_options.dart';
-import 'package:flutter/material.dart';
 import "dart:math";
 
 //This class will pull and store the collection of chagers
 class Chargers {
+  //final geo = Geoflutterfire();
   //the max number of chargers being pulled at any given time
-  int maxSize = 10;
+  int minSize = 10;
   //the max range of the chargers being querried
-  double range = 0.042478;
+  int range = 2;
   //the stored list of vehicle chargers
   List<Map<String, dynamic>> chargers = [];
   //the Array of memberships
@@ -26,19 +23,21 @@ class Chargers {
   //Pull down n < maxSize chargers into a list
   Future<List<Map<String, dynamic>>> pullChargers(
       double lat, double lon) async {
-    var querryList = await FirebaseFirestore.instance
-        .collection('stations')
-        .limit(maxSize)
-        .where('lon', isLessThan: (lon + range), isGreaterThan: (lon - range))
-        .get();
-
     chargers = [];
-    for (var docs in querryList.docs) {
-      chargers.add(docs.data());
+    List<int> geoList = getGeoSet((geoHash(lat, lon)), range);
+    //print(geo);
+    //List<int> geo = [83867952, 83867950];
+    for (var geoHash in geoList) {
+      var querryList = await FirebaseFirestore.instance
+          .collection('stations')
+          .where('geoHash', isEqualTo: geoHash)
+          .get();
+      for (var docs in querryList.docs) {
+        chargers.add(docs.data());
+      }
     }
 
     orderDistance(lat, lon);
-
     return chargers;
   }
 
@@ -77,12 +76,12 @@ class Chargers {
 
   //set the search range of chargers
   void setRange(int miles) {
-    range = miles / 69.00;
+    range = miles;
   }
 
   //set the max return size of chargers
-  void setMaxSize(int size) {
-    maxSize = size;
+  void setMinSize(int size) {
+    minSize = size;
   }
 
   //Remove from the List all plug types not owned by the user
@@ -219,11 +218,34 @@ class Chargers {
     return chargers;
   }
 
+  //identify the geoHash for the given lat/lon
+  int geoHash(double lat, double lon) {
+    int lattitude = (lat * 100).round();
+    int longitude = (lon * 100).round();
+
+    return (18000 * lattitude) + longitude;
+  }
+
+  //determines the surrounding geoHashes and returns it as a set
+  List<int> getGeoSet(int geoHash, int range) {
+    int high = range;
+    int low = range * (-1);
+    List<int> geoSet = [];
+    print("start Geo Set");
+    for (int i = low; i <= high; i++) {
+      for (int k = low; k <= high; k++) {
+        geoSet.add(geoHash + (i * 9000) + (k));
+      }
+    }
+    print("End Geo Set");
+    return geoSet;
+  }
+
   //Debuging tool to print charging station names
   void printChargers() {
     print(chargers.length);
     for (int i = 0; i < chargers.length; i++) {
-      print(chargers.elementAt(i)['name']);
+      print(chargers.elementAt(i));
     }
   }
 }
@@ -232,13 +254,34 @@ class Debugger {
   Debugger() {
     run();
   }
+
   void run() async {
     var charger = Chargers();
-    //charger.activateAccount("0fKNcfWsxhrawuATfGUd");
-    await charger.pullChargers(46.9965, 120.5478);
-    await charger.activateAccount("0fKNcfWsxhrawuATfGUd");
+    await charger.pullChargers(46.6021, -120.5059);
+    //await charger.activateAccount("0fKNcfWsxhrawuATfGUd");
     charger.printChargers();
-    //charger.orderSpeed();
-    //charger.printChargers();
+  }
+
+  //This function applies a geoHash to each charging station
+  // DO NOT CALL THIS FUNCTION
+  void addGeoHash() async {
+    print("start");
+    var charger = Chargers();
+
+    var querryList =
+        await FirebaseFirestore.instance.collection('stations').get();
+
+    List<Map<String, dynamic>> chargers = [];
+    for (var docs in querryList.docs) {
+      chargers.add(docs.data());
+      chargers.last['id'] = docs.id;
+    }
+
+    for (var entries in chargers) {
+      FirebaseFirestore.instance.collection('stations').doc(entries['id']).set(
+          {'geoHash': charger.geoHash(entries['lat'], entries['lon'])},
+          SetOptions(merge: true)).then((value) {});
+    }
+    print("complete");
   }
 }
