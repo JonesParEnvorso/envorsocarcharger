@@ -84,13 +84,14 @@ class _MapScreenState extends State<MapScreen> {
               child: Row(
                 children: [
                   Container(
-                      width: screenWidth / 1.18,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: Color(0xff096B72),
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                      ),
-                      child: Row(children: [
+                    width: screenWidth / 1.18,
+                    height: 105,
+                    decoration: BoxDecoration(
+                      color: Color(0xff096B72),
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                    ),
+                    child: Column(children: [
+                      Row(children: [
                         SizedBox(
                           width: 15,
                         ),
@@ -128,16 +129,71 @@ class _MapScreenState extends State<MapScreen> {
                             padding:
                                 MaterialStateProperty.all(EdgeInsets.all(8)),
                             backgroundColor: MaterialStateProperty.all(
-                                Color(0xff732015)), // <-- Button color
+                                Color(0xff732015)), // Button color
                             overlayColor:
                                 MaterialStateProperty.resolveWith<Color?>(
                                     (states) {
                               if (states.contains(MaterialState.pressed))
-                                return Colors.black; // <-- Splash color
+                                return Colors.black; // Splash color
                             }),
                           ),
                         )),
-                      ])),
+                      ]),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 30,
+                          ),
+                          Container(
+                              padding: EdgeInsets.all(2),
+                              width: 280,
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                bottom: BorderSide(
+                                  color: Colors.white,
+                                ),
+                              ))),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SizedBox(
+                            width: 15,
+                          ),
+                          TextButton.icon(
+                            icon: Icon(
+                              Icons.location_on,
+                              color: Colors.white,
+                            ),
+                            label: (Text('My locations',
+                                style: TextStyle(color: Colors.white))),
+                            onPressed: () {},
+                          ),
+                          Container(
+                              padding: EdgeInsets.all(2),
+                              width: 1,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                left: BorderSide(
+                                  color: Colors.white,
+                                ),
+                              ))),
+                          TextButton.icon(
+                            icon: Icon(Icons.directions_car_filled_rounded,
+                                color: Colors.white),
+                            label: (Text('Trip Planner',
+                                style: TextStyle(color: Colors.white))),
+                            onPressed: () {},
+                          ),
+                          SizedBox(
+                            width: 33,
+                          )
+                        ],
+                      )
+                    ]),
+                  ),
                 ],
               )))
     ]));
