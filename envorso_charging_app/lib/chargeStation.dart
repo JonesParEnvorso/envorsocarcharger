@@ -29,8 +29,7 @@ class Chargers {
     var querryList = await FirebaseFirestore.instance
         .collection('stations')
         .limit(maxSize)
-        //.where('city', isEqualTo: "Ellensburg")
-        //.where('lon', isLessThan: (lon + range), isGreaterThan: (lon - range))
+        .where('lon', isLessThan: (lon + range), isGreaterThan: (lon - range))
         .get();
 
     chargers = [];
@@ -61,7 +60,7 @@ class Chargers {
         .get();
 
     carPlug = userPlug['chargerType'];
-    memberships = userMem['services'];
+    //memberships = userMem['services'];
 
     return chargers;
   }
@@ -239,7 +238,7 @@ class Debugger {
     await charger.pullChargers(46.9965, 120.5478);
     await charger.activateAccount("0fKNcfWsxhrawuATfGUd");
     charger.printChargers();
-    charger.orderSpeed();
-    charger.printChargers();
+    //charger.orderSpeed();
+    //charger.printChargers();
   }
 }
