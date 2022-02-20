@@ -3,9 +3,8 @@ import "dart:math";
 
 //This class will pull and store the collection of chagers
 class Chargers {
-  //final geo = Geoflutterfire();
   //the max number of chargers being pulled at any given time
-  int minSize = 10;
+  int minSize = 5;
   //the max range of the chargers being querried
   int range = 2;
   //the stored list of vehicle chargers
@@ -13,14 +12,14 @@ class Chargers {
   //the Array of memberships
   List<dynamic> memberships = [];
   //the array of car plugs
-  List<dynamic> carPlug = [];
+  List<dynamic> carPlugs = [];
   //the map of user info
   Map<String, dynamic> userInfo = {};
 
   //Constructor
   Chargers() {}
 
-  //Pull down n < maxSize chargers into a list
+  //Pull down chargers into a list
   Future<List<Map<String, dynamic>>> pullChargers(
       double lat, double lon) async {
     chargers = [];
@@ -58,7 +57,7 @@ class Chargers {
         .doc('services')
         .get();
 
-    carPlug = userPlug['chargerType'];
+    carPlugs = userPlug['chargerType'];
     //memberships = userMem['services'];
 
     return chargers;
@@ -66,7 +65,7 @@ class Chargers {
 
   //set the array of car plugs
   void setCarPlug(List<String> plugs) {
-    carPlug = plugs;
+    carPlugs = plugs;
   }
 
   //set the array of memberships
@@ -87,10 +86,10 @@ class Chargers {
   //Remove from the List all plug types not owned by the user
   List<Map<String, dynamic>> maskPlugs() {
     for (var n in chargers) {
-      if (!((n['plug'].contains("CHADEMO") && carPlug.contains("CHAdeMO")) ||
-          (n['plug'].contains("J1772") && carPlug.contains("J1772")) ||
+      if (!((n['plug'].contains("CHADEMO") && carPlugs.contains("CHAdeMO")) ||
+          (n['plug'].contains("J1772") && carPlugs.contains("J1772")) ||
           (n['plug'].contains("J1772COMBO") &&
-              carPlug.contains("SAE Combo CCS")))) {
+              carPlugs.contains("SAE Combo CCS")))) {
         chargers.remove(n);
       }
     }
@@ -101,10 +100,10 @@ class Chargers {
   List<Map<String, dynamic>> orderPlugs() {
     List<Map<String, dynamic>> temp = [];
     for (var n in chargers) {
-      if (!((n['plug'].contains("CHADEMO") && carPlug.contains("CHAdeMO")) ||
-          (n['plug'].contains("J1772") && carPlug.contains("J1772")) ||
+      if (!((n['plug'].contains("CHADEMO") && carPlugs.contains("CHAdeMO")) ||
+          (n['plug'].contains("J1772") && carPlugs.contains("J1772")) ||
           (n['plug'].contains("J1772COMBO") &&
-              carPlug.contains("SAE Combo CCS")))) {
+              carPlugs.contains("SAE Combo CCS")))) {
         temp.add(n);
         chargers.remove(n);
       }
