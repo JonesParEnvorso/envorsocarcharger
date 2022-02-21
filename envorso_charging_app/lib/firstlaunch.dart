@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'newUserEmail.dart';
 import 'mapScreen.dart';
 import 'servicesList.dart';
+import 'settings.dart';
 
 void main() {
   runApp(const MyApp());
@@ -40,6 +41,11 @@ class _FirstLaunch extends State<FirstLaunch> {
   goToMap(BuildContext context) {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => MapScreen()));
+  }
+
+  goToSettings(BuildContext context) {
+    Navigator.push(
+      context, MaterialPageRoute(builder: (context) => SettingsScreen()));
   }
 
   goToServices(BuildContext context) {
@@ -211,6 +217,18 @@ class _FirstLaunch extends State<FirstLaunch> {
                       ),
                       onPressed: () => goToServices(context) ,
                     )),*/
+                    // TEMP!!!!!! TEMP!!!! DELETE
+                    Container(
+                    height: 50,
+                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: ElevatedButton(
+                      child: const Text('Settings'),
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Color(0xff096B72)),
+                      ),
+                      onPressed: () => goToSettings(context),
+                    )),
               ],
             )));
   }
