@@ -457,10 +457,10 @@ class _AddPID extends State<AddPID> {
                   controller: newName,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: 'First Name Last Name',
+                    labelText: 'Cardholder Name',
+                    hintText: 'First Name Last Name',
                   ),
                   textInputAction: TextInputAction.next,
-                  validator: _validateField,
                 ),
               ),
               Container(
