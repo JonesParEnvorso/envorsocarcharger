@@ -454,11 +454,7 @@ packages:
       name: test_api
       url: "https://pub.dartlang.org"
     source: hosted
-<<<<<<< HEAD
-    version: "0.4.3"
-=======
     version: "0.4.8"
->>>>>>> d28c0fa20c105c82e96623deefc58281b0fd0543
   transparent_image:
     dependency: transitive
     description:
