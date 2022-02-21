@@ -10,6 +10,7 @@ import 'package:map_launcher/map_launcher.dart' as maplauncher;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'speech_recognition.dart';
 
 void main() {
   runApp(const MyApp());
@@ -42,6 +43,9 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
     var markers = <Marker>[];
     markers = [
       Marker(
@@ -53,26 +57,152 @@ class _MapScreenState extends State<MapScreen> {
     ];
 
     return Scaffold(
-        body: Center(
-            child: Container(
-                child: Column(children: [
-      Flexible(
-          child: FlutterMap(
-              options: MapOptions(
-                  interactiveFlags: InteractiveFlag.all &
-                      ~InteractiveFlag.rotate, // Disable rotation
-                  center: LatLng(46.999843, -120.539261),
-                  zoom: 17),
-              layers: [
-            TileLayerOptions(
-              urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-              subdomains: ['a', 'b', 'c'],
-              maxZoom: 20.0,
-              maxNativeZoom: 19.0,
-            ),
-            MarkerLayerOptions(markers: markers)
-          ]))
-    ]))));
+        body: Stack(children: [
+      Positioned.fill(
+        child: FlutterMap(
+            options: MapOptions(
+                interactiveFlags: InteractiveFlag.all &
+                    ~InteractiveFlag.rotate, // Disable rotation
+                center: LatLng(46.999843, -120.539261),
+                zoom: 17),
+            layers: [
+              TileLayerOptions(
+                urlTemplate:
+                    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                subdomains: ['a', 'b', 'c'],
+                maxZoom: 20.0,
+                maxNativeZoom: 19.0,
+              ),
+              MarkerLayerOptions(markers: markers)
+            ]),
+      ),
+
+      // THIS IS ALL SEARCH BAR STUFF PLEASE DON'T TOUCH D:
+      // If you do touch, please contact Kirsten, its sensitive :)
+      Positioned(
+          left: 0,
+          bottom: 0,
+          child: Container(
+              margin: EdgeInsets.all(20),
+              padding: EdgeInsets.all(10),
+              child: Row(
+                children: [
+                  Container(
+                    width: screenWidth / 1.18,
+                    height: 105,
+                    decoration: BoxDecoration(
+                      color: Color(0xff096B72),
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                    ),
+                    child: Column(children: [
+                      Row(children: [
+                        SizedBox(
+                          width: 15,
+                        ),
+                        Expanded(
+                          child: TextButton.icon(
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                              )),
+                              padding: MaterialStateProperty.all(
+                                  EdgeInsets.fromLTRB(10, 0, 0, 0)),
+                              alignment: Alignment.centerLeft,
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colors.white),
+                            ),
+                            icon: Icon(
+                              Icons.search,
+                              color: Colors.grey,
+                            ),
+                            label: Text('Search',
+                                style: TextStyle(color: Colors.grey)),
+                            onPressed: () {
+                              Navigator.of(context).push(_createRoute());
+                            },
+                          ),
+                        ),
+                        Container(
+                            child: ElevatedButton(
+                          onPressed: () {
+                            //Navigator.push(context, )
+                          },
+                          child: Icon(Icons.mic),
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all(CircleBorder()),
+                            padding:
+                                MaterialStateProperty.all(EdgeInsets.all(8)),
+                            backgroundColor: MaterialStateProperty.all(
+                                Color(0xff732015)), // Button color
+                            overlayColor:
+                                MaterialStateProperty.resolveWith<Color?>(
+                                    (states) {
+                              if (states.contains(MaterialState.pressed))
+                                return Colors.black; // Splash color
+                            }),
+                          ),
+                        )),
+                      ]),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 30,
+                          ),
+                          Container(
+                              padding: EdgeInsets.all(2),
+                              width: 280,
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                bottom: BorderSide(
+                                  color: Colors.white,
+                                ),
+                              ))),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SizedBox(
+                            width: 15,
+                          ),
+                          TextButton.icon(
+                            icon: Icon(
+                              Icons.location_on,
+                              color: Colors.white,
+                            ),
+                            label: (Text('My locations',
+                                style: TextStyle(color: Colors.white))),
+                            onPressed: () {},
+                          ),
+                          Container(
+                              padding: EdgeInsets.all(2),
+                              width: 1,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                left: BorderSide(
+                                  color: Colors.white,
+                                ),
+                              ))),
+                          TextButton.icon(
+                            icon: Icon(Icons.directions_car_filled_rounded,
+                                color: Colors.white),
+                            label: (Text('Trip Planner',
+                                style: TextStyle(color: Colors.white))),
+                            onPressed: () {},
+                          ),
+                          SizedBox(
+                            width: 33,
+                          )
+                        ],
+                      )
+                    ]),
+                  ),
+                ],
+              )))
+    ]));
   }
 
   // Launches a pin in Google Maps (Provide more later)
@@ -93,6 +223,94 @@ class _MapScreenState extends State<MapScreen> {
           title: "Charger Location",
           description: "Level 2 charger, Greenlots");
     }
+  }
+}
+
+Route _createRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => const searchPage(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(0.0, 1.0);
+      const end = Offset.zero;
+      const curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
+}
+
+class searchPage extends StatelessWidget {
+  const searchPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Center(
+            child: Column(
+      children: <Widget>[
+        Container(
+            padding: EdgeInsets.fromLTRB(10, 30, 0, 0),
+            child: Row(children: [
+              Container(
+                  child: ElevatedButton(
+                onPressed: () {},
+                child: Icon(Icons.arrow_back),
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all(CircleBorder()),
+                  padding: MaterialStateProperty.all(EdgeInsets.all(8)),
+                  backgroundColor: MaterialStateProperty.all(
+                      Color(0xff096B72)), // Button color
+                  overlayColor:
+                      MaterialStateProperty.resolveWith<Color?>((states) {
+                    if (states.contains(MaterialState.pressed))
+                      return Colors.black; // Splash color
+                  }),
+                ),
+              )),
+              // NEED TO DO
+              // ON FOCUS ON THIS ELEMENT WHEN SELECTING SEARCH FROM Map PAGE
+              // Have Back button go back to map page
+              // Mic does nothin
+              // make a list of starred then recent locations
+              // when location is clicked, it goes to map screen with location focused
+
+              Container(
+                  padding: EdgeInsets.all(1),
+                  width: 250,
+                  child: TextField(
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.search),
+                      hintText: "Search",
+                      hintStyle: TextStyle(color: Colors.grey),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0)),
+                    ),
+                  )),
+              Container(
+                  child: ElevatedButton(
+                onPressed: () {},
+                child: Icon(Icons.mic),
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all(CircleBorder()),
+                  padding: MaterialStateProperty.all(EdgeInsets.all(8)),
+                  backgroundColor: MaterialStateProperty.all(
+                      Color(0xff732015)), // Button color
+                  overlayColor:
+                      MaterialStateProperty.resolveWith<Color?>((states) {
+                    if (states.contains(MaterialState.pressed))
+                      return Colors.black; // Splash color
+                  }),
+                ),
+              )),
+            ])),
+      ],
+    )));
   }
 }
 
