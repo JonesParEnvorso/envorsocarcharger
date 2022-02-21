@@ -28,6 +28,7 @@ class Chargers {
     //List<int> geo = [83867952, 83867950];
     bool foundChargers = false;
     while (!foundChargers) {
+      chargers = [];
       for (var geoHash in geoList) {
         var querryList = await FirebaseFirestore.instance
             .collection('stations')
