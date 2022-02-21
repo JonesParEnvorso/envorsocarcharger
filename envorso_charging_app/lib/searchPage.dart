@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'main.dart';
+import 'speech_recognition.dart' as speech;
 
 void main() {
   runApp(const MyApp());
@@ -80,7 +81,9 @@ class _searchPage extends State<searchPage> {
                   )),
               Container(
                   child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  speech.SpeechScreen;
+                },
                 child: Icon(Icons.mic),
                 style: ButtonStyle(
                   shape: MaterialStateProperty.all(CircleBorder()),
