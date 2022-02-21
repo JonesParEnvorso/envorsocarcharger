@@ -4,9 +4,9 @@ import "dart:math";
 //This class will pull and store the collection of chagers
 class Chargers {
   //the max number of chargers being pulled at any given time
-  int minSize = 5;
+  int minSize = 3;
   //the max range of the chargers being querried
-  int range = 2;
+  int range = 3;
   //the stored list of vehicle chargers
   List<Map<String, dynamic>> chargers = [];
   //the Array of memberships
@@ -17,7 +17,7 @@ class Chargers {
   Map<String, dynamic> userInfo = {};
 
   //Constructor
-  Chargers() {}
+  Chargers();
 
   //Pull down chargers into a list
   Future<List<Map<String, dynamic>>> pullChargers(
@@ -82,7 +82,7 @@ class Chargers {
         .get();
 
     carPlugs = userPlug['chargerType'];
-    //memberships = userMem['services'];
+    memberships = userMem['services'];
 
     return chargers;
   }
@@ -214,12 +214,12 @@ class Chargers {
 
   //order the list of chargers by price
   void orderPrice() async {
-    List<Map<String, dynamic>> temp = [];
+    //List<Map<String, dynamic>> temp = [];
   }
 
   //order the list of chargers by Distance from user
   List<Map<String, dynamic>> orderDistance(double lat, double lon) {
-    List<Map<String, dynamic>> temp = [];
+    //List<Map<String, dynamic>> temp = [];
     num distanceA = 0;
     num distanceB = 0;
     bool isSorted = false;
@@ -241,6 +241,7 @@ class Chargers {
     return chargers;
   }
 
+  /*
   //identify the geoHash for the given lat/lon
   int geoHash(double lat, double lon) {
     int lattitude = (lat * 100).round();
@@ -248,8 +249,30 @@ class Chargers {
 
     return (18000 * lattitude) + longitude;
   }
+  */
+  int geoHash(double lat, double lon) {
+    int lattitude = (lat * 100).round();
+    int longitude = (lon * 100).round();
 
+    return (9000 * lattitude) + longitude;
+  }
+
+  /*
   //determines the surrounding geoHashes and returns it as a set
+  List<int> getGeoSet(int geoHash, int range) {
+    int high = range;
+    int low = range * (-1);
+    List<int> geoSet = [];
+    print("start Geo Set");
+    for (int i = low; i <= high; i++) {
+      for (int k = low; k <= high; k++) {
+        geoSet.add(geoHash + (i * 9000) + (k));
+      }
+    }
+    print("End Geo Set");
+    return geoSet;
+  }
+  */
   List<int> getGeoSet(int geoHash, int range) {
     int high = range;
     int low = range * (-1);
@@ -280,10 +303,12 @@ class Debugger {
 
   void run() async {
     var charger = Chargers();
-    //await charger.pullChargers(46.6021, -120.5059); //46.999883, -120.544755
+    //await charger.pullChargers(46.999883, -120.544755); //46.999883, -120.544755
     //await charger.activateAccount("0fKNcfWsxhrawuATfGUd");
     //charger.printChargers();
-    print(await charger.pullServices(46.6021, -120.5059));
+    print(await charger.pullServices(46.999883, -120.544755));
+    print("done");
+    //addGeoHash();
   }
 
   //This function applies a geoHash to each charging station
