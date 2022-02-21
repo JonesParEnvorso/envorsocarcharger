@@ -50,6 +50,19 @@ class Chargers {
     return chargers;
   }
 
+  Future<List<String>> pullServices(double lat, double lon) async {
+    var local = await pullChargers(lat, lon);
+    List<String> networks = [];
+
+    for (var plug in local) {
+      if (!networks.contains(plug['network'])) {
+        networks.add(plug['network']);
+      }
+    }
+
+    return networks;
+  }
+
   //Pulls user data and stores it in the Class feilds.
   Future<List<Map<String, dynamic>>> activateAccount(String key) async {
     DocumentSnapshot<Map<String, dynamic>> userPlug = await FirebaseFirestore
@@ -266,9 +279,10 @@ class Debugger {
 
   void run() async {
     var charger = Chargers();
-    await charger.pullChargers(46.6021, -120.5059);
+    //await charger.pullChargers(46.6021, -120.5059); //46.999883, -120.544755
     //await charger.activateAccount("0fKNcfWsxhrawuATfGUd");
-    charger.printChargers();
+    //charger.printChargers();
+    print(await charger.pullServices(46.6021, -120.5059));
   }
 
   //This function applies a geoHash to each charging station
