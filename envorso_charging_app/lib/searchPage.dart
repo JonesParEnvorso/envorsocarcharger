@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
 import 'main.dart';
-
 
 void main() {
   runApp(const MyApp());
@@ -25,7 +23,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
 class searchPage extends StatefulWidget {
   const searchPage({Key? key}) : super(key: key);
 
@@ -33,8 +30,8 @@ class searchPage extends StatefulWidget {
   _searchPage createState() => _searchPage();
 }
 
-class _searchPage extends StatelessWidget {
-  const _searchPage({Key? key}) : super(key: key);
+class _searchPage extends State<searchPage> {
+  //const _searchPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
