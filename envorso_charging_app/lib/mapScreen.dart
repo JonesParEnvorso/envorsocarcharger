@@ -10,7 +10,8 @@ import 'package:map_launcher/map_launcher.dart' as maplauncher;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'speech_recognition.dart';
+
+String get speechRecognition => 'speech_recognition.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,6 +32,8 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+// speech recognition class
 
 // Leaflet / OpenMap implementation
 class MapScreen extends StatefulWidget {
@@ -126,8 +129,9 @@ class _MapScreenState extends State<MapScreen> {
                         ),
                         Container(
                             child: ElevatedButton(
-                          onPressed: () {
-                            //Navigator.push(context, )
+                          onPressed: () => {
+                            speechRecognition
+                            //Navigator.push(context, MaterialPageRoute(builder: (context) => const speech )
                           },
                           child: Icon(Icons.mic),
                           style: ButtonStyle(
