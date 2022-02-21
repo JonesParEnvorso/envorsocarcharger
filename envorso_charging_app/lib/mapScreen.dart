@@ -10,6 +10,7 @@ import 'package:map_launcher/map_launcher.dart' as maplauncher;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'searchPage.dart';
 
 // speech recognition
 String get speechRecognition => 'speech_recognition.dart';
@@ -249,75 +250,7 @@ Route _createRoute() {
   );
 }
 
-class searchPage extends StatelessWidget {
-  const searchPage({Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        body: Center(
-            child: Column(
-      children: <Widget>[
-        Container(
-            padding: EdgeInsets.fromLTRB(10, 30, 0, 0),
-            child: Row(children: [
-              Container(
-                  child: ElevatedButton(
-                onPressed: () {},
-                child: Icon(Icons.arrow_back),
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all(CircleBorder()),
-                  padding: MaterialStateProperty.all(EdgeInsets.all(8)),
-                  backgroundColor: MaterialStateProperty.all(
-                      Color(0xff096B72)), // Button color
-                  overlayColor:
-                      MaterialStateProperty.resolveWith<Color?>((states) {
-                    if (states.contains(MaterialState.pressed))
-                      return Colors.black; // Splash color
-                  }),
-                ),
-              )),
-              // NEED TO DO
-              // ON FOCUS ON THIS ELEMENT WHEN SELECTING SEARCH FROM Map PAGE
-              // Have Back button go back to map page
-              // Mic does nothin
-              // make a list of starred then recent locations
-              // when location is clicked, it goes to map screen with location focused
-
-              Container(
-                  padding: EdgeInsets.all(1),
-                  width: 250,
-                  child: TextField(
-                    keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.search),
-                      hintText: "Search",
-                      hintStyle: TextStyle(color: Colors.grey),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0)),
-                    ),
-                  )),
-              Container(
-                  child: ElevatedButton(
-                onPressed: () {},
-                child: Icon(Icons.mic),
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all(CircleBorder()),
-                  padding: MaterialStateProperty.all(EdgeInsets.all(8)),
-                  backgroundColor: MaterialStateProperty.all(
-                      Color(0xff732015)), // Button color
-                  overlayColor:
-                      MaterialStateProperty.resolveWith<Color?>((states) {
-                    if (states.contains(MaterialState.pressed))
-                      return Colors.black; // Splash color
-                  }),
-                ),
-              )),
-            ])),
-      ],
-    )));
-  }
-}
 
 /*
 // Google Maps display.
