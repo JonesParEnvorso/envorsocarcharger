@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 //import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'package:firebase_core/firebase_core.dart';
 //import 'firebase_options.dart';
+
 //import 'package:url_launcher/url_launcher.dart';
+import 'chargeStation.dart';
 import 'package:location/location.dart';
 import 'package:map_launcher/map_launcher.dart' as maplauncher;
 import 'package:flutter_svg/flutter_svg.dart';
@@ -51,6 +53,15 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
+
+    // Pull charger data into a list
+    Future<List<Map<String, dynamic>>> chargerData;
+
+    Chargers chargers = Chargers();
+    chargers.pullChargers(46.999843, -120.539261);
+    chargers.printChargers();
+
+    //for
 
     var markers = <Marker>[];
     markers = [

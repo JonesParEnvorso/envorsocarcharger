@@ -26,16 +26,26 @@ class Chargers {
     List<int> geoList = getGeoSet((geoHash(lat, lon)), range);
     //print(geo);
     //List<int> geo = [83867952, 83867950];
-    for (var geoHash in geoList) {
-      var querryList = await FirebaseFirestore.instance
-          .collection('stations')
-          .where('geoHash', isEqualTo: geoHash)
-          .get();
-      for (var docs in querryList.docs) {
-        chargers.add(docs.data());
+    bool foundChargers = false;
+    while (!foundChargers) {
+      for (var geoHash in geoList) {
+        var querryList = await FirebaseFirestore.instance
+            .collection('stations')
+            .where('geoHash', isEqualTo: geoHash)
+            .get();
+        for (var docs in querryList.docs) {
+          chargers.add(docs.data());
+        }
+      }
+      if (range > 10) {
+        return chargers;
+      } else if (chargers.length >= minSize) {
+        foundChargers = true;
+      } else {
+        range++;
       }
     }
-
+    range = 2;
     orderDistance(lat, lon);
     return chargers;
   }

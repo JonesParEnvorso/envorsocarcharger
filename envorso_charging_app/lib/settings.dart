@@ -27,11 +27,42 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreen extends State<SettingsScreen> {
- @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Padding(
-          padding: EdgeInsets(10),
-         
-        ),
+      padding: const EdgeInsets.all(10),
+      child: Row(
+        children: <Widget>[
+          Container(
+              child: ElevatedButton(
+                  onPressed: () {},
+                  child: Icon(Icons.arrow_back),
+                  style: ButtonStyle(
+                      shape: MaterialStateProperty.all(CircleBorder()),
+                      padding: MaterialStateProperty.all(EdgeInsets.all(8)),
+                      backgroundColor: MaterialStateProperty.all(
+                          Color(0xff096B72)), // Button color
+                      overlayColor:
+                          MaterialStateProperty.resolveWith<Color?>((states) {
+                        if (states.contains(MaterialState.pressed))
+                          return Colors.black; // Splash color
+                      })))),
+          Container(
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.all(10),
+              child: const Text(
+                'Settings',
+                style: TextStyle(fontSize: 20),
+              )),
+              Container( 
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: Icon(Icons.cancel)
+                )
+              ),
+        ],
+      ),
+    ));
+  }
 }
