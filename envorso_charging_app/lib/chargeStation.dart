@@ -4,7 +4,7 @@ import "dart:math";
 //This class will pull and store the collection of chagers
 class Chargers {
   //the max number of chargers being pulled at any given time
-  int minSize = 3;
+  int minSize = 2;
   //the max range of the chargers being querried
   int range = 3;
   //the stored list of vehicle chargers
@@ -38,7 +38,7 @@ class Chargers {
           chargers.add(docs.data());
         }
       }
-      if (range > 10) {
+      if (range > 5) {
         return chargers;
       } else if (chargers.length >= minSize) {
         foundChargers = true;
@@ -46,6 +46,7 @@ class Chargers {
         range++;
       }
     }
+    print(range);
     range = 2;
     orderDistance(lat, lon);
     return chargers;
@@ -251,10 +252,10 @@ class Chargers {
   }
   */
   int geoHash(double lat, double lon) {
-    int lattitude = (lat * 100).round();
-    int longitude = (lon * 100).round();
+    int lattitude = (lat * 100).truncate() * 4500;
+    int longitude = ((lon * 100) / 2).truncate();
 
-    return (9000 * lattitude) + longitude;
+    return lattitude + longitude;
   }
 
   /*
@@ -280,7 +281,7 @@ class Chargers {
     print("start Geo Set");
     for (int i = low; i <= high; i++) {
       for (int k = low; k <= high; k++) {
-        geoSet.add(geoHash + (i * 9000) + (k));
+        geoSet.add(geoHash + (i * 4500) + (k));
       }
     }
     print("End Geo Set");
