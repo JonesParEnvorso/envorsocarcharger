@@ -55,15 +55,60 @@ class _MapScreenState extends State<MapScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     // Pull charger data into a list
-    Future<List<Map<String, dynamic>>> chargerData;
+    List<Map<String, dynamic>> chargerData;
 
     Chargers chargers = Chargers();
-    chargers.pullChargers(46.999843, -120.539261);
-    chargers.printChargers();
+    List<Marker> markers = [];
+    markers.add(
+      Marker(
+          point: LatLng(46.999843, -120.539261),
+          builder: (ctx) => IconButton(
+              icon: Icon(Icons.location_pin),
+              color: Colors.red,
+              onPressed: () => launchMap())),
+    );
+
+    _fillChargerList() async {
+      // Pull data
+      chargerData = await chargers.pullChargers(46.999843, -120.539261);
+
+      // Print the lat and long of every charger
+      for (int i = 0; i < 1; i++) {
+        print("lat: ${chargerData[i]['lat']}");
+        print("lon: ${chargerData[i]['lon']}");
+
+        markers.add(
+          Marker(
+              point: LatLng(chargerData[i]['lat'], chargerData[i]['lon']),
+              builder: (ctx) => IconButton(
+                  icon: Icon(Icons.location_pin),
+                  color: Colors.red,
+                  onPressed: () => launchMap())),
+        );
+      }
+      /*
+      for (int i = 0; i < chargerData.length; i++) {
+        print("List Entry ${i}: ");
+        for (MapEntry e in chargerData[i].entries) {
+          print("Key ${e.key}, Value ${e.value}");
+        }
+        print("\n");
+      }*/
+      // Translate to markers list
+      /*markers.add(
+        Marker(
+            point: LatLng(chargerData, -120.539261),
+            builder: (ctx) => IconButton(
+                icon: Icon(Icons.location_pin),
+                color: Colors.red,
+                onPressed: () => launchMap())),
+      );*/
+    }
+
+    _fillChargerList();
 
     //for
 
-    var markers = <Marker>[];
     markers = [
       Marker(
           point: LatLng(46.999843, -120.539261),
