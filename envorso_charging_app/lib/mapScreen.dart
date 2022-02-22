@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
-//import 'package:google_maps_flutter/google_maps_flutter.dart';
-//import 'newUser.dart';
-//import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'package:firebase_core/firebase_core.dart';
-//import 'firebase_options.dart';
-
-//import 'package:url_launcher/url_launcher.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'chargeStation.dart';
 import 'package:location/location.dart';
 import 'package:map_launcher/map_launcher.dart' as maplauncher;
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
 import 'searchPage.dart';
 import 'speech_recognition.dart' as speech;
+//import 'newUser.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:firebase_core/firebase_core.dart';
+//import 'firebase_options.dart';
 
 // speech recognition
 //String get speechRecognition => 'speech_recognition.dart';
@@ -38,107 +34,83 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// speech recognition class
-
-// Leaflet / OpenMap implementation
+// Mapscreen widget
 class MapScreen extends StatefulWidget {
   const MapScreen({Key? key}) : super(key: key);
-
   @override
   _MapScreenState createState() => _MapScreenState();
 }
 
+// Mapscreen state
 class _MapScreenState extends State<MapScreen> {
+  // Location data
+  late LocationData currentLocation;
+  late LocationData _currentPosition;
+  Location location = Location();
+  // Charger data
+  Chargers chargers = Chargers();
+  List<Map<String, dynamic>> chargerData = [];
+  List<Marker> markers = [];
+  // Google Maps data
+  late GoogleMapController _googleMapController;
+  static const _initialCameraPosition = CameraPosition(
+    target: LatLng(46.999843, -120.539261), // Lat/Long target.
+    zoom: 11.5, // Max zoom level is normally 21.
+  );
   @override
+  void dispose() {
+    _googleMapController.dispose();
+    super.dispose();
+  }
+
+  // Called upon state initialization
+  void initState() {
+    super.initState();
+    _fillChargerList();
+  }
+
+  @override
+  // Generate map view
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
-    // Pull charger data into a list
-    List<Map<String, dynamic>> chargerData;
-
-    Chargers chargers = Chargers();
-    List<Marker> markers = [];
-    markers.add(
-      Marker(
-          point: LatLng(46.999843, -120.539261),
-          builder: (ctx) => IconButton(
-              icon: Icon(Icons.location_pin),
-              color: Colors.red,
-              onPressed: () => launchMap())),
-    );
-
-    _fillChargerList() async {
-      // Pull data
-      chargerData = await chargers.pullChargers(46.999843, -120.539261);
-
-      // Print the lat and long of every charger
-      for (int i = 0; i < 1; i++) {
-        print("lat: ${chargerData[i]['lat']}");
-        print("lon: ${chargerData[i]['lon']}");
-
-        markers.add(
-          Marker(
-              point: LatLng(chargerData[i]['lat'], chargerData[i]['lon']),
-              builder: (ctx) => IconButton(
-                  icon: Icon(Icons.location_pin),
-                  color: Colors.red,
-                  onPressed: () => launchMap())),
-        );
-      }
-      /*
-      for (int i = 0; i < chargerData.length; i++) {
-        print("List Entry ${i}: ");
-        for (MapEntry e in chargerData[i].entries) {
-          print("Key ${e.key}, Value ${e.value}");
-        }
-        print("\n");
-      }*/
-      // Translate to markers list
-      /*markers.add(
-        Marker(
-            point: LatLng(chargerData, -120.539261),
-            builder: (ctx) => IconButton(
-                icon: Icon(Icons.location_pin),
-                color: Colors.red,
-                onPressed: () => launchMap())),
-      );*/
-    }
-
-    _fillChargerList();
-
-    //for
-
-    markers = [
-      Marker(
-          point: LatLng(46.999843, -120.539261),
-          builder: (ctx) => IconButton(
-              icon: Icon(Icons.location_pin),
-              color: Colors.red,
-              onPressed: () => launchMap())),
-    ];
-
+    //getStation();
     return Scaffold(
+        // Google Map component values
         body: Stack(children: [
+      // Google Map
       Positioned.fill(
-        child: FlutterMap(
-            options: MapOptions(
-                interactiveFlags: InteractiveFlag.all &
-                    ~InteractiveFlag.rotate, // Disable rotation
-                center: LatLng(46.999843, -120.539261),
-                zoom: 17),
-            layers: [
-              TileLayerOptions(
-                urlTemplate:
-                    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                subdomains: ['a', 'b', 'c'],
-                maxZoom: 20.0,
-                maxNativeZoom: 19.0,
-              ),
-              MarkerLayerOptions(markers: markers)
-            ]),
-      ),
-
+          child: GoogleMap(
+        myLocationEnabled: true,
+        myLocationButtonEnabled: false,
+        zoomControlsEnabled: false,
+        initialCameraPosition: _initialCameraPosition,
+        onMapCreated: (controller) => _googleMapController = controller,
+        markers: Set.of(markers), // Displays markers
+      )),
+      // Recenter button
+      Positioned(
+          right: 30,
+          bottom: 150,
+          child: FloatingActionButton(
+            backgroundColor: Color(0xff096B72),
+            foregroundColor: Colors.white,
+            onPressed: () => getLocation(_googleMapController),
+            child: const Icon(Icons.center_focus_strong),
+            heroTag: 'center',
+          )),
+      // Back button
+      Positioned(
+          left: 20,
+          top: 50,
+          child: FloatingActionButton(
+            backgroundColor: Color(0xff096B72),
+            foregroundColor: Colors.white,
+            onPressed: () => Navigator.pop(context),
+            heroTag: 'back',
+            child: const Icon(Icons.arrow_back),
+          )),
       // THIS IS ALL SEARCH BAR STUFF PLEASE DON'T TOUCH D:
       // If you do touch, please contact Kirsten, its sensitive :)
       Positioned(
@@ -268,157 +240,13 @@ class _MapScreenState extends State<MapScreen> {
     ]));
   }
 
-  // Launches a pin in Google Maps (Provide more later)
-  void launchMap() async {
-    final availableMaps = await maplauncher.MapLauncher.installedMaps;
-    await availableMaps.first.showMarker(
-      coords: maplauncher.Coords(46.999843, -120.539261),
-      title: "Charger location",
-      description: "Level 2 charger, Greenlots",
-    );
-
-    if (await maplauncher.MapLauncher.isMapAvailable(
-            maplauncher.MapType.google) !=
-        null) {
-      await maplauncher.MapLauncher.showMarker(
-          mapType: maplauncher.MapType.google,
-          coords: maplauncher.Coords(46.999843, -120.539261),
-          title: "Charger Location",
-          description: "Level 2 charger, Greenlots");
-    }
-  }
-}
-
-Route _createRoute() {
-  return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => const searchPage(),
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      const begin = Offset(0.0, 1.0);
-      const end = Offset.zero;
-      const curve = Curves.ease;
-
-      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-      return SlideTransition(
-        position: animation.drive(tween),
-        child: child,
-      );
-    },
-  );
-}
-
-
-
-/*
-// Google Maps display.
-class MapScreen extends StatefulWidget {
-  const MapScreen({Key? key}) : super(key: key);
-  @override
-  _MapScreenState createState() => _MapScreenState();
-}
-
-class _MapScreenState extends State<MapScreen> {
-  // State objects
-  late LocationData _currentPosition;
-  late GoogleMapController _googleMapController;
-  Location location = Location();
-  static const _initialCameraPosition = CameraPosition(
-    target: LatLng(46.999843, -120.539261), // Lat/Long target.
-    zoom: 11.5, // Max zoom level is normally 21.
-  );
-
-  // Called upon state initialization
-  void initState() {
-    super.initState();
-    //initializeLocation();
-    //getLocation(_googleMapController);
-  }
-
-  // List of markers on map
-  final Map<MarkerId, Marker> _markers = <MarkerId, Marker>{};
-
-  @override
-  void dispose() {
-    _googleMapController.dispose();
-    super.dispose();
-  }
-
-//Experimenting with database calls. Does not currently work
-/*
-  void getStation() async {
-    final CollectionReference station =
-        FirebaseFirestore.instance.collection('stations');
-    station.where('city', isEqualTo: "Ellensburg").get().then((QuerySnapshot) {
-      for (var result in QuerySnapshot.docs) {
-        _addMarker(LatLng(result.get('lat'), result.get('lat')));
-      }
-    });
-  }
-*/
-
-  @override
-  // Generate map view
-  Widget build(BuildContext context) {
-    //getStation();
-    return Scaffold(
-      // Google Map component values
-      body: GoogleMap(
-        myLocationEnabled: true,
-        myLocationButtonEnabled: false,
-        zoomControlsEnabled: false,
-        initialCameraPosition: _initialCameraPosition,
-        onMapCreated: (controller) => _googleMapController = controller,
-        // Displays set of markers on map.
-        markers: Set.of(_markers.values),
-        // Long press to add marker (example)
-        onLongPress: _addMarker,
-      ),
-
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Stack(
-        fit: StackFit.expand,
-        children: [
-          // Recenter button
-          Positioned(
-              right: 30,
-              bottom: 10,
-              child: FloatingActionButton(
-                backgroundColor: Theme.of(context).primaryColor,
-                foregroundColor: Colors.black,
-                onPressed: () => getLocation(_googleMapController),
-                child: const Icon(Icons.center_focus_strong),
-                heroTag: 'center',
-              )),
-          // Back button
-          Positioned(
-            left: 20,
-            top: 50,
-            child: FloatingActionButton(
-              onPressed: () => Navigator.pop(context),
-              heroTag: 'back',
-              child: const Icon(Icons.arrow_back),
-            ),
-          )
-        ],
-      ),
-      /*floatingActionButton: FloatingActionButton(
-        backgroundColor: Theme.of(context).primaryColor,
-        foregroundColor: Colors.black,
-        // Animate to starting location on press.
-        onPressed: () => _googleMapController.animateCamera(
-          CameraUpdate.newCameraPosition(_initialCameraPosition),
-        ),
-        child: const Icon(Icons.center_focus_strong),
-      ),*/
-    );
-  }
-
   // Opens the map launcher (not yet binded)
   openMapsSheet(context) async {
     try {
-      final coords = Coords(37.759392, -122.5107336); // Set charger coords
+      final coords =
+          maplauncher.Coords(37.759392, -122.5107336); // Set charger coords
       final title = "Charger"; // Set charger title here
-      final availableMaps = await MapLauncher.installedMaps;
+      final availableMaps = await maplauncher.MapLauncher.installedMaps;
 
       showModalBottomSheet(
         context: context,
@@ -453,16 +281,6 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
-  // Adds a marker to the map display.
-  // Currently stores as a map of <MarkerId, Marker>.
-  // Probably needs to be made public before calling from firebase.
-  void _addMarker(LatLng pos) {
-    MarkerId _newMarkerId = MarkerId(_markers.length.toString());
-    setState(() {
-      _markers[_newMarkerId] = Marker(markerId: _newMarkerId, position: pos);
-    });
-  }
-
   // Set the location before the map is rendered (WIP)
   void initializeLocation() async {
     _currentPosition = await location.getLocation();
@@ -471,7 +289,6 @@ class _MapScreenState extends State<MapScreen> {
   // Recenters the map on the user's location
   void getLocation(GoogleMapController controller) async {
     // Wait for location
-    LocationData currentLocation;
     currentLocation = await location.getLocation();
     // Move map camera
     _googleMapController
@@ -481,27 +298,68 @@ class _MapScreenState extends State<MapScreen> {
     )));
   }
 
-  // Launches a URL in app.
-  // Probably not going to be used for navigation, but may be useful base for
-  // connecting to charger services.
-  /*
-  void _launchMapsUrl(String originPlaceId, String destinationPlaceId) async {
-    String mapOptions = [
-      'origin=$originPlaceId',
-      'origin_place_id=$originPlaceId',
-      'destination=$destinationPlaceId',
-      'destination_place_id=$destinationPlaceId',
-      'dir_action=navigate'
-    ].join('&');
+  // Launches a pin in Google Maps (Provide more later)
+  void launchMap(int markerInd) async {
+    final availableMaps = await maplauncher.MapLauncher.installedMaps;
 
-    final url = 'https://www.google.com/maps/dir/api=1&$mapOptions';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
+    await availableMaps.first.showMarker(
+      coords: maplauncher.Coords(
+          chargerData[markerInd]['lat'], chargerData[markerInd]['lon']),
+      title: (chargerData[markerInd]['network'] + "Charger location"),
+      description: "Level 2 charger, Greenlots",
+    );
+
+    if (await maplauncher.MapLauncher.isMapAvailable(
+            maplauncher.MapType.google) !=
+        null) {
+      await maplauncher.MapLauncher.showMarker(
+          mapType: maplauncher.MapType.google,
+          coords: maplauncher.Coords(
+              chargerData[markerInd]['lat'], chargerData[markerInd]['lon']),
+          title: (chargerData[markerInd]['network'] + " Charger"),
+          description: "Level 2 charger, Greenlots");
     }
   }
-*/
 
+  // Populate charger data list.
+  // TO DO: use unique keys for recalculating
+  _fillChargerList() async {
+    // Pull data
+    chargerData = await chargers.pullChargers(46.999843, -120.539261);
+
+    // Print the lat and long of every charger
+    for (int i = 0; i < chargerData.length; i++) {
+      print("lat: ${chargerData[i]['lat']}");
+      print("lon: ${chargerData[i]['lon']}");
+
+      LatLng pos = LatLng(chargerData[i]['lat'], chargerData[i]['lon']);
+      setState(() {
+        markers.add(Marker(
+          markerId: (MarkerId(markers.length.toString())),
+          position: pos,
+          onTap: () => launchMap(i),
+        ));
+      });
+    }
+  }
+
+  Route _createRoute() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          const searchPage(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(0.0, 1.0);
+        const end = Offset.zero;
+        const curve = Curves.ease;
+
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
 }
-*/
