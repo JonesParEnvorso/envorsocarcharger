@@ -24,6 +24,18 @@ class MyApp extends StatelessWidget {
   }
 }
 
+List<Map<String, dynamic>> chargers = [];
+
+Chargers chargeList = Chargers();
+
+// fills the list with the result from the database
+_fillChargerList() async {
+  chargers = await chargeList.pullChargers(46.999883, -120.544755);
+  //chargers2 = await chargeList.pullServices(46.999883, -120.544755);
+}
+
+//List<CheckBoxListTileModel> checkBoxListTileModel = [];
+
 class ServicesList extends StatefulWidget {
   const ServicesList({Key? key, required this.documentId}) : super(key: key);
 
@@ -33,8 +45,7 @@ class ServicesList extends StatefulWidget {
 }
 
 class _ServicesList extends State<ServicesList> {
-  List<CheckBoxListTileModel> checkBoxListTileModel =
-      CheckBoxListTileModel.getServices();
+  //checkBoxListTileModel = CheckBoxListTileModel.getServices();
 
   goToMap(BuildContext context) {
     Navigator.push(
@@ -44,14 +55,26 @@ class _ServicesList extends State<ServicesList> {
   // list to store service data
   final List<String> services = <String>[];
 
-  Chargers chargeList = Chargers();
+  List<String> chargers2 = [];
+  List<CheckBoxListTileModel> checkBoxListTileModel = [];
 
-  List<Map<String, dynamic>> chargers = [];
+  @override
+  void initState() {
+    print("start");
+    super.initState();
+    //await CheckBoxListTileModel.getServices();
+    _fillServices();
 
-  // fills the list with the result from the database
-  _fillChargerList() async {
-    chargers = await chargeList.pullChargers(46.999883, -120.544755);
+    //checkBoxListTileModel = CheckBoxListTileModel.getServices();
   }
+
+  _fillServices() async {
+    await _fillChargerList();
+    checkBoxListTileModel = CheckBoxListTileModel.getServices();
+  }
+
+  //List<CheckBoxListTileModel> checkBoxListTileModel =
+  //CheckBoxListTileModel.getServices();
 
   @override
   Widget build(BuildContext context) {
@@ -72,15 +95,18 @@ class _ServicesList extends State<ServicesList> {
     }
 
     _printChargers() async {
-      _fillChargerList();
+      await _fillChargerList();
 
       // prints all keys and values for the query result
-      for (int i = 0; i < chargers.length; i++) {
+      /*for (int i = 0; i < chargers.length; i++) {
         print("List Entry ${i}: ");
         for (MapEntry e in chargers[i].entries) {
           print("Key ${e.key}, Value ${e.value}");
         }
         print("\n");
+      }*/
+      for (int i = 0; i < chargers2.length; i++) {
+        print(chargers2[i]);
       }
     }
 
@@ -101,7 +127,7 @@ class _ServicesList extends State<ServicesList> {
                 margin: const EdgeInsets.all(10),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
+                    children: const <Widget>[
                       Icon(
                         Icons.stars,
                         color: Color(0xff096B72),
@@ -218,43 +244,57 @@ class CheckBoxListTileModel {
       required this.money,
       required this.title,
       required this.isCheck});
+
   static List<CheckBoxListTileModel> getServices() {
-    return <CheckBoxListTileModel>[
+    //_fillChargerList();
+
+    print("Hello from getServices");
+
+    List<CheckBoxListTileModel> list = [];
+
+    for (int i = 0; i < chargers.length; i++) {
+      print(i);
+      list.add(CheckBoxListTileModel(
+          id: i, local: true, money: false, title: 'test', isCheck: false));
+    }
+
+    return list;
+    /*return <CheckBoxListTileModel>[
       CheckBoxListTileModel(
-        id: 1,
+        id: 0,
         local: false,
         money: true,
         title: 'ChargePoint',
         isCheck: false,
       ),
       CheckBoxListTileModel(
-        id: 2,
+        id: 1,
         local: false,
         money: true,
         title: 'Electrify America',
         isCheck: false,
       ),
       CheckBoxListTileModel(
-        id: 3,
+        id: 2,
         local: true,
         money: true,
         title: 'Greenlots',
         isCheck: true,
       ),
       CheckBoxListTileModel(
-        id: 4,
+        id: 3,
         local: true,
         money: false,
         title: 'Electrical Vehicle Charging Station',
         isCheck: true,
       ),
       CheckBoxListTileModel(
-        id: 5,
+        id: 4,
         local: true,
         money: true,
         title: 'Webasto',
         isCheck: true,
       )
-    ];
+    ];*/
   }
 }
