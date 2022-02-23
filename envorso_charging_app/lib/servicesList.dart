@@ -145,7 +145,7 @@ class _ServicesList extends State<ServicesList> with TickerProviderStateMixin {
                 )),
             Container(
                 alignment: Alignment.center,
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(15),
                 margin: const EdgeInsets.all(10),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -176,9 +176,14 @@ class _ServicesList extends State<ServicesList> with TickerProviderStateMixin {
                         style: TextStyle(fontSize: 15),
                       ),
                     ])),
+            
             isLoading // starts off as true, changes to false once list has been loaded in
                 ? const Center(
-                    child: CircularProgressIndicator(),
+                  
+                    child: CircularProgressIndicator(
+                      
+                      color: Color(0xff096B72),
+                    ),
                   )
                 : ListView.builder(
                     scrollDirection: Axis.vertical,
