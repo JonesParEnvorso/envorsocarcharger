@@ -142,10 +142,11 @@ class _AddUser extends State<AddUser> {
                     labelText: 'Password',
                     suffixIcon: IconButton(
                       icon: Icon(
+                        
                         _passwordVisible
                             ? Icons.visibility
                             : Icons.visibility_off,
-                        color: Theme.of(context).primaryColorDark,
+                        color: Color(0xff096B72),
                       ),
                       onPressed: () {
                         setState(() {
@@ -206,40 +207,67 @@ class LinkedLabelCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: padding,
-      child: Row(
-        children: <Widget>[
-          Checkbox(
-            value: value,
-            onChanged: (bool? newValue) {
-              onChanged(newValue!);
-            },
-          ),
-          Expanded(
-            child: RichText(
+    return Row(
+      children: <Widget>[
+        Checkbox(
+          value: value,
+          onChanged: (bool? newValue) {
+            onChanged(newValue!);
+          },
+        ),
+        Row(children: [
+          RichText(
               text: TextSpan(children: [
-                const TextSpan(
-                    text: "I agree to the ",
-                    style: TextStyle(color: Colors.black)),
-                TextSpan(
-                    text: "Terms of Services ",
-                    style: const TextStyle(color: Color(0xff096B72)),
-                    recognizer: TapGestureRecognizer()..onTap = () {}),
-                const TextSpan(
-                    text: "and ", style: TextStyle(color: Colors.black)),
-                TextSpan(
-                    text: "Privacy Policy",
-                    style: const TextStyle(
-                      color: Color(0xff096B72),
+            const TextSpan(
+                text: "I agree to the ", style: TextStyle(color: Colors.black)),
+          ])),
+          TextButton(
+              child: const Text('Terms of Services'),
+              style: TextButton.styleFrom(primary: Color(0xff096B72)),
+              onPressed: () => showDialog<String>(
+                    context: context,
+
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text('Terms of Service'),
+                      content: const SingleChildScrollView(
+                          child: Text(
+                              'These are the Terms of Service governing the use of this Service and the agreement that operates between You and the Company. These Terms of Service set out the rights and obligations of all users regarding the use of the Service. Your access to and use of the Service is conditioned on Your acceptance of and compliance with these Terms of Service. These Terms of Service apply to all visitors, users and others who access or use the Service. By accessing or using the Service You agree to be bound by these Terms of Service. If You disagree with any part of these Terms of Service then You may not access the Service. You represent that you are over the age of 18. The Company does not permit those under 18 to use the Service. Your access to and use of the Service is also conditioned on Your acceptance of and compliance with the Privacy Policy of the Company. Our Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your personal information when You use the Application or the Website and tells You about Your privacy rights and how the law protects You. Please read Our Privacy Policy carefully before using Our Service. \n\nUser Accounts:\nWhen You create an account with Us, You must provide Us information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of Your account on Our Service. You are responsible for safeguarding the password that You use to access the Service and for any activities or actions under Your password, whether Your password is with Our Service or a Third-Party Social Media Service. You agree not to disclose Your password to any third party. You must notify Us immediately upon becoming aware of any breach of security or unauthorized use of Your account. You may not use as a username the name of another person or entity or that is not lawfully available for use, a name or trademark that is subject to any rights of another person or entity other than You without appropriate authorization, or a name that is otherwise offensive, vulgar or obscene.',
+                              )),
+                      actions: <Widget>[
+                        TextButton(
+                          style: TextButton.styleFrom(primary: Color(0xff096B72)),
+                          onPressed: () => Navigator.pop(context, 'OK'),
+                          child: const Text('OK'),
+                        ),
+                      ],
                     ),
-                    recognizer: TapGestureRecognizer()..onTap = () {}),
-                const TextSpan(text: ".", style: TextStyle(color: Colors.black))
-              ]),
-            ),
-          ),
-        ],
-      ),
+                  )),
+          RichText(
+              text: TextSpan(children: [
+            const TextSpan(text: "and", style: TextStyle(color: Colors.black)),
+          ])),
+          TextButton(
+              child: const Text('Privacy Policy.'),
+              style: TextButton.styleFrom(primary: Color(0xff096B72)),
+              onPressed: () => showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text('Privacy Policy'),
+                      content: const SingleChildScrollView(
+                          child: Text(
+                              'These are the Terms of Service governing the use of this Service and the agreement that operates between You and the Company. These Terms of Service set out the rights and obligations of all users regarding the use of the Service. Your access to and use of the Service is conditioned on Your acceptance of and compliance with these Terms of Service. These Terms of Service apply to all visitors, users and others who access or use the Service. By accessing or using the Service You agree to be bound by these Terms of Service. If You disagree with any part of these Terms of Service then You may not access the Service. You represent that you are over the age of 18. The Company does not permit those under 18 to use the Service. Your access to and use of the Service is also conditioned on Your acceptance of and compliance with the Privacy Policy of the Company. Our Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your personal information when You use the Application or the Website and tells You about Your privacy rights and how the law protects You. Please read Our Privacy Policy carefully before using Our Service. User Accounts When You create an account with Us, You must provide Us information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of Your account on Our Service. You are responsible for safeguarding the password that You use to access the Service and for any activities or actions under Your password, whether Your password is with Our Service or a Third-Party Social Media Service. You agree not to disclose Your password to any third party. You must notify Us immediately upon becoming aware of any breach of security or unauthorized use of Your account.  You may not use as a username the name of another person or entity or that is not lawfully available for use, a name or trademark that is subject to any rights of another person or entity other than You without appropriate authorization, or a name that is otherwise offensive, vulgar or obscene.',
+                              style: TextStyle(color: Color(0xff096B72)))),
+                      actions: <Widget>[
+                        TextButton(
+                          style: TextButton.styleFrom(primary: Color(0xff096B72)),
+                          onPressed: () => Navigator.pop(context, 'OK'),
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    ),
+                  )),
+        ]),
+      ],
     );
   }
 }
