@@ -82,7 +82,7 @@ class _searchPage extends State<searchPage> {
               Container(
                   child: ElevatedButton(
                 onPressed: () {
-                  speech.main();
+                  speech.MyApp;
                 },
                 child: Icon(Icons.mic),
                 style: ButtonStyle(
