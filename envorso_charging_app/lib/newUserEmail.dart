@@ -211,6 +211,7 @@ class LinkedLabelCheckbox extends StatelessWidget {
       children: <Widget>[
         Checkbox(
           value: value,
+          activeColor: Color(0xff096B72),
           onChanged: (bool? newValue) {
             onChanged(newValue!);
           },

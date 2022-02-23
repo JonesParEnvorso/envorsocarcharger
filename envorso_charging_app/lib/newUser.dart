@@ -480,7 +480,7 @@ class _AddPID extends State<AddPID> {
                         isCardNumVisible
                             ? Icons.visibility
                             : Icons.visibility_off,
-                        color: Theme.of(context).primaryColorDark,
+                        color: Color(0xff096B72),
                       ),
                       onPressed: () {
                         setState(() {
@@ -544,7 +544,7 @@ class _AddPID extends State<AddPID> {
                           isCvvVisible
                               ? Icons.visibility
                               : Icons.visibility_off,
-                          color: Theme.of(context).primaryColorDark,
+                          color: Color(0xff096B72),
                         ),
                         onPressed: () {
                           setState(() {
