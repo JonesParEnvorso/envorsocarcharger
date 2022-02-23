@@ -5,6 +5,7 @@ import 'firebase_options.dart';
 import 'newUser.dart';
 import 'firstlaunch.dart';
 import 'speech_recognition.dart';
+import 'startUp.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,11 +26,12 @@ class MyApp extends StatelessWidget {
           FocusManager.instance.primaryFocus?.unfocus();
         },
         child: MaterialApp(
-          title: 'ENRoute',
-          theme: ThemeData(
-            primarySwatch: Colors.blue,
-          ),
-          home: const FirstLaunch(),
-        ));
+            title: 'ENRoute',
+            theme: ThemeData(
+              primarySwatch: Colors.blue,
+            ),
+            // change to StartUp to attempt persistent sign-in
+            home: const FirstLaunch() //const StartUp(),
+            ));
   }
 }
