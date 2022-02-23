@@ -444,10 +444,23 @@ class _AddPID extends State<AddPID> {
                 ], // end children
               ),
               TextButton(
-                onPressed: () => {},
-                child: const Text('Why is Credit Card info needed?',
-                    style: TextStyle(color: Color(0xff096B72))),
-              ),
+                  child: const Text('Why is Credit Card info needed?',
+                      style: TextStyle(color: Color(0xff096B72))),
+                  onPressed: () => showDialog<String>(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                          title: const Text('Credit Card Info'),
+                          content: const SingleChildScrollView(child: Text('CREDIT CARD INFORMATION IS OPTIONAL\n\nWe will not charge you any amount of money for using our service, but in order to use certain charging companies chargers, your credit card informatoin will be needed for them. \n\ne.g. We won\'t charge you, but we make it easier for you to use services that do charge you.')),
+                          actions: <Widget>[
+                            TextButton(
+                              style: TextButton.styleFrom(
+                                  primary: Color(0xff096B72)),
+                              onPressed: () => Navigator.pop(context, 'OK'),
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        ),
+                      )),
               // start of credit card
               Container(
                 // User's name
@@ -480,7 +493,7 @@ class _AddPID extends State<AddPID> {
                         isCardNumVisible
                             ? Icons.visibility
                             : Icons.visibility_off,
-                        color: Theme.of(context).primaryColorDark,
+                        color: Color(0xff096B72),
                       ),
                       onPressed: () {
                         setState(() {
@@ -544,7 +557,7 @@ class _AddPID extends State<AddPID> {
                           isCvvVisible
                               ? Icons.visibility
                               : Icons.visibility_off,
-                          color: Theme.of(context).primaryColorDark,
+                          color: Color(0xff096B72),
                         ),
                         onPressed: () {
                           setState(() {
