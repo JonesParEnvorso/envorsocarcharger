@@ -4,9 +4,9 @@ import "dart:math";
 //This class will pull and store the collection of chagers
 class Chargers {
   //the max number of chargers being pulled at any given time
-  int minSize = 5;
+  int minSize = 2;
   //the max range of the chargers being querried
-  int range = 2;
+  int range = 3;
   //the stored list of vehicle chargers
   List<Map<String, dynamic>> chargers = [];
   //the Array of memberships
@@ -17,7 +17,7 @@ class Chargers {
   Map<String, dynamic> userInfo = {};
 
   //Constructor
-  Chargers() {}
+  Chargers();
 
   //Pull down chargers into a list
   Future<List<Map<String, dynamic>>> pullChargers(
@@ -28,6 +28,7 @@ class Chargers {
     //List<int> geo = [83867952, 83867950];
     bool foundChargers = false;
     while (!foundChargers) {
+      chargers = [];
       for (var geoHash in geoList) {
         var querryList = await FirebaseFirestore.instance
             .collection('stations')
@@ -37,7 +38,7 @@ class Chargers {
           chargers.add(docs.data());
         }
       }
-      if (range > 10) {
+      if (range > 5) {
         return chargers;
       } else if (chargers.length >= minSize) {
         foundChargers = true;
@@ -45,9 +46,23 @@ class Chargers {
         range++;
       }
     }
+    print(range);
     range = 2;
     orderDistance(lat, lon);
     return chargers;
+  }
+
+  Future<List<String>> pullServices(double lat, double lon) async {
+    var local = await pullChargers(lat, lon);
+    List<String> networks = [];
+
+    for (var plug in local) {
+      if (!networks.contains(plug['network'])) {
+        networks.add(plug['network']);
+      }
+    }
+
+    return networks;
   }
 
   //Pulls user data and stores it in the Class feilds.
@@ -68,7 +83,7 @@ class Chargers {
         .get();
 
     carPlugs = userPlug['chargerType'];
-    //memberships = userMem['services'];
+    memberships = userMem['services'];
 
     return chargers;
   }
@@ -200,12 +215,12 @@ class Chargers {
 
   //order the list of chargers by price
   void orderPrice() async {
-    List<Map<String, dynamic>> temp = [];
+    //List<Map<String, dynamic>> temp = [];
   }
 
   //order the list of chargers by Distance from user
   List<Map<String, dynamic>> orderDistance(double lat, double lon) {
-    List<Map<String, dynamic>> temp = [];
+    //List<Map<String, dynamic>> temp = [];
     num distanceA = 0;
     num distanceB = 0;
     bool isSorted = false;
@@ -227,6 +242,7 @@ class Chargers {
     return chargers;
   }
 
+  /*
   //identify the geoHash for the given lat/lon
   int geoHash(double lat, double lon) {
     int lattitude = (lat * 100).round();
@@ -234,7 +250,15 @@ class Chargers {
 
     return (18000 * lattitude) + longitude;
   }
+  */
+  int geoHash(double lat, double lon) {
+    int lattitude = (lat * 100).truncate() * 4500;
+    int longitude = ((lon * 100) / 2).truncate();
 
+    return lattitude + longitude;
+  }
+
+  /*
   //determines the surrounding geoHashes and returns it as a set
   List<int> getGeoSet(int geoHash, int range) {
     int high = range;
@@ -244,6 +268,20 @@ class Chargers {
     for (int i = low; i <= high; i++) {
       for (int k = low; k <= high; k++) {
         geoSet.add(geoHash + (i * 9000) + (k));
+      }
+    }
+    print("End Geo Set");
+    return geoSet;
+  }
+  */
+  List<int> getGeoSet(int geoHash, int range) {
+    int high = range;
+    int low = range * (-1);
+    List<int> geoSet = [];
+    print("start Geo Set");
+    for (int i = low; i <= high; i++) {
+      for (int k = low; k <= high; k++) {
+        geoSet.add(geoHash + (i * 4500) + (k));
       }
     }
     print("End Geo Set");
@@ -266,9 +304,12 @@ class Debugger {
 
   void run() async {
     var charger = Chargers();
-    await charger.pullChargers(46.6021, -120.5059);
+    //await charger.pullChargers(46.999883, -120.544755); //46.999883, -120.544755
     //await charger.activateAccount("0fKNcfWsxhrawuATfGUd");
-    charger.printChargers();
+    //charger.printChargers();
+    print(await charger.pullServices(46.999883, -120.544755));
+    print("done");
+    //addGeoHash();
   }
 
   //This function applies a geoHash to each charging station

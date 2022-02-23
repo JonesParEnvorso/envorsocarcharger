@@ -24,6 +24,18 @@ class MyApp extends StatelessWidget {
   }
 }
 
+List<Map<String, dynamic>> chargers = [];
+
+Chargers chargeList = Chargers();
+
+// fills the list with the result from the database
+_fillChargerList() async {
+  chargers = await chargeList.pullChargers(46.999883, -120.544755);
+  //chargers2 = await chargeList.pullServices(46.999883, -120.544755);
+}
+
+//List<CheckBoxListTileModel> checkBoxListTileModel = [];
+
 class ServicesList extends StatefulWidget {
   const ServicesList({Key? key, required this.documentId}) : super(key: key);
 
@@ -32,9 +44,8 @@ class ServicesList extends StatefulWidget {
   _ServicesList createState() => _ServicesList();
 }
 
-class _ServicesList extends State<ServicesList> {
-  List<CheckBoxListTileModel> checkBoxListTileModel =
-      CheckBoxListTileModel.getServices();
+class _ServicesList extends State<ServicesList> with TickerProviderStateMixin {
+  //checkBoxListTileModel = CheckBoxListTileModel.getServices();
 
   goToMap(BuildContext context) {
     Navigator.push(
@@ -44,17 +55,45 @@ class _ServicesList extends State<ServicesList> {
   // list to store service data
   final List<String> services = <String>[];
 
-  Chargers chargeList = Chargers();
+  List<String> chargers2 = [];
+  List<CheckBoxListTileModel> checkBoxListTileModel = [];
 
-  List<Map<String, dynamic>> chargers = [];
+  late AnimationController aniController;
 
-  // fills the list with the result from the database
-  _fillChargerList() async {
-    chargers = await chargeList.pullChargers(46.999883, -120.544755);
+  // boolean for loading indicator
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    aniController = AnimationController(vsync: this);
+    _fillServices();
+    super.initState();
+  }
+
+  _fillServices() async {
+    await _fillChargerList();
+    String zip = '';
+    var doc =
+        FirebaseFirestore.instance.collection('users').doc(widget.documentId);
+    await doc.get().then((DocumentSnapshot docSnap) {
+      zip = docSnap.get(FieldPath(const ['address', 'zip']));
+    });
+    List<CheckBoxListTileModel> temp =
+        await CheckBoxListTileModel.getServices(zip);
+    setState(() {
+      checkBoxListTileModel = temp;
+      isLoading = false;
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // firebase function
     Future<void> _addServices() {
       for (int i = 0; i < checkBoxListTileModel.length; i++) {
         if (checkBoxListTileModel[i].isCheck == true) {
@@ -71,16 +110,25 @@ class _ServicesList extends State<ServicesList> {
               (Object error) => Future.error(Exception("$error")));
     }
 
+    // continue button calls this
+    _handleInput() {
+      _addServices();
+      goToMap(context);
+    }
+
     _printChargers() async {
-      _fillChargerList();
+      await _fillChargerList();
 
       // prints all keys and values for the query result
-      for (int i = 0; i < chargers.length; i++) {
+      /*for (int i = 0; i < chargers.length; i++) {
         print("List Entry ${i}: ");
         for (MapEntry e in chargers[i].entries) {
           print("Key ${e.key}, Value ${e.value}");
         }
         print("\n");
+      }*/
+      for (int i = 0; i < chargers2.length; i++) {
+        print(chargers2[i]);
       }
     }
 
@@ -97,11 +145,11 @@ class _ServicesList extends State<ServicesList> {
                 )),
             Container(
                 alignment: Alignment.center,
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(15),
                 margin: const EdgeInsets.all(10),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
+                    children: const <Widget>[
                       Icon(
                         Icons.stars,
                         color: Color(0xff096B72),
@@ -128,72 +176,79 @@ class _ServicesList extends State<ServicesList> {
                         style: TextStyle(fontSize: 15),
                       ),
                     ])),
-            ListView.builder(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemCount: checkBoxListTileModel.length,
-                itemBuilder: (BuildContext context, int index) {
-                  // ignore: unnecessary_new
-                  return Card(
-                    // ignore: unnecessary_new
-                    child: new Container(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Column(
-                        children: <Widget>[
-                          // ignore: unnecessary_new
-                          new CheckboxListTile(
-                            onChanged: (bool? val) {
-                              itemChange(val, index);
-                            },
-                            activeColor: const Color(0xff096B72),
-                            dense: true,
-                            title: Text(
-                              checkBoxListTileModel[index].title,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                            value: checkBoxListTileModel[index].isCheck,
-                            secondary: Container(
-                                height: 50,
-                                width: 50,
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.stars,
-                                      color: checkBoxListTileModel[index].local
-                                          ? const Color(0xff096B72)
-                                          : Colors.white,
-                                    ),
-                                    if (checkBoxListTileModel[index].money) ...[
-                                      const Icon(
-                                        Icons.monetization_on,
-                                        color: Color(0xffCFB406),
-                                      ),
-                                    ],
-                                  ],
-                                )),
-                          )
-                        ],
-                      ),
+            
+            isLoading // starts off as true, changes to false once list has been loaded in
+                ? const Center(
+                  
+                    child: CircularProgressIndicator(
+                      
+                      color: Color(0xff096B72),
                     ),
-                  );
-                }),
+                  )
+                : ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: checkBoxListTileModel.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      // ignore: unnecessary_new
+                      return Card(
+                        // ignore: unnecessary_new
+                        child: new Container(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Column(
+                            children: <Widget>[
+                              // ignore: unnecessary_new
+                              new CheckboxListTile(
+                                onChanged: (bool? val) {
+                                  itemChange(val, index);
+                                },
+                                activeColor: const Color(0xff096B72),
+                                dense: true,
+                                title: Text(
+                                  checkBoxListTileModel[index].title,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                                value: checkBoxListTileModel[index].isCheck,
+                                secondary: Container(
+                                    height: 50,
+                                    width: 50,
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.stars,
+                                          color:
+                                              checkBoxListTileModel[index].local
+                                                  ? const Color(0xff096B72)
+                                                  : Colors.white,
+                                        ),
+                                        if (checkBoxListTileModel[index]
+                                            .money) ...[
+                                          const Icon(
+                                            Icons.monetization_on,
+                                            color: Color(0xffCFB406),
+                                          ),
+                                        ],
+                                      ],
+                                    )),
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
             Container(
                 // continue button
-                // currently is doing nothing other than allowing Richard to test things
                 child: ElevatedButton(
-              onPressed: () => /*_addServices()*/ _printChargers(),
+              onPressed: () => _handleInput(),
               child: const Text("Continue"),
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Color(0xff096B72)),
               ),
             )),
-            // REMOVE THIS BUTTON AFTER TESTING
-            ElevatedButton(
-                onPressed: () => goToMap(context), child: const Text("To Map"))
           ])),
     );
   }
@@ -218,43 +273,81 @@ class CheckBoxListTileModel {
       required this.money,
       required this.title,
       required this.isCheck});
-  static List<CheckBoxListTileModel> getServices() {
-    return <CheckBoxListTileModel>[
+
+  static Future<List<CheckBoxListTileModel>> getServices(String zip) async {
+    List<CheckBoxListTileModel> list = [];
+
+    // grabs network or name of charger, zip code, and price of charge.
+    for (int i = 0; i < chargers.length; i++) {
+      String title;
+      bool money;
+      bool local;
+
+      if (chargers[i]['network'] == 'Non-Networked') {
+        title = chargers[i]['name'];
+      } else {
+        title = chargers[i]['network'];
+      }
+
+      // following logic will have to be changed as we find more information on the price of chargers
+      if (chargers[i]['price'] == '' || chargers[i]['price'] == 'Free') {
+        money = false;
+      } else {
+        money = true;
+      }
+
+      if (chargers[i]['zip'].toString() == zip) {
+        local = true;
+      } else {
+        local = false;
+      }
+
+      if (local == true) {
+        list.add(CheckBoxListTileModel(
+            id: i, local: local, money: money, title: title, isCheck: true));
+      } else {
+        list.add(CheckBoxListTileModel(
+            id: i, local: local, money: money, title: title, isCheck: false));
+      }
+    }
+
+    return list;
+    /*return <CheckBoxListTileModel>[
       CheckBoxListTileModel(
-        id: 1,
+        id: 0,
         local: false,
         money: true,
         title: 'ChargePoint',
         isCheck: false,
       ),
       CheckBoxListTileModel(
-        id: 2,
+        id: 1,
         local: false,
         money: true,
         title: 'Electrify America',
         isCheck: false,
       ),
       CheckBoxListTileModel(
-        id: 3,
+        id: 2,
         local: true,
         money: true,
         title: 'Greenlots',
         isCheck: true,
       ),
       CheckBoxListTileModel(
-        id: 4,
+        id: 3,
         local: true,
         money: false,
         title: 'Electrical Vehicle Charging Station',
         isCheck: true,
       ),
       CheckBoxListTileModel(
-        id: 5,
+        id: 4,
         local: true,
         money: true,
         title: 'Webasto',
         isCheck: true,
       )
-    ];
+    ];*/
   }
 }
