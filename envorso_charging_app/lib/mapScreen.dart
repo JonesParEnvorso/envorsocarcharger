@@ -6,6 +6,10 @@ import 'package:map_launcher/map_launcher.dart' as maplauncher;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'searchPage.dart';
 import 'speech_recognition.dart' as speech;
+import 'package:google_place/google_place.dart' as googleplace;
+
+//import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+
 //import 'newUser.dart';
 //import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'package:firebase_core/firebase_core.dart';
@@ -45,7 +49,7 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   // Location data
   late LocationData currentLocation;
-  late LocationData _currentPosition;
+  //late LocationData _currentPosition;
   Location location = Location();
   // Charger data
   Chargers chargers = Chargers();
@@ -54,9 +58,13 @@ class _MapScreenState extends State<MapScreen> {
   // Google Maps data
   late GoogleMapController _googleMapController;
   static const _initialCameraPosition = CameraPosition(
-    target: LatLng(46.999843, -120.539261), // Lat/Long target.
-    zoom: 11.5, // Max zoom level is normally 21.
+    target: LatLng(39.983235, -98.966782), // Lat/Long target.
+    zoom: 2, // Max zoom level is normally 21.
   );
+  // Polyline data
+  final Set<Polyline> polyline = {};
+  List<LatLng> routeCoords = [];
+  //GoogleMapPolyline googleMapPolyline = new GoogleMapPolyline();
   @override
   void dispose() {
     _googleMapController.dispose();
@@ -64,9 +72,9 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   // Called upon state initialization
+  @override
   void initState() {
     super.initState();
-    _fillChargerList();
   }
 
   @override
@@ -86,7 +94,8 @@ class _MapScreenState extends State<MapScreen> {
         myLocationButtonEnabled: false,
         zoomControlsEnabled: false,
         initialCameraPosition: _initialCameraPosition,
-        onMapCreated: (controller) => _googleMapController = controller,
+        onMapCreated: (controller) =>
+            {_googleMapController = controller, showChargersAtLocation()},
         markers: Set.of(markers), // Displays markers
       )),
       // Recenter button
@@ -94,7 +103,7 @@ class _MapScreenState extends State<MapScreen> {
           right: 30,
           bottom: 150,
           child: FloatingActionButton(
-            backgroundColor: Color(0xff096B72),
+            backgroundColor: const Color(0xff096B72),
             foregroundColor: Colors.white,
             onPressed: () => getLocation(_googleMapController),
             child: const Icon(Icons.center_focus_strong),
@@ -105,7 +114,7 @@ class _MapScreenState extends State<MapScreen> {
           left: 20,
           top: 50,
           child: FloatingActionButton(
-            backgroundColor: Color(0xff096B72),
+            backgroundColor: const Color(0xff096B72),
             foregroundColor: Colors.white,
             onPressed: () => Navigator.pop(context),
             heroTag: 'back',
@@ -117,20 +126,20 @@ class _MapScreenState extends State<MapScreen> {
           left: 0,
           bottom: 0,
           child: Container(
-              margin: EdgeInsets.all(20),
-              padding: EdgeInsets.all(10),
+              margin: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(10),
               child: Row(
                 children: [
                   Container(
                     width: screenWidth / 1.18,
                     height: 105,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Color(0xff096B72),
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                     ),
                     child: Column(children: [
                       Row(children: [
-                        SizedBox(
+                        const SizedBox(
                           width: 15,
                         ),
                         Expanded(
@@ -142,16 +151,16 @@ class _MapScreenState extends State<MapScreen> {
                                 borderRadius: BorderRadius.circular(15.0),
                               )),
                               padding: MaterialStateProperty.all(
-                                  EdgeInsets.fromLTRB(10, 0, 0, 0)),
+                                  const EdgeInsets.fromLTRB(10, 0, 0, 0)),
                               alignment: Alignment.centerLeft,
                               backgroundColor:
                                   MaterialStateProperty.all(Colors.white),
                             ),
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.search,
                               color: Colors.grey,
                             ),
-                            label: Text('Search',
+                            label: const Text('Search',
                                 style: TextStyle(color: Colors.grey)),
                             onPressed: () {
                               Navigator.of(context).push(_createRoute());
@@ -164,13 +173,14 @@ class _MapScreenState extends State<MapScreen> {
                             speech.main();
                             //Navigator.push(context, MaterialPageRoute(builder: (context) => const speech )
                           },
-                          child: Icon(Icons.mic),
+                          child: const Icon(Icons.mic),
                           style: ButtonStyle(
-                            shape: MaterialStateProperty.all(CircleBorder()),
-                            padding:
-                                MaterialStateProperty.all(EdgeInsets.all(8)),
+                            shape:
+                                MaterialStateProperty.all(const CircleBorder()),
+                            padding: MaterialStateProperty.all(
+                                const EdgeInsets.all(8)),
                             backgroundColor: MaterialStateProperty.all(
-                                Color(0xff732015)), // Button color
+                                const Color(0xff732015)), // Button color
                             overlayColor:
                                 MaterialStateProperty.resolveWith<Color?>(
                                     (states) {
@@ -182,13 +192,13 @@ class _MapScreenState extends State<MapScreen> {
                       ]),
                       Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 30,
                           ),
                           Container(
-                              padding: EdgeInsets.all(2),
+                              padding: const EdgeInsets.all(2),
                               width: 280,
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                   border: Border(
                                 bottom: BorderSide(
                                   color: Colors.white,
@@ -199,36 +209,37 @@ class _MapScreenState extends State<MapScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 15,
                           ),
                           TextButton.icon(
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.location_on,
                               color: Colors.white,
                             ),
-                            label: (Text('My locations',
+                            label: (const Text('My locations',
                                 style: TextStyle(color: Colors.white))),
                             onPressed: () {},
                           ),
                           Container(
-                              padding: EdgeInsets.all(2),
+                              padding: const EdgeInsets.all(2),
                               width: 1,
                               height: 30,
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                   border: Border(
                                 left: BorderSide(
                                   color: Colors.white,
                                 ),
                               ))),
                           TextButton.icon(
-                            icon: Icon(Icons.directions_car_filled_rounded,
+                            icon: const Icon(
+                                Icons.directions_car_filled_rounded,
                                 color: Colors.white),
-                            label: (Text('Trip Planner',
+                            label: (const Text('Trip Planner',
                                 style: TextStyle(color: Colors.white))),
                             onPressed: () {},
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 33,
                           )
                         ],
@@ -245,7 +256,7 @@ class _MapScreenState extends State<MapScreen> {
     try {
       final coords =
           maplauncher.Coords(37.759392, -122.5107336); // Set charger coords
-      final title = "Charger"; // Set charger title here
+      const title = "Charger"; // Set charger title here
       final availableMaps = await maplauncher.MapLauncher.installedMaps;
 
       showModalBottomSheet(
@@ -283,11 +294,13 @@ class _MapScreenState extends State<MapScreen> {
 
   // Set the location before the map is rendered (WIP)
   void initializeLocation() async {
-    _currentPosition = await location.getLocation();
+    //_currentPosition = await location.getLocation();
   }
 
   // Recenters the map on the user's location
-  void getLocation(GoogleMapController controller) async {
+  Future<void> getLocation(GoogleMapController controller) async {
+    // Wait for controller if not valid
+
     // Wait for location
     currentLocation = await location.getLocation();
     // Move map camera
@@ -301,14 +314,14 @@ class _MapScreenState extends State<MapScreen> {
   // Launches a pin in Google Maps (Provide more later)
   void launchMap(int markerInd) async {
     final availableMaps = await maplauncher.MapLauncher.installedMaps;
-
+/*
     await availableMaps.first.showMarker(
       coords: maplauncher.Coords(
           chargerData[markerInd]['lat'], chargerData[markerInd]['lon']),
       title: (chargerData[markerInd]['network'] + "Charger location"),
       description: "Level 2 charger, Greenlots",
     );
-
+*/
     if (await maplauncher.MapLauncher.isMapAvailable(
             maplauncher.MapType.google) !=
         null) {
@@ -321,11 +334,17 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
+  void showChargersAtLocation() async {
+    await getLocation(_googleMapController);
+    await _fillChargerList();
+  }
+
   // Populate charger data list.
   // TO DO: use unique keys for recalculating
   _fillChargerList() async {
     // Pull data
-    chargerData = await chargers.pullChargers(46.999843, -120.539261);
+    chargerData = await chargers.pullChargers(
+        currentLocation.latitude!, currentLocation.longitude!);
 
     // Print the lat and long of every charger
     for (int i = 0; i < chargerData.length; i++) {
