@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'newUserEmail.dart';
 import 'enRouteAccountSettings.dart';
 import 'addAccounts.dart';
+import 'mapScreen.dart';
+import 'searchPage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -48,6 +50,23 @@ class _SettingsScreen extends State<SettingsScreen> {
                 )));
   }
 
+goToSearchPage(BuildContext context) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => searchPage(
+                //documentId: curUser,
+                )));
+  }
+  goToMap(BuildContext context) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => MapScreen(
+                //documentId: curUser,
+                )));
+  }
+
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
@@ -61,7 +80,7 @@ class _SettingsScreen extends State<SettingsScreen> {
                   children: <Widget>[
                     Container(
                         child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () => goToSearchPage(context),
                             child: Icon(Icons.arrow_back),
                             style: ButtonStyle(
                                 shape:
@@ -88,7 +107,7 @@ class _SettingsScreen extends State<SettingsScreen> {
                     ),
                     Container(
                         child: IconButton(
-                      onPressed: () {},
+                      onPressed: () => goToMap(context),
                       icon: Icon(Icons.cancel),
                       iconSize: 45,
                     )),

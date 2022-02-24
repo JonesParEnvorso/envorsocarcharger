@@ -125,7 +125,7 @@ class _MapScreenState extends State<MapScreen> {
         child: FloatingActionButton(
           backgroundColor: const Color(0xff096B72),
           foregroundColor: Colors.white,
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => {},
           heroTag: 'back',
           child: const Icon(Icons.filter_alt),
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'settings.dart';
+import 'mapScreen.dart';
 
 import 'main.dart';
 import 'speech_recognition.dart' as speech;
@@ -39,6 +40,10 @@ class _searchPage extends State<searchPage> {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => SettingsScreen()));
   }
+ goToMap(BuildContext context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => MapScreen()));
+  }
 
   
   Widget build(BuildContext context) {
@@ -63,7 +68,7 @@ class _searchPage extends State<searchPage> {
             child: Row(children: [
               Container(
                   child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () => goToMap(context),
                 child: Icon(Icons.arrow_back),
                 style: ButtonStyle(
                   shape: MaterialStateProperty.all(CircleBorder()),
