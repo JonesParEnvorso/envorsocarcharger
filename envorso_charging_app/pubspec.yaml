@@ -64,6 +64,8 @@ dependencies:
   permission_handler: ^9.2.0
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.9.1
+
   flutter_test:
     sdk: flutter
 
@@ -94,10 +96,15 @@ flutter:
     - assets/images/google_logo.png
     - assets/images/Transparent-Envorso-Logo.png
     - assets/images/ENRoute-logo.png
-    - assets/images/Thumb-logo.png
     - assets/images/Plug-Icon-CHAdeMO.png
     - assets/images/Plug-Icon-J1772-Combo.png
     - assets/images/Plug-Icon-J1772.png
+
+# Custom app icon
+flutter_icons:
+  image_path: assets/icon/Thumb-logo.png
+  android: true
+  ios: true
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
