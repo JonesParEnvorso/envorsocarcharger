@@ -50,14 +50,11 @@ class MapScreen extends StatefulWidget {
 
 // Mapscreen state
 class _MapScreenState extends State<MapScreen> {
-
-
-  goToSavedLocations(){
-     Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => SavedLocations()));
+  goToSavedLocations() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => SavedLocations()));
   }
+
   // Location data
   late LocationData currentLocation;
   //late LocationData _currentPosition;
@@ -88,8 +85,6 @@ class _MapScreenState extends State<MapScreen> {
   void initState() {
     super.initState();
   }
-
-  
 
   @override
   // Generate map view
@@ -126,14 +121,14 @@ class _MapScreenState extends State<MapScreen> {
       // Back button
       Positioned(
         bottom: 150,
-        left: 30, 
+        left: 30,
         child: FloatingActionButton(
-            backgroundColor: const Color(0xff096B72),
-            foregroundColor: Colors.white,
-            onPressed: () => Navigator.pop(context),
-            heroTag: 'back',
-            child: const Icon(Icons.filter_alt),
-          ),
+          backgroundColor: const Color(0xff096B72),
+          foregroundColor: Colors.white,
+          onPressed: () => Navigator.pop(context),
+          heroTag: 'back',
+          child: const Icon(Icons.filter_alt),
+        ),
       ),
       /*Positioned(
           left: 20,
@@ -189,7 +184,7 @@ class _MapScreenState extends State<MapScreen> {
                                 style: TextStyle(color: Colors.grey)),
                             onPressed: () {
                               Navigator.of(context).push(_createRoute());
-                              speech.main();
+                              //speech.main();
                             },
                           ),
                         ),
@@ -245,7 +240,8 @@ class _MapScreenState extends State<MapScreen> {
                             ),
                             label: (const Text('My locations',
                                 style: TextStyle(color: Colors.white))),
-                            onPressed: () => Navigator.of(context).push(_saveLocations()),
+                            onPressed: () =>
+                                Navigator.of(context).push(_saveLocations()),
                           ),
                           Container(
                               padding: const EdgeInsets.all(2),
@@ -429,7 +425,8 @@ class _MapScreenState extends State<MapScreen> {
       },
     );
   }
-Route _saveLocations() {
+
+  Route _saveLocations() {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) =>
           const SavedLocations(),
@@ -448,5 +445,4 @@ Route _saveLocations() {
       },
     );
   }
-
 }
