@@ -55,7 +55,7 @@ class _FirstLaunch extends State<FirstLaunch> {
         context,
         MaterialPageRoute(
             builder: (context) => const ServicesList(
-                  documentId: 'test',
+                  uId: 'test',
                 )));
   }
 
