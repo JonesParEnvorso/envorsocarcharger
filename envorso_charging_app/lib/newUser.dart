@@ -162,7 +162,6 @@ class _AddPID extends State<AddPID> {
   OutlineInputBorder? border;
 
   FirebaseFunctions firebaseFunctions = FirebaseFunctions();
-  //String uId = '';
 
   @override
   void initState() {
@@ -266,10 +265,17 @@ class _AddPID extends State<AddPID> {
       return null;
     }
 
+    _validateDropDown(String? value) {
+      if (value == 'State') {
+        return 'Required';
+      }
+    }
+
     return Scaffold(
       body: Form(
           key: _formKey,
           child: ListView(
+            shrinkWrap: true,
             children: <Widget>[
               // text entries
               Container(
@@ -368,6 +374,39 @@ class _AddPID extends State<AddPID> {
                         validator: _validateField),
                   ),
                   Container(
+                    height: 80,
+                    width: screenWidth / 5,
+                    margin: const EdgeInsets.all(5.0),
+                    decoration: const ShapeDecoration(
+                        shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                      side: BorderSide(
+                          width: 1.0,
+                          style: BorderStyle.solid,
+                          color: Colors.white),
+                    )),
+                    child: DropdownButtonFormField(
+                      items: states.map((states) {
+                        return DropdownMenuItem(
+                          value: states,
+                          child: Text(states),
+                        );
+                      }).toList(),
+                      value: newState,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          if (newValue != null) {
+                            newState = newValue;
+                          }
+                        });
+                      },
+                      validator: _validateDropDown,
+                      elevation: 5,
+                      isDense: true,
+                      //iconSize: 20.0,
+                    ),
+                  ),
+                  /*Container(
                     // state dropdown
                     margin: const EdgeInsets.all(5.0),
                     height: 60,
@@ -391,6 +430,7 @@ class _AddPID extends State<AddPID> {
                           onChanged: (String? newValue) {
                             setState(() {
                               newState = newValue!;
+                              _dropdownError = '';
                             });
                           },
                           // Down Arrow Icon
@@ -406,9 +446,14 @@ class _AddPID extends State<AddPID> {
                         ),
                       ),
                     ),
-                  )
+                  ),
+                  _dropdownError == ''
+                      ? Text(_dropdownError,
+                          style: const TextStyle(color: Colors.red))
+                      : const SizedBox.shrink(),*/
                 ], // end children
               ),
+
               TextButton(
                   child: const Text('Why is Credit Card info needed?',
                       style: TextStyle(color: Color(0xff096B72))),
@@ -461,7 +506,7 @@ class _AddPID extends State<AddPID> {
                         isCardNumVisible
                             ? Icons.visibility
                             : Icons.visibility_off,
-                        color: Color(0xff096B72),
+                        color: const Color(0xff096B72),
                       ),
                       onPressed: () {
                         setState(() {
