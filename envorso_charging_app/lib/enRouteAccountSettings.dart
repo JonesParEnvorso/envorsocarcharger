@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'settings.dart'; 
+import 'settings.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,14 +29,10 @@ class ChangePID extends StatefulWidget {
 }
 
 class _ChangePID extends State<ChangePID> {
-
-goToSettings(BuildContext context) {
+  goToSettings(BuildContext context) {
     Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => SettingsScreen()));
+        context, MaterialPageRoute(builder: (context) => SettingsScreen()));
   }
-
 
   String newState = 'State';
   List<String> states = [
@@ -156,16 +152,18 @@ goToSettings(BuildContext context) {
           Container(
               child: ElevatedButton(
                   onPressed: () => goToSettings(context),
-                  child: Icon(Icons.arrow_back),
+                  child: const Icon(Icons.arrow_back),
                   style: ButtonStyle(
-                      shape: MaterialStateProperty.all(CircleBorder()),
-                      padding: MaterialStateProperty.all(EdgeInsets.all(8)),
+                      shape: MaterialStateProperty.all(const CircleBorder()),
+                      padding:
+                          MaterialStateProperty.all(const EdgeInsets.all(8)),
                       backgroundColor: MaterialStateProperty.all(
-                          Color(0xff096B72)), // Button color
+                          const Color(0xff096B72)), // Button color
                       overlayColor:
                           MaterialStateProperty.resolveWith<Color?>((states) {
-                        if (states.contains(MaterialState.pressed))
-                          return Colors.black; // Splash color
+                        if (states.contains(MaterialState.pressed)) {
+                          return Colors.black;
+                        } // Splash color
                       })))),
           // text entries
           Container(
@@ -317,8 +315,8 @@ goToSettings(BuildContext context) {
                               'CREDIT CARD INFORMATION IS OPTIONAL\n\nWe will not charge you any amount of money for using our service, but in order to use certain charging companies chargers, your credit card informatoin will be needed for them. \n\ne.g. We won\'t charge you, but we make it easier for you to use services that do charge you.')),
                       actions: <Widget>[
                         TextButton(
-                          style:
-                              TextButton.styleFrom(primary: Color(0xff096B72)),
+                          style: TextButton.styleFrom(
+                              primary: const Color(0xff096B72)),
                           onPressed: () => Navigator.pop(context, 'OK'),
                           child: const Text('OK'),
                         ),
@@ -355,7 +353,7 @@ goToSettings(BuildContext context) {
                 suffixIcon: IconButton(
                   icon: Icon(
                     isCardNumVisible ? Icons.visibility : Icons.visibility_off,
-                    color: Color(0xff096B72),
+                    color: const Color(0xff096B72),
                   ),
                   onPressed: () {
                     setState(() {
@@ -417,7 +415,7 @@ goToSettings(BuildContext context) {
                   suffixIcon: IconButton(
                     icon: Icon(
                       isCvvVisible ? Icons.visibility : Icons.visibility_off,
-                      color: Color(0xff096B72),
+                      color: const Color(0xff096B72),
                     ),
                     onPressed: () {
                       setState(() {
@@ -460,7 +458,7 @@ goToSettings(BuildContext context) {
                           onChanged: (bool? val) {
                             //itemChange(val, index);
                           },
-                          activeColor: Color(0xff096B72),
+                          activeColor: const Color(0xff096B72),
                           dense: true,
                           title: Text(
                             checkBoxListTileModel[index].title,
@@ -493,7 +491,8 @@ goToSettings(BuildContext context) {
                 onPressed: () {},
                 child: const Text("Sign Out"),
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Color(0xff096B72)),
+                  backgroundColor:
+                      MaterialStateProperty.all(const Color(0xff096B72)),
                 ),
               )),
         ],
