@@ -164,6 +164,7 @@ class _MapScreenState extends State<MapScreen> {
                                 style: TextStyle(color: Colors.grey)),
                             onPressed: () {
                               Navigator.of(context).push(_createRoute());
+                              speech.main();
                             },
                           ),
                         ),

@@ -59,6 +59,9 @@ dependencies:
   flutter_signin_button: ^2.0.0
   country_state_city_picker: ^1.2.8
   flutter_credit_card: ^3.0.1
+  speech_recognition: ^0.3.0+1
+  english_words: ^4.0.0
+  permission_handler: ^9.2.0
 
 dev_dependencies:
   flutter_test:
