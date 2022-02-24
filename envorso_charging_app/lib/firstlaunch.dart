@@ -55,7 +55,7 @@ class _FirstLaunch extends State<FirstLaunch> {
         context,
         MaterialPageRoute(
             builder: (context) => const ServicesList(
-                  documentId: 'test',
+                  uId: 'test',
                 )));
   }
 
@@ -133,7 +133,7 @@ class _FirstLaunch extends State<FirstLaunch> {
                                 _passwordVisible
                                     ? Icons.visibility
                                     : Icons.visibility_off,
-                                color: Theme.of(context).primaryColorDark,
+                                color: Color(0xff096B72),
                               ),
                               onPressed: () {
                                 setState(() {
@@ -286,7 +286,7 @@ class _FirstLaunch extends State<FirstLaunch> {
                       onPressed: () => goToServices(context) ,
                     )),*/
                       // TEMP!!!!!! TEMP!!!! DELETE
-                      Container(
+                      /*Container(
                           height: 50,
                           width: 200,
                           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -300,7 +300,7 @@ class _FirstLaunch extends State<FirstLaunch> {
                                   const Color(0xff096B72)),
                             ),
                             onPressed: () => goToSettings(context),
-                          )),
+                          )),*/
                     ],
                   ),
                 ),

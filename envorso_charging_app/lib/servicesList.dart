@@ -4,6 +4,7 @@ import 'newUserEmail.dart';
 import 'mapScreen.dart';
 import 'chargeStation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'firebaseFunctions.dart';
 
 void main() {
   runApp(const MyApp());
@@ -37,9 +38,9 @@ _fillChargerList() async {
 //List<CheckBoxListTileModel> checkBoxListTileModel = [];
 
 class ServicesList extends StatefulWidget {
-  const ServicesList({Key? key, required this.documentId}) : super(key: key);
+  const ServicesList({Key? key, required this.uId}) : super(key: key);
 
-  final String documentId;
+  final String uId;
   @override
   _ServicesList createState() => _ServicesList();
 }
@@ -63,6 +64,8 @@ class _ServicesList extends State<ServicesList> with TickerProviderStateMixin {
   // boolean for loading indicator
   bool isLoading = true;
 
+  FirebaseFunctions firebaseFunctions = FirebaseFunctions();
+
   @override
   void initState() {
     aniController = AnimationController(vsync: this);
@@ -70,11 +73,15 @@ class _ServicesList extends State<ServicesList> with TickerProviderStateMixin {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   _fillServices() async {
     await _fillChargerList();
     String zip = '';
-    var doc =
-        FirebaseFirestore.instance.collection('users').doc(widget.documentId);
+    var doc = FirebaseFirestore.instance.collection('users').doc(widget.uId);
     await doc.get().then((DocumentSnapshot docSnap) {
       zip = docSnap.get(FieldPath(const ['address', 'zip']));
     });
@@ -87,49 +94,18 @@ class _ServicesList extends State<ServicesList> with TickerProviderStateMixin {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    // firebase function
-    Future<void> _addServices() {
+    // handle input
+    _addServices() {
       for (int i = 0; i < checkBoxListTileModel.length; i++) {
         if (checkBoxListTileModel[i].isCheck == true) {
           services.add(checkBoxListTileModel[i].title);
         }
       }
-      DocumentReference newUser =
-          FirebaseFirestore.instance.collection('users').doc(widget.documentId);
 
-      return newUser
-          .collection('services')
-          .doc('services')
-          .set({'services': services}).catchError(
-              (Object error) => Future.error(Exception("$error")));
-    }
+      firebaseFunctions.addServices(widget.uId, services);
 
-    // continue button calls this
-    _handleInput() {
-      _addServices();
       goToMap(context);
-    }
-
-    _printChargers() async {
-      await _fillChargerList();
-
-      // prints all keys and values for the query result
-      /*for (int i = 0; i < chargers.length; i++) {
-        print("List Entry ${i}: ");
-        for (MapEntry e in chargers[i].entries) {
-          print("Key ${e.key}, Value ${e.value}");
-        }
-        print("\n");
-      }*/
-      for (int i = 0; i < chargers2.length; i++) {
-        print(chargers2[i]);
-      }
     }
 
     return Scaffold(
@@ -176,12 +152,9 @@ class _ServicesList extends State<ServicesList> with TickerProviderStateMixin {
                         style: TextStyle(fontSize: 15),
                       ),
                     ])),
-            
             isLoading // starts off as true, changes to false once list has been loaded in
                 ? const Center(
-                  
                     child: CircularProgressIndicator(
-                      
                       color: Color(0xff096B72),
                     ),
                   )
@@ -243,10 +216,11 @@ class _ServicesList extends State<ServicesList> with TickerProviderStateMixin {
             Container(
                 // continue button
                 child: ElevatedButton(
-              onPressed: () => _handleInput(),
+              onPressed: () => _addServices(),
               child: const Text("Continue"),
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Color(0xff096B72)),
+                backgroundColor:
+                    MaterialStateProperty.all(const Color(0xff096B72)),
               ),
             )),
           ])),

@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/services.dart';
 import 'firebase_options.dart';
 import 'newUser.dart';
 import 'firstlaunch.dart';
-import 'package:flutter/gestures.dart';
 import 'userAuth.dart';
+import 'firebaseFunctions.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,20 +38,6 @@ class AddUser extends StatefulWidget {
 }
 
 class _AddUser extends State<AddUser> {
-  goToPID(BuildContext context) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => AddPID(
-                  documentId: curUser,
-                )));
-  }
-
-  goToLogin(BuildContext context) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => FirstLaunch()));
-  }
-
   final newEmail = TextEditingController();
   final newPassword = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey();
@@ -60,46 +45,45 @@ class _AddUser extends State<AddUser> {
 
   late String curUser;
 
-  // firebase function
-  void _signUp() async {
-    String email = newEmail.text;
-    String password = newPassword.text;
-    UserAuth userAuth = UserAuth();
+  FirebaseFunctions firebaseFunctions = FirebaseFunctions();
 
+  String uId = '';
+
+  @override
+  void initState() {
+    super.initState();
+
+    _passwordVisible = false;
+  }
+
+  @override
+  void dispose() {
     newEmail.clear();
     newPassword.clear();
+    newEmail.dispose();
+    newPassword.dispose();
 
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    super.dispose();
+  }
 
-    await users
-        .add({
-          "email": email,
-          "password": password,
-        })
-        .then((value) => curUser = value.id)
-        .catchError((error) => print("Failed to add user: $error"));
+  goToPID(BuildContext context) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => AddPID(
+                  uId: uId,
+                  email: newEmail.text,
+                  password: newPassword.text,
+                )));
+  }
 
-    await userAuth.registerWithEmail(email, password);
-    goToPID(context);
-  } // _signUp
+  goToLogin(BuildContext context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const FirstLaunch()));
+  }
 
   @override
   Widget build(BuildContext context) {
-    @override
-    void initState() {
-      super.initState();
-
-      _passwordVisible = false;
-    }
-
-    @override
-    void dispose() {
-      newEmail.dispose();
-      newPassword.dispose();
-
-      super.dispose();
-    }
-
     _validateField(String? value) {
       if (value == null || value.isEmpty) {
         return 'Required';
@@ -148,7 +132,7 @@ class _AddUser extends State<AddUser> {
                         _passwordVisible
                             ? Icons.visibility
                             : Icons.visibility_off,
-                        color: Color(0xff096B72),
+                        color: const Color(0xff096B72),
                       ),
                       onPressed: () {
                         setState(() {
@@ -176,11 +160,34 @@ class _AddUser extends State<AddUser> {
                 backgroundColor:
                     MaterialStateProperty.all(const Color(0xff096B72)),
               ),
-              onPressed: () {
+              onPressed: () async {
                 // button validation. need to make checkbox work better.
                 // currently there is no indication that the box needs to be checked
                 if (_formKey.currentState!.validate() && _isSelected) {
-                  _signUp();
+                  // error checking
+                  String? res = await firebaseFunctions.createAccount(
+                      newEmail.text, newPassword.text);
+                  if (res == '' || res == null) {
+                    // do something
+                  } else if (res == 'email') {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) =>
+                            _signUpAlert(context, 'Email is already in use'));
+                  } else if (res == 'weak') {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) => _signUpAlert(context,
+                            'Weak Password. Need a minimum of six characters'));
+                  } else if (res == 'invalid email') {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) => _signUpAlert(
+                            context, 'Please Enter a valid email'));
+                  } else {
+                    uId = res;
+                    goToPID(context);
+                  }
                 }
               })),
       TextButton(
@@ -211,12 +218,14 @@ class LinkedLabelCheckbox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        Checkbox(
-          value: value,
-          activeColor: Color(0xff096B72),
-          onChanged: (bool? newValue) {
-            onChanged(newValue!);
-          },
+        Expanded(
+          child: Checkbox(
+            value: value,
+            activeColor: Color(0xff096B72),
+            onChanged: (bool? newValue) {
+              onChanged(newValue!);
+            },
+          ),
         ),
         Row(children: [
           RichText(
@@ -249,28 +258,27 @@ class LinkedLabelCheckbox extends StatelessWidget {
               text: TextSpan(children: [
             const TextSpan(text: "and", style: TextStyle(color: Colors.black)),
           ])),
-          TextButton(
-              child: const Text('Privacy Policy.'),
-              style: TextButton.styleFrom(primary: Color(0xff096B72)),
-              onPressed: () => showDialog<String>(
-                    context: context,
-                    builder: (BuildContext context) => AlertDialog(
-                      title: const Text('Privacy Policy'),
-                      content: const SingleChildScrollView(
-                          child: Text(
-                              'These are the Terms of Service governing the use of this Service and the agreement that operates between You and the Company. These Terms of Service set out the rights and obligations of all users regarding the use of the Service. Your access to and use of the Service is conditioned on Your acceptance of and compliance with these Terms of Service. These Terms of Service apply to all visitors, users and others who access or use the Service. By accessing or using the Service You agree to be bound by these Terms of Service. If You disagree with any part of these Terms of Service then You may not access the Service. You represent that you are over the age of 18. The Company does not permit those under 18 to use the Service. Your access to and use of the Service is also conditioned on Your acceptance of and compliance with the Privacy Policy of the Company. Our Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your personal information when You use the Application or the Website and tells You about Your privacy rights and how the law protects You. Please read Our Privacy Policy carefully before using Our Service. User Accounts When You create an account with Us, You must provide Us information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of Your account on Our Service. You are responsible for safeguarding the password that You use to access the Service and for any activities or actions under Your password, whether Your password is with Our Service or a Third-Party Social Media Service. You agree not to disclose Your password to any third party. You must notify Us immediately upon becoming aware of any breach of security or unauthorized use of Your account.  You may not use as a username the name of another person or entity or that is not lawfully available for use, a name or trademark that is subject to any rights of another person or entity other than You without appropriate authorization, or a name that is otherwise offensive, vulgar or obscene.',
-                              style: TextStyle(color: Color(0xff096B72)))),
-                      actions: <Widget>[
-                        TextButton(
-                          style:
-                              TextButton.styleFrom(primary: Color(0xff096B72)),
-                          onPressed: () => Navigator.pop(context, 'OK'),
-                          child: const Text('OK'),
-                        ),
-                      ],
-                    ),
-                  )),
         ]),
+        TextButton(
+            child: const Text('Privacy Policy.'),
+            style: TextButton.styleFrom(primary: Color(0xff096B72)),
+            onPressed: () => showDialog<String>(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    title: const Text('Privacy Policy'),
+                    content: const SingleChildScrollView(
+                        child: Text(
+                            'These are the Terms of Service governing the use of this Service and the agreement that operates between You and the Company. These Terms of Service set out the rights and obligations of all users regarding the use of the Service. Your access to and use of the Service is conditioned on Your acceptance of and compliance with these Terms of Service. These Terms of Service apply to all visitors, users and others who access or use the Service. By accessing or using the Service You agree to be bound by these Terms of Service. If You disagree with any part of these Terms of Service then You may not access the Service. You represent that you are over the age of 18. The Company does not permit those under 18 to use the Service. Your access to and use of the Service is also conditioned on Your acceptance of and compliance with the Privacy Policy of the Company. Our Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your personal information when You use the Application or the Website and tells You about Your privacy rights and how the law protects You. Please read Our Privacy Policy carefully before using Our Service. User Accounts When You create an account with Us, You must provide Us information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of Your account on Our Service. You are responsible for safeguarding the password that You use to access the Service and for any activities or actions under Your password, whether Your password is with Our Service or a Third-Party Social Media Service. You agree not to disclose Your password to any third party. You must notify Us immediately upon becoming aware of any breach of security or unauthorized use of Your account.  You may not use as a username the name of another person or entity or that is not lawfully available for use, a name or trademark that is subject to any rights of another person or entity other than You without appropriate authorization, or a name that is otherwise offensive, vulgar or obscene.',
+                            style: TextStyle(color: Color(0xff096B72)))),
+                    actions: <Widget>[
+                      TextButton(
+                        style: TextButton.styleFrom(primary: Color(0xff096B72)),
+                        onPressed: () => Navigator.pop(context, 'OK'),
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  ),
+                )),
       ],
     );
   }
@@ -301,4 +309,16 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
       },
     );
   }
+}
+
+Widget _signUpAlert(BuildContext context, String content) {
+  return AlertDialog(
+    title: const Text('Sign-up Error'),
+    content: Text(content),
+    actions: <Widget>[
+      TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Close')),
+    ],
+  );
 }

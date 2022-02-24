@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'settings.dart';
 
 import 'main.dart';
 import 'speech_recognition.dart' as speech;
@@ -33,15 +34,32 @@ class searchPage extends StatefulWidget {
 
 class _searchPage extends State<searchPage> {
   //const _searchPage({Key? key}) : super(key: key);
-
   @override
+  goToSettings(BuildContext context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => SettingsScreen()));
+  }
+
+  
   Widget build(BuildContext context) {
     return Scaffold(
         body: Center(
             child: Column(
       children: <Widget>[
         Container(
-            padding: EdgeInsets.fromLTRB(10, 30, 0, 0),
+            padding: EdgeInsets.fromLTRB(10, 20, 0, 0),
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: () => goToSettings(context),
+                  icon: Icon(Icons.settings),
+                  iconSize: 45,
+                ),
+                Text('USERNAME FILLER', style: TextStyle(color: Colors.black))
+              ],
+            )),
+        Container(
+            padding: EdgeInsets.fromLTRB(10, 20, 0, 0),
             child: Row(children: [
               Container(
                   child: ElevatedButton(
