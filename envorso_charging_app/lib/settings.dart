@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'newUserEmail.dart';
+import 'enRouteAccountSettings.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,6 +29,16 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreen extends State<SettingsScreen> {
   @override
+  late String curUser;
+  goToChangePID(BuildContext context) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ChangePID(
+                //documentId: curUser,
+                )));
+  }
+
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
@@ -109,13 +120,15 @@ class _SettingsScreen extends State<SettingsScreen> {
                   child: ListView(shrinkWrap: true, children: <Widget>[
                 Expanded(
                     child: Column(children: [
-                  Card(
-                      child: ListTile(
-                    onTap: () {},
-                    leading: Icon(Icons.manage_accounts_rounded, size: 40),
-                    title: Text('EnRoute Account'),
-                    iconColor: Color(0xff096B72),
-                  )),
+                  GestureDetector(
+                    onTap: () => goToChangePID(context),
+                    child: Card(
+                        child: ListTile(
+                      leading: Icon(Icons.manage_accounts_rounded, size: 40),
+                      title: Text('EnRoute Account'),
+                      iconColor: Color(0xff096B72),
+                    )),
+                  )
                 ])),
               ])),
               Container(
