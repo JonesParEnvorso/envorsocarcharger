@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'newUserEmail.dart';
 import 'enRouteAccountSettings.dart';
+import 'settings.dart';
 
 void main() {
   runApp(const MyApp());
