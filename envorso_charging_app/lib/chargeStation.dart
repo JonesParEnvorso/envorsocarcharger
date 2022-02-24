@@ -6,7 +6,7 @@ class Chargers {
   //the max number of chargers being pulled at any given time
   int minSize = 2;
   //the max range of the chargers being querried
-  int range = 3;
+  int range = 4;
   //the stored list of vehicle chargers
   List<Map<String, dynamic>> chargers = [];
   //the Array of memberships
@@ -244,12 +244,6 @@ class Chargers {
 
   /*
   //identify the geoHash for the given lat/lon
-  int geoHash(double lat, double lon) {
-    int lattitude = (lat * 100).round();
-    int longitude = (lon * 100).round();
-
-    return (18000 * lattitude) + longitude;
-  }
   */
   int geoHash(double lat, double lon) {
     int lattitude = (lat * 100).truncate() * 4500;
@@ -260,19 +254,6 @@ class Chargers {
 
   /*
   //determines the surrounding geoHashes and returns it as a set
-  List<int> getGeoSet(int geoHash, int range) {
-    int high = range;
-    int low = range * (-1);
-    List<int> geoSet = [];
-    print("start Geo Set");
-    for (int i = low; i <= high; i++) {
-      for (int k = low; k <= high; k++) {
-        geoSet.add(geoHash + (i * 9000) + (k));
-      }
-    }
-    print("End Geo Set");
-    return geoSet;
-  }
   */
   List<int> getGeoSet(int geoHash, int range) {
     int high = range;
