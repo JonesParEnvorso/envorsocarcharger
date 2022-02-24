@@ -79,7 +79,7 @@ class _AddUser extends State<AddUser> {
         .then((value) => curUser = value.id)
         .catchError((error) => print("Failed to add user: $error"));
 
-    await userAuth.registerWithEmail(email, password);
+    userAuth.registerWithEmail(email, password);
     goToPID(context);
   } // _signUp
 
