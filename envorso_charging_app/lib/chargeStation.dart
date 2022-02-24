@@ -23,7 +23,7 @@ class Chargers {
   Future<List<Map<String, dynamic>>> pullChargers(
       double lat, double lon) async {
     chargers = [];
-    List<int> geoList = getGeoSet((geoHash(lat, lon)), range);
+    List<List<int>> geoList = getGeoSet((geoHash(lat, lon)), range);
     //print(geo);
     //List<int> geo = [83867952, 83867950];
     bool foundChargers = false;
@@ -32,7 +32,7 @@ class Chargers {
       for (var geoHash in geoList) {
         var querryList = await FirebaseFirestore.instance
             .collection('stations')
-            .where('geoHash', isEqualTo: geoHash)
+            .where('geoHash', whereIn: geoHash)
             .get();
         for (var docs in querryList.docs) {
           chargers.add(docs.data());
@@ -255,16 +255,26 @@ class Chargers {
   /*
   //determines the surrounding geoHashes and returns it as a set
   */
-  List<int> getGeoSet(int geoHash, int range) {
+  List<List<int>> getGeoSet(int geoHash, int range) {
     int high = range;
     int low = range * (-1);
-    List<int> geoSet = [];
+    List<List<int>> geoSet = [];
+    List<int> temp = [];
+    int count = 0;
     print("start Geo Set");
+
     for (int i = low; i <= high; i++) {
       for (int k = low; k <= high; k++) {
-        geoSet.add(geoHash + (i * 4500) + (k));
+        if (count == 10) {
+          geoSet.add(temp);
+          temp = [];
+          count = 0;
+        }
+        temp.add(geoHash + (i * 4500) + (k));
+        count++;
       }
     }
+    geoSet.add(temp);
     print("End Geo Set");
     return geoSet;
   }
