@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'searchPage.dart';
 import 'speech_recognition.dart' as speech;
 import 'package:google_place/google_place.dart' as googleplace;
+import 'savedLocations.dart';
 //import 'package:http/http.dart' as http;
 //import 'dart:convert' as convert;
 
@@ -49,6 +50,14 @@ class MapScreen extends StatefulWidget {
 
 // Mapscreen state
 class _MapScreenState extends State<MapScreen> {
+
+
+  goToSavedLocations(){
+     Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => SavedLocations()));
+  }
   // Location data
   late LocationData currentLocation;
   //late LocationData _currentPosition;
@@ -79,6 +88,8 @@ class _MapScreenState extends State<MapScreen> {
   void initState() {
     super.initState();
   }
+
+  
 
   @override
   // Generate map view
@@ -222,7 +233,7 @@ class _MapScreenState extends State<MapScreen> {
                             ),
                             label: (const Text('My locations',
                                 style: TextStyle(color: Colors.white))),
-                            onPressed: () {},
+                            onPressed: () => Navigator.of(context).push(_saveLocations()),
                           ),
                           Container(
                               padding: const EdgeInsets.all(2),
@@ -406,4 +417,24 @@ class _MapScreenState extends State<MapScreen> {
       },
     );
   }
+Route _saveLocations() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          const SavedLocations(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(0.0, 1.0);
+        const end = Offset.zero;
+        const curve = Curves.ease;
+
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
 }
