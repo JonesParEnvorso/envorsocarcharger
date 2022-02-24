@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'newUserEmail.dart';
 import 'enRouteAccountSettings.dart';
+import 'addAccounts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -35,6 +36,14 @@ class _SettingsScreen extends State<SettingsScreen> {
         context,
         MaterialPageRoute(
             builder: (context) => ChangePID(
+                //documentId: curUser,
+                )));
+  }
+  goToAddAcounts(BuildContext context) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => AddAcounts(
                 //documentId: curUser,
                 )));
   }
@@ -95,10 +104,10 @@ class _SettingsScreen extends State<SettingsScreen> {
                     child: Column(children: [
                   Card(
                     child: ListTile(
-                      onTap: () {},
+                      onTap: () => goToAddAcounts(context),
                       leading: Icon(Icons.supervisor_account, size: 40),
                       iconColor: Color(0xff096B72),
-                      title: Text('Add Accounts'),
+                      title: Text('Add Service Accounts'),
                     ),
                   ),
                 ])),
@@ -131,7 +140,7 @@ class _SettingsScreen extends State<SettingsScreen> {
                   )
                 ])),
               ])),
-              Container(
+              /*Container(
                   child: ListView(shrinkWrap: true, children: <Widget>[
                 Expanded(
                     child: Column(children: [
@@ -143,7 +152,7 @@ class _SettingsScreen extends State<SettingsScreen> {
                     iconColor: Color(0xff096B72),
                   )),
                 ])),
-              ])),
+              ])),*/
               Container(
                   child: ListView(shrinkWrap: true, children: <Widget>[
                 Expanded(
