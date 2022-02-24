@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/services.dart';
 import 'firebase_options.dart';
 import 'newUser.dart';
 import 'firstlaunch.dart';
-import 'package:flutter/gestures.dart';
 import 'userAuth.dart';
+import 'firebaseFunctions.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,20 +38,6 @@ class AddUser extends StatefulWidget {
 }
 
 class _AddUser extends State<AddUser> {
-  goToPID(BuildContext context) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => AddPID(
-                  documentId: curUser,
-                )));
-  }
-
-  goToLogin(BuildContext context) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => FirstLaunch()));
-  }
-
   final newEmail = TextEditingController();
   final newPassword = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey();
@@ -60,46 +45,45 @@ class _AddUser extends State<AddUser> {
 
   late String curUser;
 
-  // firebase function
-  void _signUp() async {
-    String email = newEmail.text;
-    String password = newPassword.text;
-    UserAuth userAuth = UserAuth();
+  FirebaseFunctions firebaseFunctions = FirebaseFunctions();
 
+  String uId = '';
+
+  @override
+  void initState() {
+    super.initState();
+
+    _passwordVisible = false;
+  }
+
+  @override
+  void dispose() {
     newEmail.clear();
     newPassword.clear();
+    newEmail.dispose();
+    newPassword.dispose();
 
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    super.dispose();
+  }
 
-    await users
-        .add({
-          "email": email,
-          "password": password,
-        })
-        .then((value) => curUser = value.id)
-        .catchError((error) => print("Failed to add user: $error"));
+  goToPID(BuildContext context) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => AddPID(
+                  uId: uId,
+                  email: newEmail.text,
+                  password: newPassword.text,
+                )));
+  }
 
-    userAuth.registerWithEmail(email, password);
-    goToPID(context);
-  } // _signUp
+  goToLogin(BuildContext context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const FirstLaunch()));
+  }
 
   @override
   Widget build(BuildContext context) {
-    @override
-    void initState() {
-      super.initState();
-
-      _passwordVisible = false;
-    }
-
-    @override
-    void dispose() {
-      newEmail.dispose();
-      newPassword.dispose();
-
-      super.dispose();
-    }
-
     _validateField(String? value) {
       if (value == null || value.isEmpty) {
         return 'Required';
@@ -148,7 +132,7 @@ class _AddUser extends State<AddUser> {
                         _passwordVisible
                             ? Icons.visibility
                             : Icons.visibility_off,
-                        color: Color(0xff096B72),
+                        color: const Color(0xff096B72),
                       ),
                       onPressed: () {
                         setState(() {
@@ -176,11 +160,34 @@ class _AddUser extends State<AddUser> {
                 backgroundColor:
                     MaterialStateProperty.all(const Color(0xff096B72)),
               ),
-              onPressed: () {
+              onPressed: () async {
                 // button validation. need to make checkbox work better.
                 // currently there is no indication that the box needs to be checked
                 if (_formKey.currentState!.validate() && _isSelected) {
-                  _signUp();
+                  // error checking
+                  String? res = await firebaseFunctions.createAccount(
+                      newEmail.text, newPassword.text);
+                  if (res == '' || res == null) {
+                    // do something
+                  } else if (res == 'email') {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) =>
+                            _signUpAlert(context, 'Email is already in use'));
+                  } else if (res == 'weak') {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) => _signUpAlert(context,
+                            'Weak Password. Need a minimum of six characters'));
+                  } else if (res == 'invalid email') {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) => _signUpAlert(
+                            context, 'Please Enter a valid email'));
+                  } else {
+                    uId = res;
+                    goToPID(context);
+                  }
                 }
               })),
       TextButton(
@@ -302,4 +309,16 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
       },
     );
   }
+}
+
+Widget _signUpAlert(BuildContext context, String content) {
+  return AlertDialog(
+    title: const Text('Sign-up Error'),
+    content: Text(content),
+    actions: <Widget>[
+      TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Close')),
+    ],
+  );
 }

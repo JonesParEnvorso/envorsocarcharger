@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'firebase_options.dart';
 import 'servicesList.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
+import 'firebaseFunctions.dart';
 
 void main() async {
   /*WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +27,9 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const AddPID(
-        documentId: "",
+        uId: '',
+        email: '',
+        password: '',
       ),
     );
   }
@@ -34,9 +37,16 @@ class MyApp extends StatelessWidget {
 
 // create new user from user input
 class AddPID extends StatefulWidget {
-  const AddPID({Key? key, required this.documentId}) : super(key: key);
+  const AddPID(
+      {Key? key,
+      required this.uId,
+      required this.email,
+      required this.password})
+      : super(key: key);
 
-  final String documentId;
+  final String uId;
+  final String email;
+  final String password;
 
   @override
   _AddPID createState() => _AddPID();
@@ -149,6 +159,50 @@ class _AddPID extends State<AddPID> {
   bool _chademoSelected = false;
   bool _saeComboSelected = false;
 
+  OutlineInputBorder? border;
+
+  FirebaseFunctions firebaseFunctions = FirebaseFunctions();
+  //String uId = '';
+
+  @override
+  void initState() {
+    super.initState();
+    isCardNumVisible = false;
+    isCvvVisible = false;
+    border = OutlineInputBorder(
+      borderSide: BorderSide(
+        color: Colors.grey.withOpacity(0.7),
+        width: 2.0,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    newName.clear();
+    newPhone.clear();
+    newUsername.clear();
+    newStreet.clear();
+    newCity.clear();
+    newZip.clear();
+    newCountry.clear();
+    newExpiry.clear();
+    newCard.clear();
+    newCvv.clear();
+    newName.dispose();
+    newUsername.dispose();
+    newPhone.dispose();
+    newCity.dispose();
+    newStreet.dispose();
+    newZip.dispose();
+    newCountry.dispose();
+    newCard.dispose();
+    newExpiry.dispose();
+    newCvv.dispose();
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     // device dimensions. makes fields consistent across all devices
@@ -161,7 +215,7 @@ class _AddPID extends State<AddPID> {
     // padding around the text entry boxes
     const inputPadding = EdgeInsets.all(5);
 
-    final String docId = widget.documentId;
+    //final String docId = widget.documentId;
 
     goToServices(BuildContext context) {
       // add documentId as a field to the next page
@@ -169,65 +223,11 @@ class _AddPID extends State<AddPID> {
           context,
           MaterialPageRoute(
               builder: (context) => ServicesList(
-                    documentId: docId,
+                    uId: widget.uId,
                   )));
     }
 
-    OutlineInputBorder? border;
-
-    @override
-    void initState() {
-      super.initState();
-      isCardNumVisible = false;
-      isCvvVisible = false;
-      border = OutlineInputBorder(
-        borderSide: BorderSide(
-          color: Colors.grey.withOpacity(0.7),
-          width: 2.0,
-        ),
-      );
-    }
-
-    @override
-    void dispose() {
-      //_controller.dispose();
-      newName.dispose();
-      newUsername.dispose();
-      newPhone.dispose();
-      newCity.dispose();
-      newStreet.dispose();
-      newZip.dispose();
-      newCountry.dispose();
-      newCard.dispose();
-      newExpiry.dispose();
-      newCvv.dispose();
-
-      super.dispose();
-    }
-
-    Future<void> _addPID() {
-      //String name = newName.text; // split name into first and last
-
-      final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-      String firstName;
-      String lastName;
-      if (!newName.text.contains(" ")) {
-        firstName = newName.text;
-        lastName = "";
-      } else {
-        firstName = newName.text.substring(0, newName.text.indexOf(" "));
-        lastName = newName.text.substring(newName.text.indexOf(" ") + 1);
-      }
-      String username = newUsername.text;
-      String phoneNumber = newPhone.text;
-      String city = newCity.text;
-      String street = newStreet.text;
-      String state = newState;
-      String zip = newZip.text;
-      String creditCard = newCard.text;
-      String expir = newExpiry.text;
-      String cvv = newCvv.text;
-
+    _addPID() async {
       if (_j1772Selected) {
         chargerTypes.add('J1772');
       }
@@ -238,60 +238,26 @@ class _AddPID extends State<AddPID> {
         chargerTypes.add('SAE Combo CCS');
       }
 
-      DocumentReference newUser =
-          FirebaseFirestore.instance.collection('users').doc(widget.documentId);
-
-      return newUser
-          .update(
-            {
-              'firstName': firstName,
-              'lastName': lastName,
-              'phoneNumber': phoneNumber,
-              'countryCode':
-                  '+1', // default to +1 since we are only focusing on USA
-              'address': {
-                // address is a map
-                "city": city,
-                "street": street,
-                "state": state,
-                "zip": zip,
-              },
-              "creditCard": {
-                // credit card is also a map
-                "num": creditCard,
-                "exp": expir,
-                "cvv": cvv,
-              },
-              "username": username,
-            }, /*SetOptions(merge: true)*/
-          )
-          .then((value) => newUser
-              .collection('chargerType')
-              .doc("chargers")
-              .set({'chargerType': chargerTypes}))
-          .catchError((Object error) => Future.error(Exception("$error")));
+      return await firebaseFunctions
+          .createUser(
+              widget.uId,
+              widget.email,
+              widget.password,
+              newUsername.text,
+              newPhone.text,
+              newStreet.text,
+              newCity.text,
+              newZip.text,
+              newState,
+              newName.text,
+              newCard.text,
+              newExpiry.text,
+              newCvv.text,
+              chargerTypes)
+          .then((value) {
+        goToServices(context);
+      }).catchError((error) => print("Failed to add user: $error"));
     } // _AddPID
-
-    _handleInput() {
-      _addPID();
-      // clear text entries
-      newName.clear();
-      newPhone.clear();
-      newUsername.clear();
-      newState = 'State';
-      newStreet.clear();
-      newCity.clear();
-      newZip.clear();
-      newCountry.clear();
-      newExpiry.clear();
-      newCard.clear();
-      newCvv.clear();
-      //cardHolderName = '';
-      //cardNumber = '';
-      //expiryDate = '';
-      //cvvCode = '';
-      goToServices(context);
-    }
 
     _validateField(String? value) {
       if (value == null || value.isEmpty) {
@@ -635,8 +601,8 @@ class _AddPID extends State<AddPID> {
                     onPressed: () {
                       if (_formKey.currentState!.validate() &&
                           newState != 'State') {
-                        //_addPID();
-                        _handleInput();
+                        _addPID();
+                        //_handleInput();
                       }
                     },
                     child: const Text("Continue"),
