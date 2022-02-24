@@ -125,6 +125,17 @@ class _MapScreenState extends State<MapScreen> {
           )),
       // Back button
       Positioned(
+        bottom: 150,
+        left: 30, 
+        child: FloatingActionButton(
+            backgroundColor: const Color(0xff096B72),
+            foregroundColor: Colors.white,
+            onPressed: () => Navigator.pop(context),
+            heroTag: 'back',
+            child: const Icon(Icons.filter_alt),
+          ),
+      ),
+      /*Positioned(
           left: 20,
           top: 50,
           child: FloatingActionButton(
@@ -133,7 +144,7 @@ class _MapScreenState extends State<MapScreen> {
             onPressed: () => Navigator.pop(context),
             heroTag: 'back',
             child: const Icon(Icons.arrow_back),
-          )),
+          )),*/
       // THIS IS ALL SEARCH BAR STUFF PLEASE DON'T TOUCH D:
       // If you do touch, please contact Kirsten, its sensitive :)
       Positioned(
