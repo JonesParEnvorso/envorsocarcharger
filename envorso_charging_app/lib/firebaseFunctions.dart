@@ -47,13 +47,6 @@ class FirebaseFunctions {
       String expiry,
       String cvv,
       List<String> chargers) async {
-    // use uId as doc id
-    /*String? uId = await userAuth.registerWithEmail(email, password);
-
-    if (uId == '' || uId == null) {
-      return '';
-    }*/
-
     CollectionReference users = firestore.collection('users');
 
     String firstName;
@@ -103,6 +96,82 @@ class FirebaseFunctions {
   } // createUser
 
   // update account
+  updateAccount(
+      String uId,
+      String username,
+      String phoneNumber,
+      String street,
+      String city,
+      String zip,
+      String state,
+      String name,
+      String creditCard,
+      String expiry,
+      String cvv,
+      List<String> chargers) async {
+    String firstName;
+    String lastName;
+    if (name == '') {
+      firstName = '';
+      lastName = '';
+    } else if (name.contains(" ")) {
+      firstName = name;
+      lastName = "";
+    } else {
+      firstName = name.substring(0, name.indexOf(" "));
+      lastName = name.substring(name.indexOf(" ") + 1);
+    }
+
+    DocumentReference curUser = firestore.collection('users').doc(uId);
+    DocumentSnapshot<Map<String, dynamic>> data =
+        await firestore.collection('users').doc(uId).get();
+
+    Map<String, dynamic>? map = data.data();
+    if (map == null) {
+      print("No map");
+      return;
+    }
+
+    map.forEach((key, value) {
+      if (key == 'firstName' && firstName == '') {
+        firstName = value;
+      } else if (key == 'lastName' && lastName == '') {
+        lastName = value;
+      } else if (key == 'phoneNumber' && phoneNumber == '') {
+        phoneNumber = value;
+      } else if (key == 'username' && username == '') {
+        username == value;
+      } else if (key == 'address') {}
+    });
+
+    await curUser
+        .update({
+          'firstName': firstName,
+          'lastName': lastName,
+          'phoneNumber': phoneNumber,
+          'countryCode':
+              '+1', // default to +1 since we are only focusing on USA
+          'address': {
+            // address is a map
+            "city": city,
+            "street": street,
+            "state": state,
+            "zip": zip,
+          },
+          "creditCard": {
+            // credit card is also a map
+            "num": creditCard,
+            "exp": expiry,
+            "cvv": cvv,
+          },
+          "username": username,
+        })
+        .then((value) =>
+            curUser.collection('chargerType').doc('chargers').update({
+              'chargerType': chargers,
+            }))
+        .catchError((Object error) => Future.error(Exception("$error")));
+  }
 
   // add services to a user document
   addServices(String uId, List<String> services) async {

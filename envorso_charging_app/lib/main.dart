@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
               primarySwatch: Colors.blue,
             ),
             // change to StartUp to attempt persistent sign-in
-            home: const FirstLaunch() //const StartUp(),
+            home: const StartUp() //const FirstLaunch() ,
             ));
   }
 }

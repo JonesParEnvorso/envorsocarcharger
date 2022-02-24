@@ -1,7 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:envorso_charging_app/firstlaunch.dart';
+import 'package:envorso_charging_app/servicesList.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'settings.dart';
+import 'firebaseFunctions.dart';
+import 'startUp.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,9 +35,11 @@ class ChangePID extends StatefulWidget {
 
 class _ChangePID extends State<ChangePID> {
   goToSettings(BuildContext context) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => SettingsScreen()));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const SettingsScreen()));
   }
+
+  goToFirstLaunch(BuildContext context) {}
 
   String newState = 'State';
   List<String> states = [
@@ -117,9 +124,57 @@ class _ChangePID extends State<ChangePID> {
 
   List<CheckBoxListTileModel> checkBoxListTileModel =
       CheckBoxListTileModel.getImgs();
+
+  final List<String> chargerTypes = <String>[];
   bool _j1772Selected = false;
   bool _chademoSelected = false;
   bool _saeComboSelected = false;
+
+  OutlineInputBorder? border;
+
+  FirebaseFunctions firebaseFunctions = FirebaseFunctions();
+
+  @override
+  void initState() {
+    _j1772Selected = false;
+    _chademoSelected = false;
+    _saeComboSelected = false;
+    super.initState();
+    isCardNumVisible = false;
+    isCvvVisible = false;
+    border = OutlineInputBorder(
+      borderSide: BorderSide(
+        color: Colors.grey.withOpacity(0.7),
+        width: 2.0,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    newName.clear();
+    newPhone.clear();
+    newUsername.clear();
+    newStreet.clear();
+    newCity.clear();
+    newZip.clear();
+    newCountry.clear();
+    newExpiry.clear();
+    newCard.clear();
+    newCvv.clear();
+    newName.dispose();
+    newUsername.dispose();
+    newPhone.dispose();
+    newCity.dispose();
+    newStreet.dispose();
+    newZip.dispose();
+    newCountry.dispose();
+    newCard.dispose();
+    newExpiry.dispose();
+    newCvv.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +182,17 @@ class _ChangePID extends State<ChangePID> {
     final screenWidth = MediaQuery.of(context).size.width;
     const inputPadding = EdgeInsets.all(5);
 
-    /*if (_j1772Selected) {
+    _updatePID() async {
+      final FirebaseAuth auth = FirebaseAuth.instance;
+      String uId;
+      if (auth.currentUser == null) {
+        print('No user! How did you even get here?');
+        return;
+      } else {
+        uId = auth.currentUser!.uid;
+      }
+
+      if (_j1772Selected) {
         chargerTypes.add('J1772');
       }
       if (_chademoSelected) {
@@ -135,13 +200,51 @@ class _ChangePID extends State<ChangePID> {
       }
       if (_saeComboSelected) {
         chargerTypes.add('SAE Combo CCS');
-      }*/
-
-    _validateField(String? value) {
-      if (value == null || value.isEmpty) {
-        return 'Required';
       }
-      return null;
+
+      /*firebaseFunctions.updateAccount(
+          uId,
+          newUsername.text,
+          newPhone.text,
+          newStreet.text,
+          newCity.text,
+          newZip.text,
+          newState,
+          newName.text,
+          newCard.text,
+          newExpiry.text,
+          newCvv.text,
+          chargerTypes);*/
+
+      newUsername.clear();
+      newPhone.clear();
+      newStreet.clear();
+      newCity.clear();
+      newZip.clear();
+      newState = 'State';
+      newName.clear();
+      newCard.clear();
+      newExpiry.clear();
+      newCvv.clear();
+      chargers = [];
+      itemChange(false, 0);
+      itemChange(false, 1);
+      itemChange(false, 2);
+    }
+
+    _signOut() async {
+      final User? user = FirebaseAuth.instance.currentUser;
+
+      if (user == null) {
+        print('No user! How did you even get here?');
+        return;
+      }
+
+      await FirebaseAuth.instance.signOut().then((res) {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => const StartUp()));
+      });
+      // go to firstLaunch
     }
 
     return Scaffold(
@@ -150,6 +253,7 @@ class _ChangePID extends State<ChangePID> {
           child: ListView(
         children: <Widget>[
           Container(
+              alignment: Alignment.centerLeft,
               child: ElevatedButton(
                   onPressed: () => goToSettings(context),
                   child: const Icon(Icons.arrow_back),
@@ -165,7 +269,7 @@ class _ChangePID extends State<ChangePID> {
                           return Colors.black;
                         } // Splash color
                       })))),
-          // text entries
+          // text entries. no need for validation
           Container(
               alignment: Alignment.centerLeft,
               padding: const EdgeInsets.all(5),
@@ -178,47 +282,47 @@ class _ChangePID extends State<ChangePID> {
             width: screenWidth,
             padding: inputPadding,
             child: TextFormField(
-                controller: newUsername,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Username',
-                ),
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.next,
-                validator: _validateField),
+              controller: newUsername,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Username',
+              ),
+              keyboardType: TextInputType.emailAddress,
+              textInputAction: TextInputAction.next,
+            ),
           ),
           Container(
               // phone number
               width: screenWidth,
               padding: inputPadding,
               child: TextFormField(
-                  controller: newPhone,
-                  //autocorrect: false,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Phone Number',
-                  ),
-                  keyboardType: TextInputType.phone,
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.digitsOnly
-                  ],
-                  textInputAction: TextInputAction.next,
-                  validator: _validateField)),
+                controller: newPhone,
+                //autocorrect: false,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Phone Number',
+                ),
+                keyboardType: TextInputType.phone,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly
+                ],
+                textInputAction: TextInputAction.next,
+              )),
 
           // Home Street
           Container(
             width: screenWidth / 2.25,
             padding: inputPadding,
             child: TextFormField(
-                controller: newStreet,
-                //autocorrect: false,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Home street',
-                ),
-                keyboardType: TextInputType.streetAddress,
-                textInputAction: TextInputAction.next,
-                validator: _validateField),
+              controller: newStreet,
+              //autocorrect: false,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Home street',
+              ),
+              keyboardType: TextInputType.streetAddress,
+              textInputAction: TextInputAction.next,
+            ),
           ),
           Row(
             children: <Widget>[
@@ -227,80 +331,72 @@ class _ChangePID extends State<ChangePID> {
                 width: screenWidth / 2,
                 padding: inputPadding,
                 child: TextFormField(
-                    controller: newCity,
-                    //autocorrect: false,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'City',
-                    ),
-                    textInputAction: TextInputAction.next,
-                    validator: _validateField),
+                  controller: newCity,
+                  //autocorrect: false,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'City',
+                  ),
+                  textInputAction: TextInputAction.next,
+                ),
               ),
               Container(
                 //ZIP
                 width: screenWidth / 4,
                 padding: inputPadding,
                 child: TextFormField(
-                    controller: newZip,
-                    //autocorrect: false,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'ZIP',
-                      counterText: '',
-                    ),
-                    keyboardType: TextInputType.number,
-                    maxLength: 5,
-                    // accepts numbers only
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly
-                    ],
-                    textInputAction: TextInputAction.next,
-                    onChanged: (value) => {
-                          if (newZip.text.length == 5)
-                            {FocusScope.of(context).nextFocus()}
-                        },
-                    validator: _validateField),
+                  controller: newZip,
+                  //autocorrect: false,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'ZIP',
+                    counterText: '',
+                  ),
+                  keyboardType: TextInputType.number,
+                  maxLength: 5,
+                  // accepts numbers only
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
+                  textInputAction: TextInputAction.next,
+                  onChanged: (value) => {
+                    if (newZip.text.length == 5)
+                      {FocusScope.of(context).nextFocus()}
+                  },
+                ),
               ),
               Container(
-                // state dropdown
+                height: 80,
+                width: screenWidth / 5,
                 margin: const EdgeInsets.all(5.0),
-                height: 60,
                 decoration: const ShapeDecoration(
-                  shape: RoundedRectangleBorder(
-                    //dimensions: EdgeInsetsGeometry(50),
-                    borderRadius: BorderRadius.all(Radius.circular(5)),
-                    side: BorderSide(
-                        width: 1.0,
-                        style: BorderStyle.solid,
-                        color: Colors.grey),
-                  ),
+                    shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  side: BorderSide(
+                      width: 1.0,
+                      style: BorderStyle.solid,
+                      color: Colors.white),
+                )),
+                child: DropdownButtonFormField(
+                  items: states.map((states) {
+                    return DropdownMenuItem(
+                      value: states,
+                      child: Text(states),
+                    );
+                  }).toList(),
+                  value: newState,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      if (newValue != null) {
+                        newState = newValue;
+                      }
+                    });
+                  },
+                  elevation: 5,
+                  isDense: true,
+                  //iconSize: 20.0,
                 ),
-                child: DropdownButtonHideUnderline(
-                  child: ButtonTheme(
-                    alignedDropdown: true,
-                    child: DropdownButton(
-                      value: newState,
-                      // After selecting the desired option,it will
-                      // change button value to selected value
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          newState = newValue!;
-                        });
-                      },
-                      // Down Arrow Icon
-                      icon: const Icon(Icons.keyboard_arrow_down),
-
-                      // Array list of items
-                      items: states.map((states) {
-                        return DropdownMenuItem(
-                          value: states,
-                          child: Text(states),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ),
-              )
+              ),
             ], // end children
           ),
           TextButton(
@@ -456,7 +552,7 @@ class _ChangePID extends State<ChangePID> {
                         // ignore: unnecessary_new
                         new CheckboxListTile(
                           onChanged: (bool? val) {
-                            //itemChange(val, index);
+                            itemChange(val, index);
                           },
                           activeColor: const Color(0xff096B72),
                           dense: true,
@@ -483,12 +579,26 @@ class _ChangePID extends State<ChangePID> {
                   ),
                 );
               }),
-
           Container(
-              // continue button
+              // update button
               padding: inputPadding,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  _updatePID();
+                },
+                child: const Text("Update Account Info"),
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all(const Color(0xff096B72)),
+                ),
+              )),
+          Container(
+              // sign out button
+              padding: inputPadding,
+              child: ElevatedButton(
+                onPressed: () {
+                  _signOut();
+                },
                 child: const Text("Sign Out"),
                 style: ButtonStyle(
                   backgroundColor:
@@ -499,9 +609,8 @@ class _ChangePID extends State<ChangePID> {
       )),
     );
   }
-}
 
-/*void itemChange(bool? val, int index) {
+  void itemChange(bool? val, int index) {
     if (index == 1) {
       _chademoSelected = !_chademoSelected;
     } else if (index == 2) {
@@ -512,7 +621,9 @@ class _ChangePID extends State<ChangePID> {
     setState(() {
       checkBoxListTileModel[index].isCheck = val;
     });
-  }*/
+  }
+}
+
 class CheckBoxListTileModel {
   int imgId;
   String img;
