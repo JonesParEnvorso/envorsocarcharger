@@ -7,6 +7,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'searchPage.dart';
 import 'speech_recognition.dart' as speech;
 import 'package:google_place/google_place.dart' as googleplace;
+//import 'package:http/http.dart' as http;
+//import 'dart:convert' as convert;
 
 //import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
@@ -51,6 +53,7 @@ class _MapScreenState extends State<MapScreen> {
   late LocationData currentLocation;
   //late LocationData _currentPosition;
   Location location = Location();
+  LatLng curLatLng = const LatLng(0, 0);
   // Charger data
   Chargers chargers = Chargers();
   List<Map<String, dynamic>> chargerData = [];
@@ -292,6 +295,28 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
+  // Experimenting with mapbox directions
+  /*Future<Map<String, dynamic>> Future<void> getDirections(
+      LatLng destination) async {
+    //print(
+    //    'https://api.mapbox.com/directions/v5/mapbox/driving/${currentLocation.latitude},${currentLocation.longitude};${destination.latitude},${destination.longitude}?access_token=sk.eyJ1IjoiY3J0dXJuYnVsbCIsImEiOiJja3poZmZjeGE0MWU3Mm90dnE3Yms4Y2UzIn0.0zQmFVU4kY7AE1H2GxOdVg');
+    final String url =
+        'https://api.mapbox.com/directions/v5/mapbox/driving/${currentLocation.longitude},${currentLocation.latitude};${destination.longitude},${destination.latitude}?access_token=sk.eyJ1IjoiY3J0dXJuYnVsbCIsImEiOiJja3poZmZjeGE0MWU3Mm90dnE3Yms4Y2UzIn0.0zQmFVU4kY7AE1H2GxOdVg';
+    var response = await http.get(Uri.parse(url));
+    Map json = convert.jsonDecode(response.body);
+
+    //print(json);
+
+    print(json["routes"][0]);
+
+    //var results = {}
+
+    //
+
+    //print(json);
+    return;
+  }*/
+
   // Set the location before the map is rendered (WIP)
   void initializeLocation() async {
     //_currentPosition = await location.getLocation();
@@ -303,6 +328,7 @@ class _MapScreenState extends State<MapScreen> {
 
     // Wait for location
     currentLocation = await location.getLocation();
+    curLatLng = LatLng(currentLocation.latitude!, currentLocation.longitude!);
     // Move map camera
     _googleMapController
         .animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
@@ -354,10 +380,9 @@ class _MapScreenState extends State<MapScreen> {
       LatLng pos = LatLng(chargerData[i]['lat'], chargerData[i]['lon']);
       setState(() {
         markers.add(Marker(
-          markerId: (MarkerId(markers.length.toString())),
-          position: pos,
-          onTap: () => launchMap(i),
-        ));
+            markerId: (MarkerId(markers.length.toString())),
+            position: pos,
+            onTap: () => launchMap(i)));
       });
     }
   }
