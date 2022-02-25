@@ -40,12 +40,12 @@ class _searchPage extends State<searchPage> {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => SettingsScreen()));
   }
- goToMap(BuildContext context) {
+
+  goToMap(BuildContext context) {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => MapScreen()));
   }
 
-  
   Widget build(BuildContext context) {
     return Scaffold(
         body: Center(
@@ -105,7 +105,8 @@ class _searchPage extends State<searchPage> {
               Container(
                   child: ElevatedButton(
                 onPressed: () {
-                  speech.MyApp;
+                  //speech.MyApp;
+                  speech.main();
                 },
                 child: Icon(Icons.mic),
                 style: ButtonStyle(
@@ -121,13 +122,12 @@ class _searchPage extends State<searchPage> {
                 ),
               )),
             ])),
-            /*Container(
+        /*Container(
               child: ListView(
                   
 
               ),
             ),*/
-      
       ],
     )));
   }
