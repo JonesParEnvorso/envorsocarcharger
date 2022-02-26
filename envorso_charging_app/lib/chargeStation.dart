@@ -38,7 +38,7 @@ class Chargers {
           chargers.add(docs.data());
         }
       }
-      if (range > 5) {
+      if (range > 6) {
         return chargers;
       } else if (chargers.length >= minSize) {
         foundChargers = true;
@@ -47,8 +47,20 @@ class Chargers {
       }
     }
     print(range);
-    range = 2;
+    range = 4;
     orderDistance(lat, lon);
+    return chargers;
+  }
+
+  Future<List<Map<String, dynamic>>> findCity(String city) async {
+    chargers = [];
+    var querryList = await FirebaseFirestore.instance
+        .collection('stations')
+        .where('city', isEqualTo: city)
+        .get();
+    for (var docs in querryList.docs) {
+      chargers.add(docs.data());
+    }
     return chargers;
   }
 
