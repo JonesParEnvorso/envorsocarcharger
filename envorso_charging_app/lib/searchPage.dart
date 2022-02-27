@@ -1,4 +1,4 @@
-import 'dart:html';
+//import 'dart:html';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -54,7 +54,7 @@ class _searchPage extends State<searchPage> {
         body: Center(
             child: Column(
       children: <Widget>[
-        Container(
+        /*Container(
             padding: EdgeInsets.fromLTRB(10, 20, 0, 0),
             child: Row(
               children: [
@@ -65,9 +65,9 @@ class _searchPage extends State<searchPage> {
                 ),
                 Text('USERNAME FILLER', style: TextStyle(color: Colors.black))
               ],
-            )),
+            )),*/
         Container(
-            padding: EdgeInsets.fromLTRB(10, 20, 0, 0),
+            padding: EdgeInsets.fromLTRB(10, 30, 0, 0),
             child: Row(children: [
               Container(
                   child: ElevatedButton(
