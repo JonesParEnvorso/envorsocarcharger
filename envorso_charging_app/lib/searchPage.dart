@@ -1,3 +1,6 @@
+import 'dart:html';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'settings.dart';
@@ -122,13 +125,35 @@ class _searchPage extends State<searchPage> {
                 ),
               )),
             ])),
-        /*Container(
-              child: ListView(
-                  
-
+        /*return ListView.builder(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemCount: listTilesLocations.length,
+              itemBuilder: (BuildContext context, int index ){
+                  return Card(
+                    child: ListTile(
+                      leading: Icon(Icons.location_pin, 
+                      color: listTilesLocations[index].superc ?  Colors.red : Colors.yellow),
+                      title: Text(listTilesLocations[index].titles),
+                    ),
+                  ),
+        )
               ),
             ),*/
       ],
     )));
   }
+}
+class listTilesLocations {
+  int id;
+  bool superc;
+  String title;
+
+  listTilesLocations(
+    {required this.id,
+    required this.superc,
+    required this.title}
+  );
+
+
 }
