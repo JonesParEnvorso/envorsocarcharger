@@ -125,7 +125,7 @@ class _MapScreenState extends State<MapScreen> {
         child: FloatingActionButton(
           backgroundColor: const Color(0xff096B72),
           foregroundColor: Colors.white,
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => {},
           heroTag: 'back',
           child: const Icon(Icons.filter_alt),
         ),
@@ -191,7 +191,7 @@ class _MapScreenState extends State<MapScreen> {
                         Container(
                             child: ElevatedButton(
                           onPressed: () {
-                            speech.main();
+                            speech.MyApp;
                             //Navigator.push(context, MaterialPageRoute(builder: (context) => const speech )
                           },
                           child: const Icon(Icons.mic),
