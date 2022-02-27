@@ -123,10 +123,14 @@ class FirebaseFunctions {
     }
 
     DocumentReference curUser = firestore.collection('users').doc(uId);
-    DocumentSnapshot<Map<String, dynamic>> data =
-        await firestore.collection('users').doc(uId).get();
+    //DocumentSnapshot<Map<String, dynamic>> data =
+    await firestore
+        .collection('users')
+        .doc(uId)
+        .get()
+        .then((DocumentSnapshot<Map<String, dynamic>> doc) {});
 
-    Map<String, dynamic>? map = data.data();
+    /*Map<String, dynamic>? map = data.data();
     if (map == null) {
       print("No map");
       return;
@@ -142,8 +146,9 @@ class FirebaseFunctions {
       } else if (key == 'username' && username == '') {
         username == value;
       } else if (key == 'address') {}
-    });
+    });*/
 
+    // prevent overriding of uncessary data
     await curUser
         .update({
           'firstName': firstName,
