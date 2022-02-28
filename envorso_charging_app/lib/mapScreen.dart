@@ -10,6 +10,7 @@ import 'speech_recognition.dart' as speech;
 import 'savedLocations.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
+import 'settings.dart';
 
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
@@ -53,6 +54,10 @@ class _MapScreenState extends State<MapScreen> {
   goToSavedLocations() {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => SavedLocations()));
+  }
+   goToSettings(context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => SettingsScreen()));
   }
 
   // Location data
@@ -355,11 +360,11 @@ class _MapScreenState extends State<MapScreen> {
                               ))),
                           TextButton.icon(
                             icon: const Icon(
-                                Icons.directions_car_filled_rounded,
+                                Icons.settings,
                                 color: Colors.white),
-                            label: (const Text('Trip Planner',
+                            label: (const Text('Settings',
                                 style: TextStyle(color: Colors.white))),
-                            onPressed: () {},
+                            onPressed: () => goToSettings(context),
                           ),
                           const SizedBox(
                             width: 33,
