@@ -85,7 +85,9 @@ class _searchPage extends State<searchPage> {
   _generateTile() async {
     String address;
     bool superc;
+    String plugs;
     for (var station in chargers) {
+      plugs = "";
       address =
           station['address'] + " " + station['city'] + ", " + station['state'];
       if (station['DC fast'] > 0) {
@@ -93,15 +95,20 @@ class _searchPage extends State<searchPage> {
       } else {
         superc = false;
       }
+
+      for (var plug in station['plug']) {
+        plugs += plug;
+        plugs += "\n";
+      }
       tileList.add(listTilesLocations(
           id: 123,
-          superc: false,
+          superc: superc,
           title: station['network'],
           address: address,
           lvl1: station['level 1'],
-          lvl2: station['level 1'],
+          lvl2: station['level 2'],
           dcFast: station['DC fast'],
-          plugs: station['plug']));
+          plugs: plugs));
     }
   }
 
@@ -231,39 +238,57 @@ class _searchPage extends State<searchPage> {
                                 itemBuilder: (BuildContext context, int index) {
                                   return Card(
                                       child: ListTile(
+                                          leading: Icon(Icons.location_pin,
+                                              color: tileList[index].superc
+                                                  ? Colors.red
+                                                  : Colors.yellow),
+                                          title: Text(tileList[index].title,
+                                              textAlign: TextAlign.left),
+                                          subtitle: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(
+                                                tileList[index].address,
+                                                textAlign: TextAlign.left,
+                                              ),
+                                              Text(
+                                                  "DC Fast: " +
+                                                      tileList[index]
+                                                          .dcFast
+                                                          .toString() +
+                                                      " | Level 2: " +
+                                                      tileList[index]
+                                                          .lvl2
+                                                          .toString() +
+                                                      " | Level 1: " +
+                                                      tileList[index]
+                                                          .lvl1
+                                                          .toString(),
+                                                  textAlign: TextAlign.left,
+                                                  style: TextStyle(
+                                                      fontStyle:
+                                                          FontStyle.italic,
+                                                      fontSize: 15,
+                                                      color: Colors.black))
+                                            ],
+                                          ),
+                                          trailing: Text(
+                                            tileList[index].plugs,
+                                            textAlign: TextAlign.right,
+                                          ))
+                                      /*
+                                      child: ListTile(
                                     leading: Icon(Icons.location_pin,
                                         color: tileList[index].superc
                                             ? Colors.red
                                             : Colors.yellow),
                                     title: Text(tileList[index].title),
                                     subtitle: Text(tileList[index].address),
-                                  ));
+                                  )*/
+                                      );
                                 }),
                           )),
-            /*
-        isLoading // starts off as true, changes to false once list has been loaded in
-            ? const Center(
-                child: CircularProgressIndicator(
-                  color: Color(0xff096B72),
-                ),
-              )
-            : ListView.builder(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: tileList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Card(
-                    child: ListTile(
-                      leading: Icon(Icons.location_pin,
-                          color: tileList[index].superc
-                              ? Colors.red
-                              : Colors.yellow),
-                      title: Text(tileList[index].title),
-                      subtitle: Text(tileList[index].address),
-                    ),
-                  );
-                })*/
           ],
         )));
   }
@@ -277,7 +302,7 @@ class listTilesLocations {
   int lvl1;
   int lvl2;
   int dcFast;
-  List<String> plugs;
+  String plugs;
 
   listTilesLocations(
       {required this.id,
