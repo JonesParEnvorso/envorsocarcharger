@@ -662,11 +662,11 @@ class _AddPID extends State<AddPID> {
   }
 
   void itemChange(bool? val, int index) {
-    if (index == 1) {
+    if (index == 0) {
       _chademoSelected = !_chademoSelected;
-    } else if (index == 2) {
+    } else if (index == 1) {
       _j1772Selected = !_j1772Selected;
-    } else {
+    } else if (index == 2) {
       _saeComboSelected = !_saeComboSelected;
     }
     setState(() {
@@ -700,19 +700,19 @@ class CheckBoxListTileModel {
   static List<CheckBoxListTileModel> getImgs() {
     return <CheckBoxListTileModel>[
       CheckBoxListTileModel(
-        imgId: 1,
+        imgId: 0,
         img: 'assets/images/Plug-Icon-CHAdeMO.png',
         title: 'CHAdeMo',
         isCheck: false,
       ),
       CheckBoxListTileModel(
-        imgId: 2,
+        imgId: 1,
         img: 'assets/images/Plug-Icon-J1772.png',
         title: 'J1772',
         isCheck: false,
       ),
       CheckBoxListTileModel(
-        imgId: 3,
+        imgId: 2,
         img: 'assets/images/Plug-Icon-J1772-Combo.png',
         title: 'J1772 Combo',
         isCheck: false,

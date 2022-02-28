@@ -111,119 +111,120 @@ class _ServicesList extends State<ServicesList> with TickerProviderStateMixin {
     return Scaffold(
       body: Padding(
           padding: const EdgeInsets.all(10),
-          child: ListView(children: <Widget>[
-            Container(
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.all(5),
-                child: const Text(
-                  'Services',
-                  style: TextStyle(fontSize: 20),
-                )),
-            Container(
-                alignment: Alignment.center,
-                padding: const EdgeInsets.all(15),
-                margin: const EdgeInsets.all(10),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const <Widget>[
-                      Icon(
-                        Icons.stars,
-                        color: Color(0xff096B72),
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Text(
-                        'Local',
-                        style: TextStyle(fontSize: 15),
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Icon(
-                        Icons.monetization_on,
-                        color: Color(0xffCFB406),
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Text(
-                        'Fees apply',
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ])),
-            isLoading // starts off as true, changes to false once list has been loaded in
-                ? const Center(
-                    child: CircularProgressIndicator(
-                      color: Color(0xff096B72),
-                    ),
-                  )
-                : ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemCount: checkBoxListTileModel.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      // ignore: unnecessary_new
-                      return Card(
+          child: isLoading
+              ? const Center(
+                  // loading icon
+                  child: CircularProgressIndicator(
+                    color: Color(0xff096B72),
+                  ),
+                )
+              : ListView(children: <Widget>[
+                  Container(
+                      alignment: Alignment.centerLeft,
+                      padding: const EdgeInsets.all(5),
+                      child: const Text(
+                        'Services',
+                        style: TextStyle(fontSize: 20),
+                      )),
+                  Container(
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.all(15),
+                      margin: const EdgeInsets.all(10),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const <Widget>[
+                            Icon(
+                              Icons.stars,
+                              color: Color(0xff096B72),
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              'Local',
+                              style: TextStyle(fontSize: 15),
+                            ),
+                            SizedBox(
+                              width: 20,
+                            ),
+                            Icon(
+                              Icons.monetization_on,
+                              color: Color(0xffCFB406),
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              'Fees apply',
+                              style: TextStyle(fontSize: 15),
+                            ),
+                          ])),
+                  ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemCount: checkBoxListTileModel.length,
+                      itemBuilder: (BuildContext context, int index) {
                         // ignore: unnecessary_new
-                        child: new Container(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Column(
-                            children: <Widget>[
-                              // ignore: unnecessary_new
-                              new CheckboxListTile(
-                                onChanged: (bool? val) {
-                                  itemChange(val, index);
-                                },
-                                activeColor: const Color(0xff096B72),
-                                dense: true,
-                                title: Text(
-                                  checkBoxListTileModel[index].title,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 0.5,
+                        return Card(
+                          // ignore: unnecessary_new
+                          child: new Container(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Column(
+                              children: <Widget>[
+                                // ignore: unnecessary_new
+                                new CheckboxListTile(
+                                  onChanged: (bool? val) {
+                                    itemChange(val, index);
+                                  },
+                                  activeColor: const Color(0xff096B72),
+                                  dense: true,
+                                  title: Text(
+                                    checkBoxListTileModel[index].title,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.5,
+                                    ),
                                   ),
-                                ),
-                                value: checkBoxListTileModel[index].isCheck,
-                                secondary: Container(
-                                    height: 50,
-                                    width: 50,
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.stars,
-                                          color:
-                                              checkBoxListTileModel[index].local
-                                                  ? const Color(0xff096B72)
-                                                  : Colors.white,
-                                        ),
-                                        if (checkBoxListTileModel[index]
-                                            .money) ...[
-                                          const Icon(
-                                            Icons.monetization_on,
-                                            color: Color(0xffCFB406),
+                                  value: checkBoxListTileModel[index].isCheck,
+                                  secondary: Container(
+                                      height: 50,
+                                      width: 50,
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.stars,
+                                            color: checkBoxListTileModel[index]
+                                                    .local
+                                                ? const Color(0xff096B72)
+                                                : Colors.white,
                                           ),
+                                          if (checkBoxListTileModel[index]
+                                              .money) ...[
+                                            const Icon(
+                                              Icons.monetization_on,
+                                              color: Color(0xffCFB406),
+                                            ),
+                                          ],
                                         ],
-                                      ],
-                                    )),
-                              )
-                            ],
+                                      )),
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    }),
-            Container(
-                // continue button
-                child: ElevatedButton(
-              onPressed: () => _addServices(),
-              child: const Text("Continue"),
-              style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all(const Color(0xff096B72)),
-              ),
-            )),
-          ])),
+                        );
+                      }),
+                  Container(
+                      // continue button
+                      child: ElevatedButton(
+                    onPressed: () => _addServices(),
+                    child: const Text("Continue"),
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(const Color(0xff096B72)),
+                    ),
+                  )),
+                ])),
     );
   }
 

@@ -1,3 +1,6 @@
+//import 'dart:html';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'settings.dart';
@@ -51,7 +54,7 @@ class _searchPage extends State<searchPage> {
         body: Center(
             child: Column(
       children: <Widget>[
-        Container(
+        /*Container(
             padding: EdgeInsets.fromLTRB(10, 20, 0, 0),
             child: Row(
               children: [
@@ -62,9 +65,9 @@ class _searchPage extends State<searchPage> {
                 ),
                 Text('USERNAME FILLER', style: TextStyle(color: Colors.black))
               ],
-            )),
+            )),*/
         Container(
-            padding: EdgeInsets.fromLTRB(10, 20, 0, 0),
+            padding: EdgeInsets.fromLTRB(10, 30, 0, 0),
             child: Row(children: [
               Container(
                   child: ElevatedButton(
@@ -122,13 +125,35 @@ class _searchPage extends State<searchPage> {
                 ),
               )),
             ])),
-        /*Container(
-              child: ListView(
-                  
-
+        /*return ListView.builder(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemCount: listTilesLocations.length,
+              itemBuilder: (BuildContext context, int index ){
+                  return Card(
+                    child: ListTile(
+                      leading: Icon(Icons.location_pin, 
+                      color: listTilesLocations[index].superc ?  Colors.red : Colors.yellow),
+                      title: Text(listTilesLocations[index].titles),
+                    ),
+                  ),
+        )
               ),
             ),*/
       ],
     )));
   }
+}
+class listTilesLocations {
+  int id;
+  bool superc;
+  String title;
+
+  listTilesLocations(
+    {required this.id,
+    required this.superc,
+    required this.title}
+  );
+
+
 }

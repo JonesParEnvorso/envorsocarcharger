@@ -33,6 +33,10 @@ class ChangePID extends StatefulWidget {
   _ChangePID createState() => _ChangePID();
 }
 
+late bool _j1772Selected;
+late bool _chademoSelected;
+late bool _saeComboSelected;
+
 class _ChangePID extends State<ChangePID> {
   goToSettings(BuildContext context) {
     Navigator.push(context,
@@ -122,24 +126,23 @@ class _ChangePID extends State<ChangePID> {
   final newUsername = TextEditingController();
   final newPhone = TextEditingController();
 
-  List<CheckBoxListTileModel> checkBoxListTileModel =
-      CheckBoxListTileModel.getImgs();
+  List<CheckBoxListTileModel> checkBoxListTileModel = [];
+  //CheckBoxListTileModel.getImgs();
 
-  final List<String> chargerTypes = <String>[];
-  bool _j1772Selected = false;
-  bool _chademoSelected = false;
-  bool _saeComboSelected = false;
+  List<String> chargerTypes = [];
 
   OutlineInputBorder? border;
 
   FirebaseFunctions firebaseFunctions = FirebaseFunctions();
 
+  bool isLoading = true;
+
   @override
   void initState() {
-    _j1772Selected = false;
-    _chademoSelected = false;
-    _saeComboSelected = false;
-    super.initState();
+    _fillChargers();
+    //_j1772Selected = false;
+    //_chademoSelected = false;
+    //_saeComboSelected = false;
     isCardNumVisible = false;
     isCvvVisible = false;
     border = OutlineInputBorder(
@@ -148,6 +151,7 @@ class _ChangePID extends State<ChangePID> {
         width: 2.0,
       ),
     );
+    super.initState();
   }
 
   @override
@@ -176,6 +180,14 @@ class _ChangePID extends State<ChangePID> {
     super.dispose();
   }
 
+  _fillChargers() async {
+    List<CheckBoxListTileModel> temp = await CheckBoxListTileModel.getImgs();
+    setState(() {
+      checkBoxListTileModel = temp;
+      isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -183,6 +195,9 @@ class _ChangePID extends State<ChangePID> {
     const inputPadding = EdgeInsets.all(5);
 
     _updatePID() async {
+      setState(() {
+        isLoading = true;
+      });
       final FirebaseAuth auth = FirebaseAuth.instance;
       String uId;
       if (auth.currentUser == null) {
@@ -202,7 +217,7 @@ class _ChangePID extends State<ChangePID> {
         chargerTypes.add('SAE Combo CCS');
       }
 
-      /*firebaseFunctions.updateAccount(
+      await firebaseFunctions.updateAccount(
           uId,
           newUsername.text,
           newPhone.text,
@@ -214,22 +229,30 @@ class _ChangePID extends State<ChangePID> {
           newCard.text,
           newExpiry.text,
           newCvv.text,
-          chargerTypes);*/
+          chargerTypes);
 
-      newUsername.clear();
-      newPhone.clear();
-      newStreet.clear();
-      newCity.clear();
-      newZip.clear();
-      newState = 'State';
-      newName.clear();
-      newCard.clear();
-      newExpiry.clear();
-      newCvv.clear();
-      chargers = [];
-      itemChange(false, 0);
-      itemChange(false, 1);
-      itemChange(false, 2);
+      //itemChange(false, 0);
+      //itemChange(false, 1);
+      //itemChange(false, 2);
+      //j1772Selected = false;
+      //chademoSelected = false;
+      //saeComboSelected = false;
+      List<CheckBoxListTileModel> temp = await CheckBoxListTileModel.getImgs();
+      setState(() {
+        newUsername.clear();
+        newPhone.clear();
+        newStreet.clear();
+        newCity.clear();
+        newZip.clear();
+        newState = 'State';
+        newName.clear();
+        newCard.clear();
+        newExpiry.clear();
+        newCvv.clear();
+        chargerTypes = [];
+        checkBoxListTileModel = temp;
+        isLoading = false;
+      });
     }
 
     _signOut() async {
@@ -250,372 +273,385 @@ class _ChangePID extends State<ChangePID> {
     return Scaffold(
       body: Form(
           //key: _formKey,
-          child: ListView(
-        children: <Widget>[
-          Container(
-              alignment: Alignment.centerLeft,
-              child: ElevatedButton(
-                  onPressed: () => goToSettings(context),
-                  child: const Icon(Icons.arrow_back),
-                  style: ButtonStyle(
-                      shape: MaterialStateProperty.all(const CircleBorder()),
-                      padding:
-                          MaterialStateProperty.all(const EdgeInsets.all(8)),
-                      backgroundColor: MaterialStateProperty.all(
-                          const Color(0xff096B72)), // Button color
-                      overlayColor:
-                          MaterialStateProperty.resolveWith<Color?>((states) {
-                        if (states.contains(MaterialState.pressed)) {
-                          return Colors.black;
-                        } // Splash color
-                      })))),
-          // text entries. no need for validation
-          Container(
-              alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.all(5),
-              child: const Text(
-                'User Info',
-                style: TextStyle(fontSize: 20),
-              )),
-          Container(
-            // username
-            width: screenWidth,
-            padding: inputPadding,
-            child: TextFormField(
-              controller: newUsername,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Username',
-              ),
-              keyboardType: TextInputType.emailAddress,
-              textInputAction: TextInputAction.next,
-            ),
-          ),
-          Container(
-              // phone number
-              width: screenWidth,
-              padding: inputPadding,
-              child: TextFormField(
-                controller: newPhone,
-                //autocorrect: false,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Phone Number',
-                ),
-                keyboardType: TextInputType.phone,
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.digitsOnly
-                ],
-                textInputAction: TextInputAction.next,
-              )),
-
-          // Home Street
-          Container(
-            width: screenWidth / 2.25,
-            padding: inputPadding,
-            child: TextFormField(
-              controller: newStreet,
-              //autocorrect: false,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Home street',
-              ),
-              keyboardType: TextInputType.streetAddress,
-              textInputAction: TextInputAction.next,
-            ),
-          ),
-          Row(
-            children: <Widget>[
-              Container(
-                // city
-                width: screenWidth / 2,
-                padding: inputPadding,
-                child: TextFormField(
-                  controller: newCity,
-                  //autocorrect: false,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'City',
+          child: isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(
+                    color: Color(0xff096B72),
                   ),
-                  textInputAction: TextInputAction.next,
-                ),
-              ),
-              Container(
-                //ZIP
-                width: screenWidth / 4,
-                padding: inputPadding,
-                child: TextFormField(
-                  controller: newZip,
-                  //autocorrect: false,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'ZIP',
-                    counterText: '',
-                  ),
-                  keyboardType: TextInputType.number,
-                  maxLength: 5,
-                  // accepts numbers only
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.digitsOnly
-                  ],
-                  textInputAction: TextInputAction.next,
-                  onChanged: (value) => {
-                    if (newZip.text.length == 5)
-                      {FocusScope.of(context).nextFocus()}
-                  },
-                ),
-              ),
-              Container(
-                height: 80,
-                width: screenWidth / 5,
-                margin: const EdgeInsets.all(5.0),
-                decoration: const ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  side: BorderSide(
-                      width: 1.0,
-                      style: BorderStyle.solid,
-                      color: Colors.white),
-                )),
-                child: DropdownButtonFormField(
-                  items: states.map((states) {
-                    return DropdownMenuItem(
-                      value: states,
-                      child: Text(states),
-                    );
-                  }).toList(),
-                  value: newState,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      if (newValue != null) {
-                        newState = newValue;
-                      }
-                    });
-                  },
-                  elevation: 5,
-                  isDense: true,
-                  //iconSize: 20.0,
-                ),
-              ),
-            ], // end children
-          ),
-          TextButton(
-              child: const Text('Why is Credit Card info needed?',
-                  style: TextStyle(color: Color(0xff096B72))),
-              onPressed: () => showDialog<String>(
-                    context: context,
-                    builder: (BuildContext context) => AlertDialog(
-                      title: const Text('Credit Card Info'),
-                      content: const SingleChildScrollView(
-                          child: Text(
-                              'CREDIT CARD INFORMATION IS OPTIONAL\n\nWe will not charge you any amount of money for using our service, but in order to use certain charging companies chargers, your credit card informatoin will be needed for them. \n\ne.g. We won\'t charge you, but we make it easier for you to use services that do charge you.')),
-                      actions: <Widget>[
-                        TextButton(
-                          style: TextButton.styleFrom(
-                              primary: const Color(0xff096B72)),
-                          onPressed: () => Navigator.pop(context, 'OK'),
-                          child: const Text('OK'),
+                )
+              : ListView(
+                  children: <Widget>[
+                    Container(
+                        alignment: Alignment.centerLeft,
+                        child: ElevatedButton(
+                            onPressed: () => goToSettings(context),
+                            child: const Icon(Icons.arrow_back),
+                            style: ButtonStyle(
+                                shape: MaterialStateProperty.all(
+                                    const CircleBorder()),
+                                padding: MaterialStateProperty.all(
+                                    const EdgeInsets.all(8)),
+                                backgroundColor: MaterialStateProperty.all(
+                                    const Color(0xff096B72)), // Button color
+                                overlayColor:
+                                    MaterialStateProperty.resolveWith<Color?>(
+                                        (states) {
+                                  if (states.contains(MaterialState.pressed)) {
+                                    return Colors.black;
+                                  } // Splash color
+                                })))),
+                    // text entries. no need for validation
+                    Container(
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.all(5),
+                        child: const Text(
+                          'User Info',
+                          style: TextStyle(fontSize: 20),
+                        )),
+                    Container(
+                      // username
+                      width: screenWidth,
+                      padding: inputPadding,
+                      child: TextFormField(
+                        controller: newUsername,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Username',
                         ),
-                      ],
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.next,
+                      ),
                     ),
-                  )),
-          // start of credit card
-          Container(
-            // User's name
-            width: screenWidth,
-            padding: inputPadding,
-            child: TextFormField(
-              controller: newName,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Cardholder Name',
-                hintText: 'First Name Last Name',
-              ),
-              textInputAction: TextInputAction.next,
-            ),
-          ),
-          Container(
-            // Credit Card Number
-            width: screenWidth,
-            padding: inputPadding,
-            child: TextFormField(
-              controller: newCard,
-              obscureText: !isCardNumVisible,
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                labelText: 'CC number',
-                hintText: '#### #### #### ####',
-                counterText: '',
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    isCardNumVisible ? Icons.visibility : Icons.visibility_off,
-                    color: const Color(0xff096B72),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      isCardNumVisible = !isCardNumVisible;
-                    });
-                  },
-                ),
-              ),
-              onChanged: (value) => {
-                if (newCard.text.length == 16)
-                  {FocusScope.of(context).nextFocus()}
-              },
-              maxLength: 16,
-              textInputAction: TextInputAction.next,
-            ),
-          ),
-          Row(children: <Widget>[
-            Container(
-                // expiration date
-                width: screenWidth / 2,
-                padding: inputPadding,
-                child: TextFormField(
-                  // commented this out because this forces the Exp. Date field to
-                  // have data in it, which isn't necessarily what we want since
-                  // all credit card data is optional, minus the user's name
-                  /*validator: (String? val) {
+                    Container(
+                        // phone number
+                        width: screenWidth,
+                        padding: inputPadding,
+                        child: TextFormField(
+                          controller: newPhone,
+                          //autocorrect: false,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Phone Number',
+                          ),
+                          keyboardType: TextInputType.phone,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
+                          textInputAction: TextInputAction.next,
+                        )),
+
+                    // Home Street
+                    Container(
+                      width: screenWidth / 2.25,
+                      padding: inputPadding,
+                      child: TextFormField(
+                        controller: newStreet,
+                        //autocorrect: false,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Home street',
+                        ),
+                        keyboardType: TextInputType.streetAddress,
+                        textInputAction: TextInputAction.next,
+                      ),
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Container(
+                          // city
+                          width: screenWidth / 2,
+                          padding: inputPadding,
+                          child: TextFormField(
+                            controller: newCity,
+                            //autocorrect: false,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'City',
+                            ),
+                            textInputAction: TextInputAction.next,
+                          ),
+                        ),
+                        Container(
+                          //ZIP
+                          width: screenWidth / 4,
+                          padding: inputPadding,
+                          child: TextFormField(
+                            controller: newZip,
+                            //autocorrect: false,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'ZIP',
+                              counterText: '',
+                            ),
+                            keyboardType: TextInputType.number,
+                            maxLength: 5,
+                            // accepts numbers only
+                            inputFormatters: <TextInputFormatter>[
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            textInputAction: TextInputAction.next,
+                            onChanged: (value) => {
+                              if (newZip.text.length == 5)
+                                {FocusScope.of(context).nextFocus()}
+                            },
+                          ),
+                        ),
+                        Container(
+                          height: 80,
+                          width: screenWidth / 5,
+                          margin: const EdgeInsets.all(5.0),
+                          decoration: const ShapeDecoration(
+                              shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                            side: BorderSide(
+                                width: 1.0,
+                                style: BorderStyle.solid,
+                                color: Colors.white),
+                          )),
+                          child: DropdownButtonFormField(
+                            items: states.map((states) {
+                              return DropdownMenuItem(
+                                value: states,
+                                child: Text(states),
+                              );
+                            }).toList(),
+                            value: newState,
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                if (newValue != null) {
+                                  newState = newValue;
+                                }
+                              });
+                            },
+                            elevation: 5,
+                            isDense: true,
+                            //iconSize: 20.0,
+                          ),
+                        ),
+                      ], // end children
+                    ),
+                    TextButton(
+                        child: const Text('Why is Credit Card info needed?',
+                            style: TextStyle(color: Color(0xff096B72))),
+                        onPressed: () => showDialog<String>(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                title: const Text('Credit Card Info'),
+                                content: const SingleChildScrollView(
+                                    child: Text(
+                                        'CREDIT CARD INFORMATION IS OPTIONAL\n\nWe will not charge you any amount of money for using our service, but in order to use certain charging companies chargers, your credit card informatoin will be needed for them. \n\ne.g. We won\'t charge you, but we make it easier for you to use services that do charge you.')),
+                                actions: <Widget>[
+                                  TextButton(
+                                    style: TextButton.styleFrom(
+                                        primary: const Color(0xff096B72)),
+                                    onPressed: () =>
+                                        Navigator.pop(context, 'OK'),
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              ),
+                            )),
+                    // start of credit card
+                    Container(
+                      // User's name
+                      width: screenWidth,
+                      padding: inputPadding,
+                      child: TextFormField(
+                        controller: newName,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Cardholder Name',
+                          hintText: 'First Name Last Name',
+                        ),
+                        textInputAction: TextInputAction.next,
+                      ),
+                    ),
+                    Container(
+                      // Credit Card Number
+                      width: screenWidth,
+                      padding: inputPadding,
+                      child: TextFormField(
+                        controller: newCard,
+                        obscureText: !isCardNumVisible,
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          labelText: 'CC number',
+                          hintText: '#### #### #### ####',
+                          counterText: '',
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              isCardNumVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: const Color(0xff096B72),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                isCardNumVisible = !isCardNumVisible;
+                              });
+                            },
+                          ),
+                        ),
+                        onChanged: (value) => {
+                          if (newCard.text.length == 16)
+                            {FocusScope.of(context).nextFocus()}
+                        },
+                        maxLength: 16,
+                        textInputAction: TextInputAction.next,
+                      ),
+                    ),
+                    Row(children: <Widget>[
+                      Container(
+                          // expiration date
+                          width: screenWidth / 2,
+                          padding: inputPadding,
+                          child: TextFormField(
+                            // commented this out because this forces the Exp. Date field to
+                            // have data in it, which isn't necessarily what we want since
+                            // all credit card data is optional, minus the user's name
+                            /*validator: (String? val) {
                         return (val != null && !val.contains('/'))
                             ? 'Missing /'
                             : null;
                       },*/
-                  controller: newExpiry,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Exp. Date',
-                    hintText: 'XX/XX',
-                  ),
-                  keyboardType: TextInputType.datetime,
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(5),
-                  ],
-                  onChanged: (value) => {
-                    if (newExpiry.text.length == 5)
-                      {FocusScope.of(context).nextFocus()}
-                  },
-                  textInputAction: TextInputAction.next,
-                  //validator: _validateField),
-                )),
-            Container(
-              // cvv
-              width: screenWidth / 2,
-              padding: inputPadding,
-              child: TextFormField(
-                controller: newCvv,
-                obscureText: !isCvvVisible,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  labelText: 'CVV',
-                  counterText: '',
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      isCvvVisible ? Icons.visibility : Icons.visibility_off,
-                      color: const Color(0xff096B72),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        isCvvVisible = !isCvvVisible;
-                      });
-                    },
-                  ),
-                ),
-                textInputAction: TextInputAction.next,
-                keyboardType: TextInputType.number,
-                maxLength: 4,
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.digitsOnly,
-                ],
-              ),
-            ),
-          ]),
-          // end of credit card
-          Container(
-              alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.all(10),
-              child: const Text(
-                'Plug types:',
-                style: TextStyle(fontSize: 20),
-              )),
-          ListView.builder(
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemCount: checkBoxListTileModel.length,
-              itemBuilder: (BuildContext context, int index) {
-                // ignore: unnecessary_new
-                return Card(
-                  // ignore: unnecessary_new
-                  child: new Container(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Column(
-                      children: <Widget>[
-                        // ignore: unnecessary_new
-                        new CheckboxListTile(
-                          onChanged: (bool? val) {
-                            itemChange(val, index);
+                            controller: newExpiry,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Exp. Date',
+                              hintText: 'XX/XX',
+                            ),
+                            keyboardType: TextInputType.datetime,
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(5),
+                            ],
+                            onChanged: (value) => {
+                              if (newExpiry.text.length == 5)
+                                {FocusScope.of(context).nextFocus()}
+                            },
+                            textInputAction: TextInputAction.next,
+                            //validator: _validateField),
+                          )),
+                      Container(
+                        // cvv
+                        width: screenWidth / 2,
+                        padding: inputPadding,
+                        child: TextFormField(
+                          controller: newCvv,
+                          obscureText: !isCvvVisible,
+                          decoration: InputDecoration(
+                            border: const OutlineInputBorder(),
+                            labelText: 'CVV',
+                            counterText: '',
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                isCvvVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: const Color(0xff096B72),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  isCvvVisible = !isCvvVisible;
+                                });
+                              },
+                            ),
+                          ),
+                          textInputAction: TextInputAction.next,
+                          keyboardType: TextInputType.number,
+                          maxLength: 4,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
+                        ),
+                      ),
+                    ]),
+                    // end of credit card
+                    Container(
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.all(10),
+                        child: const Text(
+                          'Plug types:',
+                          style: TextStyle(fontSize: 20),
+                        )),
+                    ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        itemCount: checkBoxListTileModel.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          // ignore: unnecessary_new
+                          return Card(
+                            // ignore: unnecessary_new
+                            child: new Container(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Column(
+                                children: <Widget>[
+                                  // ignore: unnecessary_new
+                                  new CheckboxListTile(
+                                    onChanged: (bool? val) {
+                                      itemChange(val, index);
+                                    },
+                                    activeColor: const Color(0xff096B72),
+                                    dense: true,
+                                    title: Text(
+                                      checkBoxListTileModel[index].title,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 0.5,
+                                      ),
+                                    ),
+                                    value: checkBoxListTileModel[index].isCheck,
+                                    secondary: Container(
+                                      height: 50,
+                                      width: 50,
+                                      child: Image.asset(
+                                        checkBoxListTileModel[index].img,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        }),
+                    Container(
+                        // update button
+                        padding: inputPadding,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _updatePID();
                           },
-                          activeColor: const Color(0xff096B72),
-                          dense: true,
-                          title: Text(
-                            checkBoxListTileModel[index].title,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.5,
-                            ),
+                          child: const Text("Update Account Info"),
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                                const Color(0xff096B72)),
                           ),
-                          value: checkBoxListTileModel[index].isCheck,
-                          secondary: Container(
-                            height: 50,
-                            width: 50,
-                            child: Image.asset(
-                              checkBoxListTileModel[index].img,
-                              fit: BoxFit.cover,
-                            ),
+                        )),
+                    Container(
+                        // sign out button
+                        padding: inputPadding,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _signOut();
+                          },
+                          child: const Text("Sign Out"),
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                                const Color(0xff096B72)),
                           ),
-                        )
-                      ],
-                    ),
-                  ),
-                );
-              }),
-          Container(
-              // update button
-              padding: inputPadding,
-              child: ElevatedButton(
-                onPressed: () {
-                  _updatePID();
-                },
-                child: const Text("Update Account Info"),
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(const Color(0xff096B72)),
-                ),
-              )),
-          Container(
-              // sign out button
-              padding: inputPadding,
-              child: ElevatedButton(
-                onPressed: () {
-                  _signOut();
-                },
-                child: const Text("Sign Out"),
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(const Color(0xff096B72)),
-                ),
-              )),
-        ],
-      )),
+                        )),
+                  ],
+                )),
     );
   }
 
   void itemChange(bool? val, int index) {
-    if (index == 1) {
+    if (index == 0) {
       _chademoSelected = !_chademoSelected;
-    } else if (index == 2) {
+    } else if (index == 1) {
       _j1772Selected = !_j1772Selected;
-    } else {
+    } else if (index == 2) {
       _saeComboSelected = !_saeComboSelected;
     }
     setState(() {
@@ -636,25 +672,58 @@ class CheckBoxListTileModel {
       required this.title,
       required this.isCheck});
 
-  static List<CheckBoxListTileModel> getImgs() {
+  static Future<List<String>> getUsersChargers() async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    String uId = '';
+    if (auth.currentUser == null) {
+      print('No user! How did you even get here?');
+      return [];
+    } else {
+      uId = auth.currentUser!.uid;
+    }
+    FirebaseFunctions firebaseFunctions = FirebaseFunctions();
+    List<String> res = await firebaseFunctions.getChargers(uId);
+
+    return res;
+  }
+
+  static Future<List<CheckBoxListTileModel>> getImgs() async {
+    // get current chargers from database to show on this screen
+    bool chademo = false, j1772 = false, combo = false;
+
+    List<String> charge = await getUsersChargers();
+
+    for (String c in charge) {
+      if (c == 'CHAdeMO') {
+        _chademoSelected = true;
+        chademo = true;
+      } else if (c == 'J1772') {
+        _j1772Selected = true;
+        j1772 = true;
+      } else if (c == 'SAE Combo CCS') {
+        _saeComboSelected = true;
+        combo = true;
+      }
+    }
+
     return <CheckBoxListTileModel>[
       CheckBoxListTileModel(
-        imgId: 1,
+        imgId: 0,
         img: 'assets/images/Plug-Icon-CHAdeMO.png',
         title: 'CHAdeMo',
-        isCheck: false,
+        isCheck: chademo,
+      ),
+      CheckBoxListTileModel(
+        imgId: 1,
+        img: 'assets/images/Plug-Icon-J1772.png',
+        title: 'J1772',
+        isCheck: j1772,
       ),
       CheckBoxListTileModel(
         imgId: 2,
-        img: 'assets/images/Plug-Icon-J1772.png',
-        title: 'J1772',
-        isCheck: false,
-      ),
-      CheckBoxListTileModel(
-        imgId: 3,
         img: 'assets/images/Plug-Icon-J1772-Combo.png',
         title: 'J1772 Combo',
-        isCheck: false,
+        isCheck: combo,
       )
     ];
   }
