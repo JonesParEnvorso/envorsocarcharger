@@ -97,19 +97,55 @@ class _MapScreenState extends State<MapScreen> {
   void initState() {
     super.initState();
   }
+
   bool visible = false;
+  bool applyVisible = false;
+  bool changeMade = false;
+  List<bool> c = [];
+  List<bool> s = [];
+
   void showFilterOptions() {
     setState(() {
-      visible = ! visible;
+      visible = !visible;
+      if (!visible) {
+        applyVisible = false;
+      }
+      if (changeMade && visible) {
+        applyVisible = true;
+      }
     });
   }
+
+  void ApplyVisible() {
+    setState(() {
+      changeMade = true;
+      applyVisible = true;
+    });
+  }
+
+  void ApplyFilters() {
+    setState(() {
+      changeMade = false;
+      applyVisible = false;
+      c = [free, cost];
+      s = [dcFast, lvl2, lvl1];
+
+      _fillChargerList();
+    });
+  }
+
+  bool cost = true;
+  bool free = true;
+  bool dcFast = true;
+  bool lvl1 = true;
+  bool lvl2 = true;
 
   @override
   // Generate map view
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-    
+
     //getStation();
     return Scaffold(
         // Google Map component values
@@ -232,45 +268,153 @@ class _MapScreenState extends State<MapScreen> {
           )),
       // Back button
       Positioned(
+          height: 28,
+          width: 95,
+          bottom: 422,
+          left: 40,
+          child: Visibility(
+            visible: applyVisible,
+            child: ElevatedButton(
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                      Colors.green[700]) // Color(0xff096B72)
+                  ),
+              onPressed: () {
+                setState(() {
+                  ApplyFilters();
+                });
+              },
+              //heroTag: 'back',
+              child: const Text("Apply"),
+            ),
+          )),
+      Positioned(
         bottom: 220,
         left: 30,
         child: Visibility(
             visible: visible,
             child: Container(
               //padding: EdgeInsets.all(0),
-              height: 85,
+              height: 200,
+              //height: 85,
               width: 115,
               decoration: const BoxDecoration(
                   color: Color(0xff096B72),
                   borderRadius: BorderRadius.all(Radius.circular(20))),
-              child: ListView(padding: EdgeInsets.all(0), children: [
-                TextButton.icon(
-                  style: ButtonStyle(
-                    padding: MaterialStateProperty.all(
-                        const EdgeInsets.fromLTRB(0, 0, 0, 0)),
-                  ),
-                  icon: const Icon(
-                    Icons.monetization_on,
-                    color: Colors.white,
-                  ),
-                  label: const Text('By Price',
-                      style: TextStyle(color: Colors.white)),
-                  onPressed: () {},
-                ),
-                TextButton.icon(
-                  style: ButtonStyle(
-                    padding: MaterialStateProperty.all(
-                        const EdgeInsets.fromLTRB(5, 0, 0, 50)),
-                  ),
-                  icon: const Icon(
-                    Icons.speed,
-                    color: Colors.white,
-                  ),
-                  label: const Text('By Speed',
-                      style: TextStyle(color: Colors.white)),
-                  onPressed: () {},
-                ),
-              ]),
+
+              child: ListView(
+                  padding: EdgeInsets.fromLTRB(7, 0, 0, 0),
+                  shrinkWrap: true,
+                  children: [
+                    TextButton.icon(
+                      style: ButtonStyle(
+                          padding: MaterialStateProperty.all(
+                              const EdgeInsets.fromLTRB(0, 0, 0, 0)),
+                          alignment: Alignment.centerLeft),
+                      icon: const Icon(
+                        Icons.monetization_on,
+                        color: Colors.white,
+                      ),
+                      label: const Text('By Price',
+                          style: TextStyle(color: Colors.white)),
+                      onPressed: () {},
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Text("Free", style: TextStyle(color: Colors.white)),
+                        Checkbox(
+                          visualDensity: VisualDensity.compact,
+                          checkColor: Colors.white,
+                          value: free,
+                          onChanged: (value) {
+                            setState(() {
+                              free = value!;
+                              ApplyVisible();
+                            });
+                          },
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Text("Costs", style: TextStyle(color: Colors.white)),
+                        Checkbox(
+                          visualDensity: VisualDensity.compact,
+                          checkColor: Colors.white,
+                          value: cost,
+                          onChanged: (value) {
+                            setState(() {
+                              cost = value!;
+                              ApplyVisible();
+                            });
+                          },
+                        )
+                      ],
+                    ),
+                    TextButton.icon(
+                      style: ButtonStyle(
+                          padding: MaterialStateProperty.all(
+                              const EdgeInsets.fromLTRB(0, 0, 0, 0)),
+                          alignment: Alignment.centerLeft),
+                      icon: const Icon(
+                        Icons.speed,
+                        color: Colors.white,
+                      ),
+                      label: const Text('By Speed',
+                          style: TextStyle(color: Colors.white)),
+                      onPressed: () {},
+                    ),
+                    //Column(children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Text("DC fast", style: TextStyle(color: Colors.white)),
+                        Checkbox(
+                          visualDensity: VisualDensity.compact,
+                          checkColor: Colors.white,
+                          value: dcFast,
+                          onChanged: (value) {
+                            setState(() {
+                              dcFast = value!;
+                              ApplyVisible();
+                            });
+                          },
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Text("Level 2", style: TextStyle(color: Colors.white)),
+                        Checkbox(
+                          visualDensity: VisualDensity.compact,
+                          checkColor: Colors.white,
+                          value: lvl2,
+                          onChanged: (value) {
+                            setState(() {
+                              lvl2 = value!;
+                              ApplyVisible();
+                            });
+                          },
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Text("Level 1", style: TextStyle(color: Colors.white)),
+                        Checkbox(
+                          visualDensity: VisualDensity.compact,
+                          checkColor: Colors.white,
+                          value: lvl1,
+                          onChanged: (value) {
+                            setState(() {
+                              lvl1 = value!;
+                              ApplyVisible();
+                            });
+                          },
+                        )
+                      ],
+                    )
+                    //])
+                  ]),
             )),
       ),
       Positioned(
@@ -545,7 +689,8 @@ class _MapScreenState extends State<MapScreen> {
     // Pull data
     chargerData = await chargers.pullChargers(
         currentLocation.latitude!, currentLocation.longitude!);
-
+    chargerData = chargers.filterChargers(chargerData, s, c);
+    markers = [];
     // Print the lat and long of every charger
     for (int i = 0; i < chargerData.length; i++) {
       print("lat: ${chargerData[i]['lat']}");

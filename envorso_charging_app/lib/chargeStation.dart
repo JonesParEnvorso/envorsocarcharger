@@ -52,6 +52,38 @@ class Chargers {
     return chargers;
   }
 
+  List<Map<String, dynamic>> filterChargers(
+      List<Map<String, dynamic>> charges, List<bool> speeds, List<bool> cost) {
+    List<Map<String, dynamic>> temp = [];
+    bool c;
+    bool s;
+    for (var charge in charges) {
+      c = false;
+      s = false;
+      if (cost[0] && charge['price'] == "Free") {
+        c = true;
+      }
+      if (cost[1] && charge['price'] != "Free") {
+        c = true;
+      }
+      if (speeds[0] && charge['DC fast'] > 0) {
+        s = true;
+      }
+      if (speeds[1] && charge['level 2'] > 0) {
+        s = true;
+      }
+      if (speeds[2] && charge['level 1'] > 0) {
+        s = true;
+      }
+      if (s && c) {
+        temp.add(charge);
+        print(charge);
+      }
+    }
+
+    return temp;
+  }
+
   Future<List<Map<String, dynamic>>> findCity(String city) async {
     chargers = [];
     var querryList = await FirebaseFirestore.instance
