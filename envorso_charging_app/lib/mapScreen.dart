@@ -73,6 +73,11 @@ class _MapScreenState extends State<MapScreen> {
   // Polyline data
   final Set<Polyline> polyline = {};
   List<LatLng> routeCoords = [];
+
+  // Display card data
+  bool isCardDisplayed = false;
+  int highlightedMarkerInd = -1;
+
   //GoogleMapPolyline googleMapPolyline = new GoogleMapPolyline();
   @override
   void dispose() {
@@ -107,6 +112,99 @@ class _MapScreenState extends State<MapScreen> {
             {_googleMapController = controller, showChargersAtLocation()},
         markers: Set.of(markers), // Displays markers
       )),
+      // Info card
+      if (highlightedMarkerInd >= 0)
+        Positioned(
+          left: 0,
+          top: 0,
+          child: Container(
+              margin: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(10),
+              child: Column(children: [
+                Row(children: [
+                  Container(
+                      // Green background
+                      width: screenWidth / 1.18,
+                      height: 200,
+                      padding: EdgeInsets.only(top: 20),
+                      decoration: const BoxDecoration(
+                        color: Color(0xff096B72),
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                      ),
+                      child: Container(
+                          // White card
+                          width: screenWidth / 1.18,
+                          height: 205,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(20),
+                                bottomRight: Radius.circular(20)),
+                          ),
+                          child: Column(children: [
+                            Row(
+                              children: [
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                        // Charger name
+                                        (chargerData[highlightedMarkerInd]
+                                            ['name']),
+                                        style: new TextStyle(
+                                            color: const Color(0xff096B72),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20)),
+                                    Text("Address",
+                                        style: new TextStyle(
+                                            color: const Color(0xff096B72),
+                                            fontWeight: FontWeight.bold)),
+                                    Text("" + //
+                                        chargerData[highlightedMarkerInd]
+                                            ['address'] +
+                                        ", " +
+                                        chargerData[highlightedMarkerInd]
+                                            ['city'] +
+                                        " " +
+                                        chargerData[highlightedMarkerInd]
+                                            ['state']),
+                                    Text(
+                                        ("DC fast " +
+                                            chargerData[highlightedMarkerInd]
+                                                    ['DC fast']
+                                                .toString()),
+                                        style: new TextStyle(
+                                            color: const Color(0xff096B72),
+                                            fontWeight: FontWeight.bold)),
+                                    // Network
+                                    Text("Network",
+                                        style: new TextStyle(
+                                            color: const Color(0xff096B72),
+                                            fontWeight: FontWeight.bold)),
+                                    Text(chargerData[highlightedMarkerInd]
+                                        ['network']),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  FloatingActionButton(
+                                    backgroundColor: const Color(0xff096B72),
+                                    foregroundColor: Colors.white,
+                                    onPressed: () =>
+                                        launchMap(highlightedMarkerInd),
+                                    child: const Icon(Icons.near_me),
+                                    heroTag: 'center',
+                                  ),
+                                ])
+                          ])))
+                ])
+              ])),
+        ),
       // Recenter button
       Positioned(
           right: 30,
@@ -401,7 +499,7 @@ class _MapScreenState extends State<MapScreen> {
         markers.add(Marker(
             markerId: (MarkerId(markers.length.toString())),
             position: pos,
-            onTap: () => launchMap(i)));
+            onTap: () => selectMarker(i)));
       });
     }
   }
@@ -424,6 +522,13 @@ class _MapScreenState extends State<MapScreen> {
         );
       },
     );
+  }
+
+  // Sets which charger will be displayed on the info card
+  void selectMarker(int ind) {
+    setState(() {
+      highlightedMarkerInd = ind;
+    });
   }
 
   Route _saveLocations() {
