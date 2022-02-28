@@ -80,7 +80,7 @@ goToSearchPage(BuildContext context) {
                   children: <Widget>[
                     Container(
                         child: ElevatedButton(
-                            onPressed: () => goToSearchPage(context),
+                            onPressed: () => goToMap(context),
                             child: Icon(Icons.arrow_back),
                             style: ButtonStyle(
                                 shape:
@@ -105,12 +105,12 @@ goToSearchPage(BuildContext context) {
                     SizedBox(
                       width: screenWidth / 2.8,
                     ),
-                    Container(
+                    /*Container(
                         child: IconButton(
                       onPressed: () => goToMap(context),
                       icon: Icon(Icons.cancel),
                       iconSize: 45,
-                    )),
+                    )),*/
                   ],
                 ),
               ),
