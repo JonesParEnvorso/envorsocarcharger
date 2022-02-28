@@ -101,8 +101,8 @@ class _MapScreenState extends State<MapScreen> {
   bool visible = false;
   bool applyVisible = false;
   bool changeMade = false;
-  List<bool> c = [];
-  List<bool> s = [];
+  List<bool> c = [true, true];
+  List<bool> s = [true, true, true];
 
   void showFilterOptions() {
     setState(() {
