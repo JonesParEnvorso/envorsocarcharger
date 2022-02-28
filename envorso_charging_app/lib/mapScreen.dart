@@ -6,12 +6,13 @@ import 'package:map_launcher/map_launcher.dart' as maplauncher;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'searchPage.dart';
 import 'speech_recognition.dart' as speech;
-import 'package:google_place/google_place.dart' as googleplace;
+//import 'package:google_place/google_place.dart' as googleplace;
 import 'savedLocations.dart';
-//import 'package:http/http.dart' as http;
-//import 'dart:convert' as convert;
+import 'package:http/http.dart' as http;
+import 'dart:convert' as convert;
+import 'settings.dart';
 
-//import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
 //import 'newUser.dart';
 //import 'package:cloud_firestore/cloud_firestore.dart';
@@ -54,6 +55,10 @@ class _MapScreenState extends State<MapScreen> {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => SavedLocations()));
   }
+   goToSettings(context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => SettingsScreen()));
+  }
 
   // Location data
   late LocationData currentLocation;
@@ -71,8 +76,9 @@ class _MapScreenState extends State<MapScreen> {
     zoom: 2, // Max zoom level is normally 21.
   );
   // Polyline data
-  final Set<Polyline> polyline = {};
-  List<LatLng> routeCoords = [];
+  Set<Polyline> polylines = Set<Polyline>();
+  List<LatLng> polygonLatLngs = <LatLng>[];
+  int polyLineIdCounter = 1;
 
   // Display card data
   bool isCardDisplayed = false;
@@ -111,6 +117,7 @@ class _MapScreenState extends State<MapScreen> {
         onMapCreated: (controller) =>
             {_googleMapController = controller, showChargersAtLocation()},
         markers: Set.of(markers), // Displays markers
+        polylines: polylines,
       )),
       // Info card
       if (highlightedMarkerInd >= 0)
@@ -353,11 +360,11 @@ class _MapScreenState extends State<MapScreen> {
                               ))),
                           TextButton.icon(
                             icon: const Icon(
-                                Icons.directions_car_filled_rounded,
+                                Icons.settings,
                                 color: Colors.white),
-                            label: (const Text('Trip Planner',
+                            label: (const Text('Settings',
                                 style: TextStyle(color: Colors.white))),
-                            onPressed: () {},
+                            onPressed: () => goToSettings(context),
                           ),
                           const SizedBox(
                             width: 33,
@@ -499,7 +506,9 @@ class _MapScreenState extends State<MapScreen> {
         markers.add(Marker(
             markerId: (MarkerId(markers.length.toString())),
             position: pos,
-            onTap: () => selectMarker(i)));
+            onTap: () async {
+              selectMarker(i);
+            }));
       });
     }
   }
@@ -524,11 +533,62 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
+  // Rebuilds the directions polyline object using parse json directions.
+  void setPolyline(List<PointLatLng> points) {
+    polylines = Set<Polyline>();
+    polyLineIdCounter = 0;
+    final String polylineIdVal = 'polyline_$polyLineIdCounter';
+    polyLineIdCounter++;
+    setState(() {
+      polylines.add(Polyline(
+          polylineId: PolylineId(polylineIdVal),
+          width: 2,
+          color: Colors.blue,
+          points: points
+              .map(
+                (point) => LatLng(point.latitude, point.longitude),
+              )
+              .toList()));
+    });
+  }
+
+  // Gets and parses directions from Google Directions
+  Future<Map<String, dynamic>> getDirections(
+      String origin, String destination) async {
+    final String url =
+        'https://maps.googleapis.com/maps/api/directions/json?origin=$origin&destination=$destination&key=AIzaSyCufwN5aCc05dezlsn3WYLsRJTLtfohLpk';
+    var response = await http.get(Uri.parse(url));
+    var json = convert.jsonDecode(response.body);
+    var results = {
+      'bounds_ne': json['routes'][0]['bounds']['northeast'],
+      'bounds_sw': json['routes'][0]['bounds']['southwest'],
+      'start_location': json['routes'][0]['legs'][0]['start_location'],
+      'end_location': json['routes'][0]['legs'][0]['end_location'],
+      'polyline_decoded': PolylinePoints()
+          .decodePolyline(json['routes'][0]['overview_polyline']['points']),
+    };
+
+    //print(json);
+    return results;
+  }
+
   // Sets which charger will be displayed on the info card
-  void selectMarker(int ind) {
+  void selectMarker(int ind) async {
     setState(() {
       highlightedMarkerInd = ind;
     });
+    // Get directions from directions API
+    String origin = currentLocation.latitude.toString() +
+        "," +
+        currentLocation.longitude.toString();
+    String destination = chargerData[ind]['lat'].toString() +
+        "," +
+        chargerData[ind]['lon'].toString();
+    print(origin + " " + destination);
+    var directions = await getDirections(origin, destination);
+    // Redefine polyline using json data
+
+    setPolyline(directions['polyline_decoded']);
   }
 
   Route _saveLocations() {

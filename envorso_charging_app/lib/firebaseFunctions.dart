@@ -54,7 +54,7 @@ class FirebaseFunctions {
     if (name == '') {
       firstName = '';
       lastName = '';
-    } else if (name.contains(" ")) {
+    } else if (!name.contains(" ")) {
       firstName = name;
       lastName = "";
     } else {
@@ -109,12 +109,22 @@ class FirebaseFunctions {
       String expiry,
       String cvv,
       List<String> chargers) async {
+    DocumentReference curUser = firestore.collection('users').doc(uId);
+    DocumentSnapshot<Map<String, dynamic>> data =
+        await firestore.collection('users').doc(uId).get();
+
+    Map<String, dynamic>? map = data.data();
+    if (map == null) {
+      print("No map");
+      return;
+    }
+
     String firstName;
     String lastName;
     if (name == '') {
       firstName = '';
       lastName = '';
-    } else if (name.contains(" ")) {
+    } else if (!name.contains(" ")) {
       firstName = name;
       lastName = "";
     } else {
@@ -122,33 +132,43 @@ class FirebaseFunctions {
       lastName = name.substring(name.indexOf(" ") + 1);
     }
 
-    DocumentReference curUser = firestore.collection('users').doc(uId);
-    //DocumentSnapshot<Map<String, dynamic>> data =
-    await firestore
-        .collection('users')
-        .doc(uId)
-        .get()
-        .then((DocumentSnapshot<Map<String, dynamic>> doc) {});
-
-    /*Map<String, dynamic>? map = data.data();
-    if (map == null) {
-      print("No map");
-      return;
+    // check to make sure no data is overwritten
+    if (firstName == '') {
+      firstName = map['firstName'];
+    }
+    if (lastName == '') {
+      lastName = map['lastName'];
+    }
+    if (phoneNumber == '') {
+      phoneNumber = map['phoneNumber'];
+    }
+    if (username == '') {
+      username = map['username'];
+    }
+    if (street == '') {
+      street = map['address']['street'];
+    }
+    if (city == '') {
+      city = map['address']['city'];
+    }
+    if (zip == '') {
+      zip = map['address']['zip'];
+    }
+    if (state == '') {
+      state = map['address']['state'];
+    }
+    if (creditCard == '') {
+      creditCard = map['creditCard']['num'];
+    }
+    if (expiry == '') {
+      expiry = map['creditCard']['exp'];
+    }
+    if (cvv == '') {
+      cvv = map['creditCard']['cvv'];
     }
 
-    map.forEach((key, value) {
-      if (key == 'firstName' && firstName == '') {
-        firstName = value;
-      } else if (key == 'lastName' && lastName == '') {
-        lastName = value;
-      } else if (key == 'phoneNumber' && phoneNumber == '') {
-        phoneNumber = value;
-      } else if (key == 'username' && username == '') {
-        username == value;
-      } else if (key == 'address') {}
-    });*/
+    // properly update chargers
 
-    // prevent overriding of uncessary data
     await curUser
         .update({
           'firstName': firstName,
@@ -171,10 +191,10 @@ class FirebaseFunctions {
           },
           "username": username,
         })
-        .then((value) =>
-            curUser.collection('chargerType').doc('chargers').update({
-              'chargerType': chargers,
-            }))
+        .then((value) => curUser
+            .collection('chargerType')
+            .doc('chargers')
+            .set({'chargerType': chargers}))
         .catchError((Object error) => Future.error(Exception("$error")));
   }
 
@@ -189,7 +209,37 @@ class FirebaseFunctions {
             (Object error) => Future.error(Exception("$error")));
   }
 
-  // add credit card info
+  // get users current chargers
+  Future<List<String>> getChargers(String uId) async {
+    DocumentReference chargers = firestore
+        .collection('users')
+        .doc(uId)
+        .collection('chargerType')
+        .doc('chargers');
 
-  // add chargers
+    List<String> res = [];
+
+    DocumentSnapshot<Map<String, dynamic>> data = await firestore
+        .collection('users')
+        .doc(uId)
+        .collection('chargerType')
+        .doc('chargers')
+        .get();
+
+    Map<String, dynamic>? map = data.data();
+    if (map == null) {
+      print('no map');
+      return res;
+    }
+
+    //print(map['chargerType']);
+
+    List<dynamic> charge = map['chargerType'];
+
+    for (int i = 0; i < charge.length; i++) {
+      res.add(charge[i]);
+    }
+
+    return res;
+  }
 }
