@@ -55,7 +55,8 @@ class _MapScreenState extends State<MapScreen> {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => SavedLocations()));
   }
-   goToSettings(context) {
+
+  goToSettings(context) {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => SettingsScreen()));
   }
@@ -96,13 +97,19 @@ class _MapScreenState extends State<MapScreen> {
   void initState() {
     super.initState();
   }
+  bool visible = false;
+  void showFilterOptions() {
+    setState(() {
+      visible = ! visible;
+    });
+  }
 
   @override
   // Generate map view
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-
+    
     //getStation();
     return Scaffold(
         // Google Map component values
@@ -225,12 +232,56 @@ class _MapScreenState extends State<MapScreen> {
           )),
       // Back button
       Positioned(
+        bottom: 220,
+        left: 30,
+        child: Visibility(
+            visible: visible,
+            child: Container(
+              //padding: EdgeInsets.all(0),
+              height: 85,
+              width: 115,
+              decoration: const BoxDecoration(
+                  color: Color(0xff096B72),
+                  borderRadius: BorderRadius.all(Radius.circular(20))),
+              child: ListView(padding: EdgeInsets.all(0), children: [
+                TextButton.icon(
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all(
+                        const EdgeInsets.fromLTRB(0, 0, 0, 0)),
+                  ),
+                  icon: const Icon(
+                    Icons.monetization_on,
+                    color: Colors.white,
+                  ),
+                  label: const Text('By Price',
+                      style: TextStyle(color: Colors.white)),
+                  onPressed: () {},
+                ),
+                TextButton.icon(
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all(
+                        const EdgeInsets.fromLTRB(5, 0, 0, 50)),
+                  ),
+                  icon: const Icon(
+                    Icons.speed,
+                    color: Colors.white,
+                  ),
+                  label: const Text('By Speed',
+                      style: TextStyle(color: Colors.white)),
+                  onPressed: () {},
+                ),
+              ]),
+            )),
+      ),
+      Positioned(
         bottom: 150,
         left: 30,
         child: FloatingActionButton(
           backgroundColor: const Color(0xff096B72),
           foregroundColor: Colors.white,
-          onPressed: () => {},
+          onPressed: () {
+            showFilterOptions();
+          },
           heroTag: 'back',
           child: const Icon(Icons.filter_alt),
         ),
@@ -359,9 +410,8 @@ class _MapScreenState extends State<MapScreen> {
                                 ),
                               ))),
                           TextButton.icon(
-                            icon: const Icon(
-                                Icons.settings,
-                                color: Colors.white),
+                            icon:
+                                const Icon(Icons.settings, color: Colors.white),
                             label: (const Text('Settings',
                                 style: TextStyle(color: Colors.white))),
                             onPressed: () => goToSettings(context),
