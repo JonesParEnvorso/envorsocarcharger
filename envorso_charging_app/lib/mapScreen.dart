@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'chargeStation.dart';
@@ -103,6 +104,21 @@ class _MapScreenState extends State<MapScreen> {
   bool changeMade = false;
   List<bool> c = [true, true];
   List<bool> s = [true, true, true];
+  var plugs = [];
+
+  Future _activateFilterPlugs() async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    String uId;
+    if (auth.currentUser == null) {
+      print("No user!?!? How did you even get here?");
+      return;
+    } else {
+      uId = auth.currentUser!.uid;
+    }
+    await chargers.activateAccount(uId);
+    plugs = chargers.carPlugs;
+    print(plugs);
+  }
 
   void showFilterOptions() {
     setState(() {
@@ -303,7 +319,7 @@ class _MapScreenState extends State<MapScreen> {
                   borderRadius: BorderRadius.all(Radius.circular(20))),
 
               child: ListView(
-                  padding: EdgeInsets.fromLTRB(7, 0, 0, 0),
+                  padding: const EdgeInsets.fromLTRB(7, 0, 0, 0),
                   shrinkWrap: true,
                   children: [
                     TextButton.icon(
@@ -319,38 +335,58 @@ class _MapScreenState extends State<MapScreen> {
                           style: TextStyle(color: Colors.white)),
                       onPressed: () {},
                     ),
-                    Row(
-                      children: <Widget>[
-                        Text("Free", style: TextStyle(color: Colors.white)),
-                        Checkbox(
-                          visualDensity: VisualDensity.compact,
-                          checkColor: Colors.white,
-                          value: free,
-                          onChanged: (value) {
-                            setState(() {
-                              free = value!;
-                              ApplyVisible();
-                            });
-                          },
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Text("Costs", style: TextStyle(color: Colors.white)),
-                        Checkbox(
-                          visualDensity: VisualDensity.compact,
-                          checkColor: Colors.white,
-                          value: cost,
-                          onChanged: (value) {
-                            setState(() {
-                              cost = value!;
-                              ApplyVisible();
-                            });
-                          },
-                        )
-                      ],
-                    ),
+                    SizedBox(
+                        height: 35,
+                        child: TextButton(
+                            onPressed: () {
+                              setState(() {
+                                free = !free;
+                                ApplyVisible();
+                              });
+                            },
+                            child: Row(
+                              children: <Widget>[
+                                Text("Free",
+                                    style: TextStyle(color: Colors.white)),
+                                Checkbox(
+                                  visualDensity: VisualDensity.compact,
+                                  checkColor: Colors.white,
+                                  value: free,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      free = value!;
+                                      ApplyVisible();
+                                    });
+                                  },
+                                )
+                              ],
+                            ))),
+                    SizedBox(
+                        height: 35,
+                        child: TextButton(
+                            onPressed: () {
+                              setState(() {
+                                cost = !cost;
+                                ApplyVisible();
+                              });
+                            },
+                            child: Row(
+                              children: <Widget>[
+                                Text("Costs",
+                                    style: TextStyle(color: Colors.white)),
+                                Checkbox(
+                                  visualDensity: VisualDensity.compact,
+                                  checkColor: Colors.white,
+                                  value: cost,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      cost = value!;
+                                      ApplyVisible();
+                                    });
+                                  },
+                                )
+                              ],
+                            ))),
                     TextButton.icon(
                       style: ButtonStyle(
                           padding: MaterialStateProperty.all(
@@ -365,54 +401,84 @@ class _MapScreenState extends State<MapScreen> {
                       onPressed: () {},
                     ),
                     //Column(children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Text("DC fast", style: TextStyle(color: Colors.white)),
-                        Checkbox(
-                          visualDensity: VisualDensity.compact,
-                          checkColor: Colors.white,
-                          value: dcFast,
-                          onChanged: (value) {
-                            setState(() {
-                              dcFast = value!;
-                              ApplyVisible();
-                            });
-                          },
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Text("Level 2", style: TextStyle(color: Colors.white)),
-                        Checkbox(
-                          visualDensity: VisualDensity.compact,
-                          checkColor: Colors.white,
-                          value: lvl2,
-                          onChanged: (value) {
-                            setState(() {
-                              lvl2 = value!;
-                              ApplyVisible();
-                            });
-                          },
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Text("Level 1", style: TextStyle(color: Colors.white)),
-                        Checkbox(
-                          visualDensity: VisualDensity.compact,
-                          checkColor: Colors.white,
-                          value: lvl1,
-                          onChanged: (value) {
-                            setState(() {
-                              lvl1 = value!;
-                              ApplyVisible();
-                            });
-                          },
-                        )
-                      ],
-                    )
+                    SizedBox(
+                        height: 35,
+                        child: TextButton(
+                            onPressed: () {
+                              setState(() {
+                                dcFast = !dcFast;
+                                ApplyVisible();
+                              });
+                            },
+                            child: Row(
+                              children: <Widget>[
+                                Text("DC fast",
+                                    style: TextStyle(color: Colors.white)),
+                                Checkbox(
+                                  visualDensity: VisualDensity.compact,
+                                  checkColor: Colors.white,
+                                  value: dcFast,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      dcFast = value!;
+                                      ApplyVisible();
+                                    });
+                                  },
+                                )
+                              ],
+                            ))),
+                    SizedBox(
+                        height: 35,
+                        child: TextButton(
+                            onPressed: () {
+                              setState(() {
+                                lvl2 = !lvl2;
+                                ApplyVisible();
+                              });
+                            },
+                            child: Row(
+                              children: <Widget>[
+                                Text("Level 2",
+                                    style: TextStyle(color: Colors.white)),
+                                Checkbox(
+                                  visualDensity: VisualDensity.compact,
+                                  checkColor: Colors.white,
+                                  value: lvl2,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      lvl2 = value!;
+                                      ApplyVisible();
+                                    });
+                                  },
+                                )
+                              ],
+                            ))),
+                    SizedBox(
+                        height: 35,
+                        child: TextButton(
+                            onPressed: () {
+                              setState(() {
+                                lvl1 = !lvl1;
+                                ApplyVisible();
+                              });
+                            },
+                            child: Row(
+                              children: <Widget>[
+                                Text("Level 1",
+                                    style: TextStyle(color: Colors.white)),
+                                Checkbox(
+                                  visualDensity: VisualDensity.compact,
+                                  checkColor: Colors.white,
+                                  value: lvl1,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      lvl1 = value!;
+                                      ApplyVisible();
+                                    });
+                                  },
+                                )
+                              ],
+                            )))
                     //])
                   ]),
             )),
@@ -679,6 +745,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void showChargersAtLocation() async {
+    await _activateFilterPlugs();
     await getLocation(_googleMapController);
     await _fillChargerList();
   }
@@ -690,6 +757,7 @@ class _MapScreenState extends State<MapScreen> {
     chargerData = await chargers.pullChargers(
         currentLocation.latitude!, currentLocation.longitude!);
     chargerData = chargers.filterChargers(chargerData, s, c);
+    chargerData = chargers.maskPlugs(chargerData);
     markers = [];
     // Print the lat and long of every charger
     for (int i = 0; i < chargerData.length; i++) {

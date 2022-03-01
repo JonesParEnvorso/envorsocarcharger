@@ -17,7 +17,8 @@ class FirebaseFunctions {
 
   // create new user account
   Future<String?> createAccount(String email, String password) async {
-    if (!email.contains('@')) {
+    RegExp reg = RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
+    if (!reg.hasMatch(email)) {
       return 'invalid email';
     }
     String? uId = await userAuth.registerWithEmail(email, password);

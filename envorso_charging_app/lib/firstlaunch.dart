@@ -244,16 +244,20 @@ class _FirstLaunch extends State<FirstLaunch> {
                                     showDialog(
                                         context: context,
                                         builder: (BuildContext context) =>
-                                            _signInAlert(
-                                                context, 'Invalid email'));
+                                            _signInAlert(context,
+                                                'No user associated with that email'));
                                   } else if (res == 2) {
                                     showDialog(
                                         context: context,
                                         builder: (BuildContext context) =>
                                             _signInAlert(context,
                                                 'Invalid password for that email'));
-                                  } else {
-                                    print("Other error here");
+                                  } else if (res == 3 || res == 4) {
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) =>
+                                            _signInAlert(context,
+                                                'Please enter a valid email'));
                                   }
                                 }
                               })),
