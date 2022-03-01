@@ -54,6 +54,7 @@ class _AddUser extends State<AddUser> {
     super.initState();
 
     _passwordVisible = false;
+    _isSelected = false;
   }
 
   @override
