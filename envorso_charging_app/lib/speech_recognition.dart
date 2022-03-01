@@ -43,6 +43,8 @@ class _SpeechScreenState extends State<SpeechScreen> {
   String _text = 'Press button and speak';
   double _confidence = 1.0;
 
+  var printToZone;
+
   @override
   void initState() {
     //super.initState();
@@ -64,7 +66,7 @@ class _SpeechScreenState extends State<SpeechScreen> {
         repeatPauseDuration: const Duration(milliseconds: 100),
         repeat: true,
         child: FloatingActionButton(
-          onPressed: _listen,
+          onPressed: listen,
           child: Icon(_isListening ? Icons.mic : Icons.mic_none),
         ),
       ),
@@ -86,11 +88,19 @@ class _SpeechScreenState extends State<SpeechScreen> {
     );
   }
 
-  void _listen() async {
+  void listen() async {
     if (!_isListening) {
       bool available = await _speech.initialize(
         onStatus: (val) => print('onStatus: $val'),
-        onError: (val) => print('onError: $val'),
+        onError: (val) => (Object? object) {
+          String line = "$object";
+          var toZone = printToZone;
+          if (toZone == null) {
+            printToConsole(line);
+          } else {
+            toZone(line);
+          }
+        }('onError: $val'),
       );
       if (available) {
         setState(() => _isListening = true);
@@ -109,3 +119,5 @@ class _SpeechScreenState extends State<SpeechScreen> {
     }
   }
 }
+
+void printToConsole(String line) {}
