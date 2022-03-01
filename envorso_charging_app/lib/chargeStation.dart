@@ -46,7 +46,6 @@ class Chargers {
         range++;
       }
     }
-    print(range);
     range = 4;
     orderDistance(lat, lon);
     return chargers;
@@ -77,7 +76,6 @@ class Chargers {
       }
       if (s && c) {
         temp.add(charge);
-        print(charge);
       }
     }
 
@@ -153,16 +151,20 @@ class Chargers {
   }
 
   //Remove from the List all plug types not owned by the user
-  List<Map<String, dynamic>> maskPlugs() {
-    for (var n in chargers) {
+  List<Map<String, dynamic>> maskPlugs(List<Map<String, dynamic>> char) {
+    List<Map<String, dynamic>> temp = [];
+    for (var n in char) {
       if (!((n['plug'].contains("CHADEMO") && carPlugs.contains("CHAdeMO")) ||
           (n['plug'].contains("J1772") && carPlugs.contains("J1772")) ||
           (n['plug'].contains("J1772COMBO") &&
               carPlugs.contains("SAE Combo CCS")))) {
-        chargers.remove(n);
+        print("Lost One!");
+      } else {
+        temp.add(n);
+        print("Saved One!");
       }
     }
-    return chargers;
+    return temp;
   }
 
   //Place all plug types not owned by the user at the back of the list
@@ -305,7 +307,6 @@ class Chargers {
     List<List<int>> geoSet = [];
     List<int> temp = [];
     int count = 0;
-    print("start Geo Set");
 
     for (int i = low; i <= high; i++) {
       for (int k = low; k <= high; k++) {
@@ -319,7 +320,6 @@ class Chargers {
       }
     }
     geoSet.add(temp);
-    print("End Geo Set");
     return geoSet;
   }
 
