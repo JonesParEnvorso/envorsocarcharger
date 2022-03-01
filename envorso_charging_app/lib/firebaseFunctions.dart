@@ -28,7 +28,7 @@ class FirebaseFunctions {
       return '';
     }
     return uId;
-  }
+  } // createAccount
 
   // create new user document
   // email and password are passed to newUser.dart from newUserEmail.dart
@@ -208,16 +208,10 @@ class FirebaseFunctions {
         .doc('services')
         .set({'services': services}).catchError(
             (Object error) => Future.error(Exception("$error")));
-  }
+  } // addServices
 
   // get users current chargers
   Future<List<String>> getChargers(String uId) async {
-    DocumentReference chargers = firestore
-        .collection('users')
-        .doc(uId)
-        .collection('chargerType')
-        .doc('chargers');
-
     List<String> res = [];
 
     DocumentSnapshot<Map<String, dynamic>> data = await firestore
@@ -233,8 +227,6 @@ class FirebaseFunctions {
       return res;
     }
 
-    //print(map['chargerType']);
-
     List<dynamic> charge = map['chargerType'];
 
     for (int i = 0; i < charge.length; i++) {
@@ -242,5 +234,19 @@ class FirebaseFunctions {
     }
 
     return res;
-  }
+  } // getChargers
+
+  // get all user PID
+  Future<Map<String, dynamic>> getPID(String uId) async {
+    DocumentSnapshot<Map<String, dynamic>> data =
+        await firestore.collection('users').doc(uId).get();
+
+    Map<String, dynamic>? map = data.data();
+
+    if (map == null) {
+      return {};
+    }
+
+    return map;
+  } // getPID
 }

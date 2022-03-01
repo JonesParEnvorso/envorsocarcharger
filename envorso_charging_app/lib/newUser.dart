@@ -6,6 +6,7 @@ import 'firebase_options.dart';
 import 'servicesList.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
 import 'firebaseFunctions.dart';
+import 'dateValidiation.dart';
 
 void main() async {
   /*WidgetsFlutterBinding.ensureInitialized();
@@ -529,31 +530,28 @@ class _AddPID extends State<AddPID> {
                     width: screenWidth / 2,
                     padding: inputPadding,
                     child: TextFormField(
-                      // commented this out because this forces the Exp. Date field to
-                      // have data in it, which isn't necessarily what we want since
-                      // all credit card data is optional, minus the user's name
-                      /*validator: (String? val) {
-                        return (val != null && !val.contains('/'))
-                            ? 'Missing /'
-                            : null;
-                      },*/
-                      controller: newExpiry,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Exp. Date',
-                        hintText: 'XX/XX',
-                      ),
-                      keyboardType: TextInputType.datetime,
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(5),
-                      ],
-                      onChanged: (value) => {
-                        if (newExpiry.text.length == 5)
-                          {FocusScope.of(context).nextFocus()}
-                      },
-                      textInputAction: TextInputAction.next,
-                      //validator: _validateField),
-                    )),
+                        controller: newExpiry,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Exp. Date',
+                          hintText: 'XX/XX',
+                        ),
+                        keyboardType: TextInputType.datetime,
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(5),
+                        ],
+                        onChanged: (value) => {
+                              if (newExpiry.text.length == 5)
+                                {FocusScope.of(context).nextFocus()}
+                            },
+                        textInputAction: TextInputAction.next,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return null;
+                          } else {
+                            return DateValidation.validateDate(value);
+                          }
+                        })),
                 Container(
                   // cvv
                   width: screenWidth / 2,
