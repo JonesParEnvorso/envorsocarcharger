@@ -1,7 +1,7 @@
 //import 'dart:html';
 import 'dart:io';
 import 'dart:ui';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'settings.dart';
@@ -50,9 +50,18 @@ class _searchPage extends State<searchPage> {
 
 // fills the list with the result from the database
   _fillChargerList() async {
-    print("fillchargerlist");
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    String uId;
+    if (auth.currentUser == null) {
+      print("No user!?!? How did you even get here?");
+      return;
+    } else {
+      uId = auth.currentUser!.uid;
+    }
+    await chargeList.activateAccount(uId);
     String city = searchText.text;
     chargers = await chargeList.findCity(city);
+    chargers = chargeList.maskPlugs(chargers);
     //chargers2 = await chargeList.pullServices(46.999883, -120.544755);
   }
 
