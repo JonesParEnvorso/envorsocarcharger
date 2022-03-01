@@ -29,9 +29,16 @@ class UserAuth {
   // 0: Signed in
   // 1: No user for email
   // 2: Wrong password
-  // 3: other error
+  // 3: invalid email
+  // 4: not an email
   Future<int> signInWithEmail(String email, String password) async {
     try {
+      RegExp reg = RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
+
+      if (!reg.hasMatch(email)) {
+        return 4;
+      }
+
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
     } on FirebaseAuthException catch (e) {
@@ -41,10 +48,10 @@ class UserAuth {
       } else if (e.code == 'wrong-password') {
         print('Wrong password provided for that user.');
         return 2;
+      } else if (e.code == 'invalid-email') {
+        print('invalid email');
+        return 3;
       }
-    } catch (e) {
-      print(e);
-      return 3;
     }
     return 0;
   }
