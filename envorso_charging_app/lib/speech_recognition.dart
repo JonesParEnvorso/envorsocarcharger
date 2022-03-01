@@ -1,6 +1,6 @@
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
-//import 'package:highlight_text/highlight_text.dart';
+import 'package:highlight_text/highlight_text.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 void main() {
@@ -42,6 +42,8 @@ class _SpeechScreenState extends State<SpeechScreen> {
   bool _isListening = false;
   String _text = 'Press button and speak';
   double _confidence = 1.0;
+
+  var printToZone;
 
   @override
   void initState() {
@@ -90,7 +92,15 @@ class _SpeechScreenState extends State<SpeechScreen> {
     if (!_isListening) {
       bool available = await _speech.initialize(
         onStatus: (val) => print('onStatus: $val'),
-        onError: (val) => print('onError: $val'),
+        onError: (val) => (Object? object) {
+          String line = "$object";
+          var toZone = printToZone;
+          if (toZone == null) {
+            printToConsole(line);
+          } else {
+            toZone(line);
+          }
+        }('onError: $val'),
       );
       if (available) {
         setState(() => _isListening = true);
@@ -109,3 +119,5 @@ class _SpeechScreenState extends State<SpeechScreen> {
     }
   }
 }
+
+void printToConsole(String line) {}
