@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:envorso_charging_app/firstlaunch.dart';
-import 'package:envorso_charging_app/servicesList.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'settings.dart';
 import 'firebaseFunctions.dart';
 import 'startUp.dart';
+import 'dateValidiation.dart';
 
 void main() {
   runApp(const MyApp());
@@ -42,8 +41,6 @@ class _ChangePID extends State<ChangePID> {
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => const SettingsScreen()));
   }
-
-  goToFirstLaunch(BuildContext context) {}
 
   String newState = 'State';
   List<String> states = [
@@ -122,6 +119,8 @@ class _ChangePID extends State<ChangePID> {
   bool isCardNumVisible = false;
   bool isCvvVisible = false;
 
+  String expiryDate = '';
+
   final newName = TextEditingController();
   final newUsername = TextEditingController();
   final newPhone = TextEditingController();
@@ -135,14 +134,18 @@ class _ChangePID extends State<ChangePID> {
 
   FirebaseFunctions firebaseFunctions = FirebaseFunctions();
 
+  final FirebaseAuth auth = FirebaseAuth.instance;
+
   bool isLoading = true;
+
+  final GlobalKey<FormState> _formKey = GlobalKey();
 
   @override
   void initState() {
-    _fillChargers();
-    //_j1772Selected = false;
-    //_chademoSelected = false;
-    //_saeComboSelected = false;
+    _chademoSelected = false;
+    _j1772Selected = false;
+    _saeComboSelected = false;
+    _fillFormFields();
     isCardNumVisible = false;
     isCvvVisible = false;
     border = OutlineInputBorder(
@@ -152,7 +155,7 @@ class _ChangePID extends State<ChangePID> {
       ),
     );
     super.initState();
-  }
+  } // init
 
   @override
   void dispose() {
@@ -178,10 +181,50 @@ class _ChangePID extends State<ChangePID> {
     newCvv.dispose();
 
     super.dispose();
-  }
+  } // dispose
 
   _fillChargers() async {
     List<CheckBoxListTileModel> temp = await CheckBoxListTileModel.getImgs();
+    setState(() {
+      checkBoxListTileModel = temp;
+      isLoading = false;
+    });
+  } // fillChargers
+
+  // fill form fields with user data from database
+  _fillFormFields() async {
+    List<CheckBoxListTileModel> temp = await CheckBoxListTileModel.getImgs();
+
+    String? uId = auth.currentUser?.uid;
+    if (uId == null) {
+      print("How did you get here?");
+      return;
+    }
+
+    Map<String, dynamic> pid = await firebaseFunctions.getPID(uId);
+    String first = pid['firstName'];
+    String last = pid['lastName'];
+
+    // update the textEditingControllers
+    newUsername.text = pid['username'];
+    newPhone.text = pid['phoneNumber'];
+    newStreet.text = pid['address']['street'];
+    newCity.text = pid['address']['city'];
+    newZip.text = pid['address']['zip'];
+    newState = pid['address']['state'];
+    if (first == '' && last == '') {
+      newName.text = '';
+    } else if (first == '') {
+      newName.text = last;
+    } else if (last == '') {
+      newName.text = first;
+    } else {
+      newName.text = first + " " + last;
+    }
+    newCard.text = pid['creditCard']['num'];
+    newExpiry.text = pid['creditCard']['exp'];
+    newCvv.text = pid['creditCard']['cvv'];
+
     setState(() {
       checkBoxListTileModel = temp;
       isLoading = false;
@@ -198,7 +241,7 @@ class _ChangePID extends State<ChangePID> {
       setState(() {
         isLoading = true;
       });
-      final FirebaseAuth auth = FirebaseAuth.instance;
+
       String uId;
       if (auth.currentUser == null) {
         print('No user! How did you even get here?');
@@ -231,24 +274,8 @@ class _ChangePID extends State<ChangePID> {
           newCvv.text,
           chargerTypes);
 
-      //itemChange(false, 0);
-      //itemChange(false, 1);
-      //itemChange(false, 2);
-      //j1772Selected = false;
-      //chademoSelected = false;
-      //saeComboSelected = false;
       List<CheckBoxListTileModel> temp = await CheckBoxListTileModel.getImgs();
       setState(() {
-        newUsername.clear();
-        newPhone.clear();
-        newStreet.clear();
-        newCity.clear();
-        newZip.clear();
-        newState = 'State';
-        newName.clear();
-        newCard.clear();
-        newExpiry.clear();
-        newCvv.clear();
         chargerTypes = [];
         checkBoxListTileModel = temp;
         isLoading = false;
@@ -267,12 +294,11 @@ class _ChangePID extends State<ChangePID> {
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => const StartUp()));
       });
-      // go to firstLaunch
     }
 
     return Scaffold(
       body: Form(
-          //key: _formKey,
+          key: _formKey,
           child: isLoading
               ? const Center(
                   child: CircularProgressIndicator(
@@ -497,6 +523,7 @@ class _ChangePID extends State<ChangePID> {
                             {FocusScope.of(context).nextFocus()}
                         },
                         maxLength: 16,
+                        keyboardType: TextInputType.number,
                         textInputAction: TextInputAction.next,
                       ),
                     ),
@@ -506,30 +533,30 @@ class _ChangePID extends State<ChangePID> {
                           width: screenWidth / 2,
                           padding: inputPadding,
                           child: TextFormField(
-                            // commented this out because this forces the Exp. Date field to
-                            // have data in it, which isn't necessarily what we want since
-                            // all credit card data is optional, minus the user's name
-                            /*validator: (String? val) {
-                        return (val != null && !val.contains('/'))
-                            ? 'Missing /'
-                            : null;
-                      },*/
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return null;
+                              } else {
+                                return DateValidation.validateDate(value);
+                              }
+                            },
                             controller: newExpiry,
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                               labelText: 'Exp. Date',
-                              hintText: 'XX/XX',
+                              hintText: 'MM/YY',
                             ),
                             keyboardType: TextInputType.datetime,
                             inputFormatters: [
                               LengthLimitingTextInputFormatter(5),
+                              //CardMonthInputFormatter()
                             ],
-                            onChanged: (value) => {
-                              if (newExpiry.text.length == 5)
-                                {FocusScope.of(context).nextFocus()}
+                            onChanged: (value) {
+                              if (newExpiry.text.length == 5) {
+                                FocusScope.of(context).nextFocus();
+                              }
                             },
                             textInputAction: TextInputAction.next,
-                            //validator: _validateField),
                           )),
                       Container(
                         // cvv
@@ -620,7 +647,9 @@ class _ChangePID extends State<ChangePID> {
                         padding: inputPadding,
                         child: ElevatedButton(
                           onPressed: () {
-                            _updatePID();
+                            if (_formKey.currentState!.validate()) {
+                              _updatePID();
+                            }
                           },
                           child: const Text("Update Account Info"),
                           style: ButtonStyle(
