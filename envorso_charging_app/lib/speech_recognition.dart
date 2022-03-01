@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.red,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: SpeechScreen(),
+      //home: SpeechScreen(),
     );
   }
 }
@@ -28,15 +28,15 @@ class SpeechScreen extends StatefulWidget {
 }
 
 class _SpeechScreenState extends State<SpeechScreen> {
-  final Map<String, HighlightedWord> _highlights = {
-    'Washington': HighlightedWord(
-      onTap: () => print('Washington'),
-      textStyle: const TextStyle(
-        color: Colors.blue,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-  };
+  // final Map<String, HighlightedWord> _highlights = {
+  //   'Washington': HighlightedWord(
+  //     onTap: () => print('Washington'),
+  //     textStyle: const TextStyle(
+  //       color: Colors.blue,
+  //       fontWeight: FontWeight.bold,
+  //     ),
+  //   ),
+  // };
 
   late stt.SpeechToText _speech;
   bool _isListening = false;
@@ -45,7 +45,7 @@ class _SpeechScreenState extends State<SpeechScreen> {
 
   @override
   void initState() {
-    super.initState();
+    //super.initState();
     _speech = stt.SpeechToText();
   }
 
@@ -72,15 +72,15 @@ class _SpeechScreenState extends State<SpeechScreen> {
         reverse: true,
         child: Container(
           padding: const EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 150.0),
-          child: TextHighlight(
-            text: _text,
-            words: _highlights,
-            textStyle: const TextStyle(
-              fontSize: 32.0,
-              color: Colors.black,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
+          // child: TextHighlight(
+          //   text: _text,
+          //   words: _highlights,
+          //   textStyle: const TextStyle(
+          //     fontSize: 32.0,
+          //     color: Colors.black,
+          //     fontWeight: FontWeight.w400,
+          //   ),
+          // ),
         ),
       ),
     );
