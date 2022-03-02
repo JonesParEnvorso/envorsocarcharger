@@ -108,7 +108,8 @@ class Chargers {
   }
 
   //Pulls user data and stores it in the Class feilds.
-  Future<List<Map<String, dynamic>>> activateAccount(String key) async {
+  //Future<List<Map<String, dynamic>>> activateAccount(String key) async {
+  Future<int> activateAccount(String key) async {
     DocumentSnapshot<Map<String, dynamic>> userPlug = await FirebaseFirestore
         .instance
         .collection('users')
@@ -124,10 +125,21 @@ class Chargers {
         .doc('services')
         .get();
 
-    carPlugs = userPlug['chargerType'];
-    memberships = userMem['services'];
+    if (userPlug.data() == null) {
+      carPlugs = [];
+      return 1;
+    } else {
+      carPlugs = userPlug['chargerType'];
+    }
+    if (userMem.data() == null) {
+      memberships = [];
+      return 1;
+    } else {
+      memberships = userMem['services'];
+    }
 
-    return chargers;
+    //return chargers;
+    return 0;
   }
 
   //set the array of car plugs

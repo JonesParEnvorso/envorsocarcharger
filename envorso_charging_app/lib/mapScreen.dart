@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -96,6 +98,7 @@ class _MapScreenState extends State<MapScreen> {
   // Called upon state initialization
   @override
   void initState() {
+    showChargersAtLocation();
     super.initState();
   }
 
@@ -115,8 +118,10 @@ class _MapScreenState extends State<MapScreen> {
     } else {
       uId = auth.currentUser!.uid;
     }
-    await chargers.activateAccount(uId);
-    plugs = chargers.carPlugs;
+    while (await chargers.activateAccount(uId) == 1) {}
+    setState(() {
+      plugs = chargers.carPlugs;
+    });
     print(plugs);
   }
 
