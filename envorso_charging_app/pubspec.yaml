@@ -62,6 +62,7 @@ dependencies:
   speech_recognition: ^0.3.0+1
   english_words: ^4.0.0
   permission_handler: ^9.2.0
+  starflut: ^0.9.5
 
 dev_dependencies:
   flutter_launcher_icons: ^0.9.1
