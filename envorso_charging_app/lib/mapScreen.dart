@@ -79,6 +79,9 @@ class _MapScreenState extends State<MapScreen> {
     target: LatLng(39.983235, -98.966782), // Lat/Long target.
     zoom: 2, // Max zoom level is normally 21.
   );
+  // Marker icons
+  late BitmapDescriptor redMarkerIcon;
+  late BitmapDescriptor yellowMarkerIcon;
   // Polyline data
   Set<Polyline> polylines = Set<Polyline>();
   List<LatLng> polygonLatLngs = <LatLng>[];
@@ -151,7 +154,7 @@ class _MapScreenState extends State<MapScreen> {
       c = [free, cost];
       s = [dcFast, lvl2, lvl1];
 
-      _fillChargerList();
+      _fillChargerList(currentLocation.latitude!, currentLocation.longitude!);
     });
   }
 
@@ -287,6 +290,21 @@ class _MapScreenState extends State<MapScreen> {
             child: const Icon(Icons.center_focus_strong),
             heroTag: 'center',
           )),
+      // Debug refresh button: call this function when x miles away from previous
+      /*
+      Positioned(
+          right: 30,
+          bottom: 200,
+          child: FloatingActionButton(
+            backgroundColor: const Color(0xff096B72),
+            foregroundColor: Colors.white,
+            onPressed: () => {
+              ScreenCoordinate(x: (screenWidth / 2).round(), y: (screenHeight / 2).round());
+LatLng middlePoint = await googleMapController.getLatLng(screenCoordinate);
+            },
+            child: const Icon(Icons.refresh),
+            heroTag: 'center',
+          )),*/
       // Back button
       Positioned(
           height: 28,
@@ -752,15 +770,15 @@ class _MapScreenState extends State<MapScreen> {
   void showChargersAtLocation() async {
     await _activateFilterPlugs();
     await getLocation(_googleMapController);
-    await _fillChargerList();
+    await _fillChargerList(
+        currentLocation.latitude!, currentLocation.longitude!);
   }
 
   // Populate charger data list.
   // TO DO: use unique keys for recalculating
-  _fillChargerList() async {
+  _fillChargerList(double lat, double lon) async {
     // Pull data
-    chargerData = await chargers.pullChargers(
-        currentLocation.latitude!, currentLocation.longitude!);
+    chargerData = await chargers.pullChargers(lat, lon);
     chargerData = chargers.filterChargers(chargerData, s, c);
     chargerData = chargers.maskPlugs(chargerData);
     markers = [];
@@ -774,6 +792,10 @@ class _MapScreenState extends State<MapScreen> {
         markers.add(Marker(
             markerId: (MarkerId(markers.length.toString())),
             position: pos,
+            icon: (chargerData[i]['DC fast'] > 0)
+                ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed)
+                : BitmapDescriptor.defaultMarkerWithHue(
+                    BitmapDescriptor.hueYellow),
             onTap: () async {
               selectMarker(i);
             }));
