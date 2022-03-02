@@ -5,6 +5,7 @@ from pprint import pprint
 from urllib.parse import urljoin
 import webbrowser
 import sys
+import requests
 
 from form_extractor import get_all_forms, get_form_details, session
 
@@ -13,6 +14,8 @@ url = sys.argv[1]
 all_forms = get_all_forms(url)
 # get the first form (edit this as you wish)
 # first_form = get_all_forms(url)[0]
+
+# prints form info to screen
 for i, f in enumerate(all_forms, start=1):
     form_details = get_form_details(f)
     print(f"{i} #")
@@ -87,6 +90,16 @@ for a in soup.find_all("a"):
         pass
 
 # write the page content to a file
-#open("page.html", "w").write(str(soup))
+# when entering in evgo, it just loads the first page of signup, which is blank
+open("page.html", "w", encoding="utf-8").write(str(soup))
 
-# webbrowser.open("page.html")
+webbrowser.open("page.html")
+
+
+# maybe this is due to the captcha not being filed out?
+# look into mechanize
+# http://toddhayton.com/2014/12/08/form-handling-with-mechanize-and-beautifulsoup/
+# http://wwwsearch.sourceforge.net/mechanize/
+
+# In the EVgo site, the form does not have a name, so run the following command: br.select_form(nr=0)
+# https://stackoverflow.com/questions/2582580/python-mechanize-select-a-form-with-no-name
