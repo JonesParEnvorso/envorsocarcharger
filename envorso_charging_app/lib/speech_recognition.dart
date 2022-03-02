@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 void main() {
-  runApp(MyApp());
+  //runApp(MyApp());
+  print(SpeechScreen());
 }
 
 class MyApp extends StatelessWidget {
@@ -109,7 +110,7 @@ class _SpeechScreenState extends State<SpeechScreen> {
     }
   }
 
-  void printSomething() {
+  printSomething() {
     listen();
   }
 }
