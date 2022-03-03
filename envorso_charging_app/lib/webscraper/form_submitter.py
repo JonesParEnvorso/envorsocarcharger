@@ -1,3 +1,6 @@
+# IMPORTANT:
+# run 'pip install beautifulsoup4' and pip install mechanize' before running this code
+
 # import statements
 from bs4 import BeautifulSoup
 
