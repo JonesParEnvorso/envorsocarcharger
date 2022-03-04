@@ -101,7 +101,7 @@ class _MapScreenState extends State<MapScreen> {
   // Called upon state initialization
   @override
   void initState() {
-    showChargersAtLocation();
+    //showChargersAtLocation();
     super.initState();
   }
 
@@ -141,20 +141,33 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void ApplyVisible() {
-    setState(() {
-      changeMade = true;
-      applyVisible = true;
-    });
+    changeMade = true;
+    applyVisible = true;
   }
 
   void ApplyFilters() {
     setState(() {
-      changeMade = false;
+      /*changeMade = false;
       applyVisible = false;
       c = [free, cost];
-      s = [dcFast, lvl2, lvl1];
+      s = [dcFast, lvl2, lvl1];*/
+      // Hide every expensive charger
+      for (int i = 0; i < chargerData.length; i++) {
+        if ((!free && chargerData[i]['price'].compareTo("FREE") == 0) ||
+            (!cost && chargerData[i]['price'].compareTo("FREE") != 0) ||
+            !((dcFast && chargerData[i]['DC fast'] > 0) ||
+                (lvl1 && chargerData[i]['level 1'] > 0) ||
+                (lvl2 && chargerData[i]['level 2'] > 0))) {
+          print("applyin");
 
-      _fillChargerList(currentLocation.latitude!, currentLocation.longitude!);
+          markers[i] = markers[i].copyWith(
+            visibleParam: false,
+          );
+        } else if (!markers[i].visible) {
+          markers[i] = markers[i].copyWith(visibleParam: true);
+        }
+      }
+      //_fillChargerList(currentLocation.latitude!, currentLocation.longitude!);
     });
   }
 
@@ -291,20 +304,20 @@ class _MapScreenState extends State<MapScreen> {
             heroTag: 'center',
           )),
       // Debug refresh button: call this function when x miles away from previous
-      /*
+
       Positioned(
           right: 30,
-          bottom: 200,
+          bottom: 230,
           child: FloatingActionButton(
             backgroundColor: const Color(0xff096B72),
             foregroundColor: Colors.white,
             onPressed: () => {
-              ScreenCoordinate(x: (screenWidth / 2).round(), y: (screenHeight / 2).round());
-LatLng middlePoint = await googleMapController.getLatLng(screenCoordinate);
+              fillChargerListOnScreen(
+                  screenWidth, screenHeight, _googleMapController)
             },
             child: const Icon(Icons.refresh),
-            heroTag: 'center',
-          )),*/
+            //heroTag: 'center',
+          )),
       // Back button
       Positioned(
           height: 28,
@@ -362,10 +375,8 @@ LatLng middlePoint = await googleMapController.getLatLng(screenCoordinate);
                         height: 35,
                         child: TextButton(
                             onPressed: () {
-                              setState(() {
-                                free = !free;
-                                ApplyVisible();
-                              });
+                              free = !free;
+                              ApplyFilters();
                             },
                             child: Row(
                               children: <Widget>[
@@ -376,10 +387,8 @@ LatLng middlePoint = await googleMapController.getLatLng(screenCoordinate);
                                   checkColor: Colors.white,
                                   value: free,
                                   onChanged: (value) {
-                                    setState(() {
-                                      free = value!;
-                                      ApplyVisible();
-                                    });
+                                    free = value!;
+                                    ApplyFilters();
                                   },
                                 )
                               ],
@@ -388,10 +397,8 @@ LatLng middlePoint = await googleMapController.getLatLng(screenCoordinate);
                         height: 35,
                         child: TextButton(
                             onPressed: () {
-                              setState(() {
-                                cost = !cost;
-                                ApplyVisible();
-                              });
+                              cost = !cost;
+                              ApplyFilters();
                             },
                             child: Row(
                               children: <Widget>[
@@ -404,7 +411,7 @@ LatLng middlePoint = await googleMapController.getLatLng(screenCoordinate);
                                   onChanged: (value) {
                                     setState(() {
                                       cost = value!;
-                                      ApplyVisible();
+                                      ApplyFilters();
                                     });
                                   },
                                 )
@@ -430,7 +437,7 @@ LatLng middlePoint = await googleMapController.getLatLng(screenCoordinate);
                             onPressed: () {
                               setState(() {
                                 dcFast = !dcFast;
-                                ApplyVisible();
+                                ApplyFilters();
                               });
                             },
                             child: Row(
@@ -442,10 +449,8 @@ LatLng middlePoint = await googleMapController.getLatLng(screenCoordinate);
                                   checkColor: Colors.white,
                                   value: dcFast,
                                   onChanged: (value) {
-                                    setState(() {
-                                      dcFast = value!;
-                                      ApplyVisible();
-                                    });
+                                    dcFast = value!;
+                                    ApplyFilters();
                                   },
                                 )
                               ],
@@ -454,10 +459,8 @@ LatLng middlePoint = await googleMapController.getLatLng(screenCoordinate);
                         height: 35,
                         child: TextButton(
                             onPressed: () {
-                              setState(() {
-                                lvl2 = !lvl2;
-                                ApplyVisible();
-                              });
+                              lvl2 = !lvl2;
+                              ApplyFilters();
                             },
                             child: Row(
                               children: <Widget>[
@@ -468,10 +471,8 @@ LatLng middlePoint = await googleMapController.getLatLng(screenCoordinate);
                                   checkColor: Colors.white,
                                   value: lvl2,
                                   onChanged: (value) {
-                                    setState(() {
-                                      lvl2 = value!;
-                                      ApplyVisible();
-                                    });
+                                    lvl2 = value!;
+                                    ApplyFilters();
                                   },
                                 )
                               ],
@@ -480,10 +481,8 @@ LatLng middlePoint = await googleMapController.getLatLng(screenCoordinate);
                         height: 35,
                         child: TextButton(
                             onPressed: () {
-                              setState(() {
-                                lvl1 = !lvl1;
-                                ApplyVisible();
-                              });
+                              lvl1 = !lvl1;
+                              ApplyFilters();
                             },
                             child: Row(
                               children: <Widget>[
@@ -494,10 +493,8 @@ LatLng middlePoint = await googleMapController.getLatLng(screenCoordinate);
                                   checkColor: Colors.white,
                                   value: lvl1,
                                   onChanged: (value) {
-                                    setState(() {
-                                      lvl1 = value!;
-                                      ApplyVisible();
-                                    });
+                                    lvl1 = value!;
+                                    ApplyFilters();
                                   },
                                 )
                               ],
@@ -519,16 +516,6 @@ LatLng middlePoint = await googleMapController.getLatLng(screenCoordinate);
           child: const Icon(Icons.filter_alt),
         ),
       ),
-      /*Positioned(
-          left: 20,
-          top: 50,
-          child: FloatingActionButton(
-            backgroundColor: const Color(0xff096B72),
-            foregroundColor: Colors.white,
-            onPressed: () => Navigator.pop(context),
-            heroTag: 'back',
-            child: const Icon(Icons.arrow_back),
-          )),*/
       // THIS IS ALL SEARCH BAR STUFF PLEASE DON'T TOUCH D:
       // If you do touch, please contact Kirsten, its sensitive :)
       Positioned(
@@ -702,31 +689,18 @@ LatLng middlePoint = await googleMapController.getLatLng(screenCoordinate);
     }
   }
 
-  // Experimenting with mapbox directions
-  /*Future<Map<String, dynamic>> Future<void> getDirections(
-      LatLng destination) async {
-    //print(
-    //    'https://api.mapbox.com/directions/v5/mapbox/driving/${currentLocation.latitude},${currentLocation.longitude};${destination.latitude},${destination.longitude}?access_token=sk.eyJ1IjoiY3J0dXJuYnVsbCIsImEiOiJja3poZmZjeGE0MWU3Mm90dnE3Yms4Y2UzIn0.0zQmFVU4kY7AE1H2GxOdVg');
-    final String url =
-        'https://api.mapbox.com/directions/v5/mapbox/driving/${currentLocation.longitude},${currentLocation.latitude};${destination.longitude},${destination.latitude}?access_token=sk.eyJ1IjoiY3J0dXJuYnVsbCIsImEiOiJja3poZmZjeGE0MWU3Mm90dnE3Yms4Y2UzIn0.0zQmFVU4kY7AE1H2GxOdVg';
-    var response = await http.get(Uri.parse(url));
-    Map json = convert.jsonDecode(response.body);
-
-    //print(json);
-
-    print(json["routes"][0]);
-
-    //var results = {}
-
-    //
-
-    //print(json);
-    return;
-  }*/
-
   // Set the location before the map is rendered (WIP)
   void initializeLocation() async {
     //_currentPosition = await location.getLocation();
+  }
+
+  // Updates charger list to include chargers in center of the screen.
+  void fillChargerListOnScreen(
+      screenWidth, screenHeight, _googleMapController) async {
+    ScreenCoordinate screenCoordinate = ScreenCoordinate(
+        x: (screenWidth / 2).round(), y: (screenHeight / 2).round());
+    LatLng middlePoint = await _googleMapController.getLatLng(screenCoordinate);
+    _fillChargerList(middlePoint.latitude, middlePoint.longitude);
   }
 
   // Recenters the map on the user's location
@@ -778,12 +752,32 @@ LatLng middlePoint = await googleMapController.getLatLng(screenCoordinate);
   // TO DO: use unique keys for recalculating
   _fillChargerList(double lat, double lon) async {
     // Pull data
-    chargerData = await chargers.pullChargers(lat, lon);
-    chargerData = chargers.filterChargers(chargerData, s, c);
-    chargerData = chargers.maskPlugs(chargerData);
+    print("ok");
+    var newChargerData = await chargers.pullChargers(lat, lon);
+    print(newChargerData.length);
+    for (int i = 0; i < newChargerData.length; i++) {
+      bool chargerAlreadyAdded = false;
+      int j = 0;
+      while (!chargerAlreadyAdded && j < chargerData.length) {
+        if ((chargerData[j]['address']
+                .compareTo(newChargerData[i]['address']) ==
+            0)) {
+          chargerAlreadyAdded = true;
+        }
+        j++;
+      }
+      if (!chargerAlreadyAdded) {
+        chargerData.add(newChargerData[i]);
+        print("yep");
+      }
+    }
+    print(chargerData.length);
+    //chargerData = chargers.filterChargers(chargerData, s, c);
+    //chargerData = chargers.maskPlugs(chargerData);
     markers = [];
     // Print the lat and long of every charger
     for (int i = 0; i < chargerData.length; i++) {
+      print("City: ${chargerData[i]['city']}");
       print("lat: ${chargerData[i]['lat']}");
       print("lon: ${chargerData[i]['lon']}");
 
