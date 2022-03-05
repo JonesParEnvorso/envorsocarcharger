@@ -220,6 +220,9 @@ class _SearchPage extends State<SearchPage> {
                     onPressed: () {
                       //speech.MyApp;
                       speech.main();
+                      setState(() {
+                        isMicPressed = !isMicPressed;
+                      });
                     },
                     focusNode: micButtonFocus,
                     child: Icon(isMicPressed ? Icons.mic_none : Icons.mic),

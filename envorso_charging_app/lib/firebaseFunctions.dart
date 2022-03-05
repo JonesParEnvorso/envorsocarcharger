@@ -249,4 +249,124 @@ class FirebaseFunctions {
 
     return map;
   } // getPID
+
+  // get all unique services
+  Future<List<Map<String, String>>> getServices(String uId) async {
+    QuerySnapshot<Map<String, dynamic>> data =
+        await firestore.collection('stations').orderBy('network').get();
+
+    List<Map<String, dynamic>> list =
+        data.docs.map((doc) => doc.data()).toList();
+
+    List<Map<String, String>> uniqueServices = [];
+    List<String> uniqueNames = [];
+
+    String userZip = '';
+    await firestore
+        .collection('users')
+        .doc(uId)
+        .get()
+        .then((DocumentSnapshot docSnap) {
+      userZip = docSnap.get(FieldPath(const ['address', 'zip']));
+    });
+
+    DocumentSnapshot<Map<String, dynamic>> myServ = await firestore
+        .collection('users')
+        .doc(uId)
+        .collection('services')
+        .doc('services')
+        .get();
+
+    Map<String, dynamic>? data2 = myServ.data();
+    if (data2 == null) {
+      return uniqueServices;
+    }
+
+    // find user's services
+    List<dynamic> userServices = data2.values.toList()[0];
+
+    // add local first?
+    for (int i = 0; i < list.length; i++) {
+      String tempZip = list[i]['zip'].toString();
+      Map<String, String> map = {};
+
+      // check if zip matches with user's zip
+
+      if (tempZip == userZip && !(uniqueNames.contains(list[i]['network']))) {
+        map['network'] = list[i]['network'];
+        map['zip'] = userZip;
+        if (list[i]['network'] == 'Non-Networked') {
+          String name = list[i]['name'];
+          name += ' (' + list[i]['city'] + ')';
+          map['name'] = name;
+
+          // inUser used to determine if service is present in user's document
+          if (userServices.contains(list[i]['name'])) {
+            map['inUser'] = 'true';
+          } else {
+            map['inUser'] = 'false';
+          }
+        } else {
+          map['name'] = list[i]['name'];
+
+          if (userServices.contains(list[i]['network'])) {
+            map['inUser'] = 'true';
+          } else {
+            map['inUser'] = 'false';
+          }
+        }
+        map['price'] = list[i]['price'].toString();
+
+        uniqueServices.add(map);
+
+        if (list[i]['network'] != 'Non-Networked') {
+          uniqueNames.add(list[i]['network']);
+        } else {
+          list.removeAt(i);
+        }
+      }
+    }
+
+    // need to grab: zip, network, name, price
+    for (int i = 0; i < list.length; i++) {
+      Map<String, String> map = {};
+
+      // non-unique network
+      if (uniqueNames.contains(list[i]['network'])) {
+        continue;
+      }
+      if (list[i]['network'] != 'Non-Networked') {
+        uniqueNames.add(list[i]['network']);
+      }
+
+      map['network'] = list[i]['network'];
+      map['zip'] = list[i]['zip'].toString();
+
+      if (list[i]['network'] == 'Non-Networked') {
+        String name = list[i]['name'];
+        name += ' (' + list[i]['city'] + ')';
+        map['name'] = name;
+
+        if (userServices.contains(list[i]['name'])) {
+          map['inUser'] = 'true';
+        } else {
+          map['inUser'] = 'false';
+        }
+      } else {
+        map['name'] = list[i]['name'];
+
+        if (userServices.contains(list[i]['network'])) {
+          map['inUser'] = 'true';
+        } else {
+          map['inUser'] = 'false';
+        }
+      }
+
+      map['price'] = list[i]['price'].toString();
+
+      uniqueServices.add(map);
+    }
+
+    return uniqueServices;
+  }
 }

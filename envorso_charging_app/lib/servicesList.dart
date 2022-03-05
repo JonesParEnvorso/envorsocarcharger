@@ -161,6 +161,7 @@ class _ServicesList extends State<ServicesList> with TickerProviderStateMixin {
                           ])),
                   ListView.builder(
                       scrollDirection: Axis.vertical,
+                      physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       itemCount: checkBoxListTileModel.length,
                       itemBuilder: (BuildContext context, int index) {
