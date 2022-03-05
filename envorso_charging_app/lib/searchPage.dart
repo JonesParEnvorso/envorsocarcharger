@@ -69,6 +69,7 @@ class _SearchPage extends State<SearchPage> {
     }
     await chargeList.activateAccount(uId);
     String city = searchText.text;
+    city = city.toLowerCase();
     chargers = await chargeList.findCity(city);
     chargers = chargeList.maskPlugs(chargers);
     //chargers2 = await chargeList.pullServices(46.999883, -120.544755);

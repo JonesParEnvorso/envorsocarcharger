@@ -84,6 +84,11 @@ class Chargers {
 
   Future<List<Map<String, dynamic>>> findCity(String city) async {
     chargers = [];
+    if (city != "") {
+      String first = city.substring(0, 1);
+      city = city.substring(1, city.length);
+      city = first.toUpperCase() + city;
+    }
     var querryList = await FirebaseFirestore.instance
         .collection('stations')
         .where('city', isEqualTo: city)
