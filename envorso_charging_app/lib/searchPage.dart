@@ -47,6 +47,7 @@ class _searchPage extends State<searchPage> {
   List<listTilesLocations> tileList = [];
 
   bool isLoading = false;
+  late FocusNode myFocusNode;
 
 // fills the list with the result from the database
   _fillChargerList() async {
@@ -122,8 +123,17 @@ class _searchPage extends State<searchPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    myFocusNode = FocusNode();
+    myFocusNode.requestFocus();
+  }
+
+  @override
   void dispose() {
     searchText.dispose();
+    myFocusNode.dispose();
     super.dispose();
   }
 
@@ -177,6 +187,7 @@ class _searchPage extends State<searchPage> {
                       child: TextField(
                         keyboardType: TextInputType.text,
                         controller: searchText,
+                        focusNode: myFocusNode,
                         decoration: InputDecoration(
                           prefixIcon: Icon(Icons.search),
                           hintText: "Search",
