@@ -41,6 +41,7 @@ class _SettingsScreen extends State<SettingsScreen> {
                 //documentId: curUser,
                 )));
   }
+
   goToAddAcounts(BuildContext context) {
     Navigator.push(
         context,
@@ -50,14 +51,15 @@ class _SettingsScreen extends State<SettingsScreen> {
                 )));
   }
 
-goToSearchPage(BuildContext context) {
+  goToSearchPage(BuildContext context) {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => searchPage(
-                //documentId: curUser,
+            builder: (context) => const SearchPage(
+                  whichFocus: 2,
                 )));
   }
+
   goToMap(BuildContext context) {
     Navigator.push(
         context,

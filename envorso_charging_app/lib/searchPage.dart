@@ -25,19 +25,25 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const searchPage(),
+      home: const SearchPage(
+        whichFocus: 2,
+      ),
     );
   }
 }
 
-class searchPage extends StatefulWidget {
-  const searchPage({Key? key}) : super(key: key);
+class SearchPage extends StatefulWidget {
+  const SearchPage({Key? key, required this.whichFocus}) : super(key: key);
 
+  // 0: focus searchBar
+  // 1: focus mic
+  // >= 2: navigatated from somewhere else other than mapScreen
+  final int whichFocus;
   @override
-  _searchPage createState() => _searchPage();
+  _SearchPage createState() => _SearchPage();
 }
 
-class _searchPage extends State<searchPage> {
+class _SearchPage extends State<SearchPage> {
   final searchText = TextEditingController();
 
   List<Map<String, dynamic>> chargers = [];
@@ -47,7 +53,9 @@ class _searchPage extends State<searchPage> {
   List<listTilesLocations> tileList = [];
 
   bool isLoading = false;
-  late FocusNode myFocusNode;
+  late FocusNode searchBarFocus;
+  late FocusNode micButtonFocus;
+  late bool isMicPressed;
 
 // fills the list with the result from the database
   _fillChargerList() async {
@@ -69,13 +77,13 @@ class _searchPage extends State<searchPage> {
   //const _searchPage({Key? key}) : super(key: key);
   @override
   goToSettings(BuildContext context) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => SettingsScreen()));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const SettingsScreen()));
   }
 
   goToMap(BuildContext context) {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => MapScreen()));
+        context, MaterialPageRoute(builder: (context) => const MapScreen()));
   }
 
   _generateList() async {
@@ -126,17 +134,26 @@ class _searchPage extends State<searchPage> {
   void initState() {
     super.initState();
 
-    myFocusNode = FocusNode();
-    myFocusNode.requestFocus();
+    searchBarFocus = FocusNode();
+    micButtonFocus = FocusNode();
+    isMicPressed = false;
+    if (widget.whichFocus == 0) {
+      searchBarFocus.requestFocus();
+    } else if (widget.whichFocus == 1) {
+      micButtonFocus.requestFocus();
+      isMicPressed = true;
+    }
   }
 
   @override
   void dispose() {
     searchText.dispose();
-    myFocusNode.dispose();
+    searchBarFocus.dispose();
+    micButtonFocus.dispose();
     super.dispose();
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         resizeToAvoidBottomInset: false,
@@ -156,21 +173,23 @@ class _searchPage extends State<searchPage> {
               ],
             )),*/
             Container(
-                padding: EdgeInsets.fromLTRB(10, 30, 0, 0),
+                padding: const EdgeInsets.fromLTRB(10, 30, 0, 0),
                 child: Row(children: [
                   Container(
                       child: ElevatedButton(
                     onPressed: () => goToMap(context),
-                    child: Icon(Icons.arrow_back),
+                    child: const Icon(Icons.arrow_back),
                     style: ButtonStyle(
-                      shape: MaterialStateProperty.all(CircleBorder()),
-                      padding: MaterialStateProperty.all(EdgeInsets.all(8)),
+                      shape: MaterialStateProperty.all(const CircleBorder()),
+                      padding:
+                          MaterialStateProperty.all(const EdgeInsets.all(8)),
                       backgroundColor: MaterialStateProperty.all(
-                          Color(0xff096B72)), // Button color
+                          const Color(0xff096B72)), // Button color
                       overlayColor:
                           MaterialStateProperty.resolveWith<Color?>((states) {
-                        if (states.contains(MaterialState.pressed))
-                          return Colors.black; // Splash color
+                        if (states.contains(MaterialState.pressed)) {
+                          return Colors.black;
+                        } // Splash color
                       }),
                     ),
                   )),
@@ -182,16 +201,16 @@ class _searchPage extends State<searchPage> {
                   // when location is clicked, it goes to map screen with location focused
 
                   Container(
-                      padding: EdgeInsets.all(1),
+                      padding: const EdgeInsets.all(1),
                       width: 250,
                       child: TextField(
                         keyboardType: TextInputType.text,
                         controller: searchText,
-                        focusNode: myFocusNode,
+                        focusNode: searchBarFocus,
                         decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.search),
+                          prefixIcon: const Icon(Icons.search),
                           hintText: "Search",
-                          hintStyle: TextStyle(color: Colors.grey),
+                          hintStyle: const TextStyle(color: Colors.grey),
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(25.0)),
                         ),
@@ -202,16 +221,20 @@ class _searchPage extends State<searchPage> {
                       //speech.MyApp;
                       speech.main();
                     },
-                    child: Icon(Icons.mic),
+                    focusNode: micButtonFocus,
+                    child: Icon(isMicPressed ? Icons.mic_none : Icons.mic),
                     style: ButtonStyle(
-                      shape: MaterialStateProperty.all(CircleBorder()),
-                      padding: MaterialStateProperty.all(EdgeInsets.all(8)),
+                      shape: MaterialStateProperty.all(const CircleBorder()),
+                      padding:
+                          MaterialStateProperty.all(const EdgeInsets.all(8)),
                       backgroundColor: MaterialStateProperty.all(
-                          Color(0xff732015)), // Button color
+                          const Color(0xff732015)), // Button color
                       overlayColor:
                           MaterialStateProperty.resolveWith<Color?>((states) {
-                        if (states.contains(MaterialState.pressed))
-                          return Colors.black; // Splash color
+                        if (states.contains(MaterialState.pressed)) {
+                          return Colors.black;
+                        }
+                        return null; // Splash color
                       }),
                     ),
                   )),

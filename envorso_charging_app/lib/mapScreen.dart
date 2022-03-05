@@ -559,7 +559,7 @@ class _MapScreenState extends State<MapScreen> {
                             label: const Text('Search',
                                 style: TextStyle(color: Colors.grey)),
                             onPressed: () {
-                              Navigator.of(context).push(_createRoute());
+                              Navigator.of(context).push(_createRoute(0));
                               //speech.main();
                             },
                           ),
@@ -567,7 +567,9 @@ class _MapScreenState extends State<MapScreen> {
                         Container(
                             child: ElevatedButton(
                           onPressed: () {
-                            speech.main();
+                            //speech.main();
+                            // go to searchpage and focus the mic button
+                            Navigator.of(context).push(_createRoute(1));
                             //Navigator.push(context, MaterialPageRoute(builder: (context) => const speech )
                           },
                           child: const Icon(Icons.mic),
@@ -581,8 +583,10 @@ class _MapScreenState extends State<MapScreen> {
                             overlayColor:
                                 MaterialStateProperty.resolveWith<Color?>(
                                     (states) {
-                              if (states.contains(MaterialState.pressed))
-                                return Colors.black; // Splash color
+                              if (states.contains(MaterialState.pressed)) {
+                                return Colors.black;
+                              }
+                              return null; // Splash color
                             }),
                           ),
                         )),
@@ -797,10 +801,11 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
-  Route _createRoute() {
+  Route _createRoute(int focus) {
     return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) =>
-          const searchPage(),
+      pageBuilder: (context, animation, secondaryAnimation) => SearchPage(
+        whichFocus: focus,
+      ),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         const begin = Offset(0.0, 1.0);
         const end = Offset.zero;
