@@ -84,11 +84,7 @@ class Chargers {
 
   Future<List<Map<String, dynamic>>> findCity(String city) async {
     chargers = [];
-    if (city != "") {
-      String first = city.substring(0, 1);
-      city = city.substring(1, city.length);
-      city = first.toUpperCase() + city;
-    }
+    city = city.toLowerCase();
     var querryList = await FirebaseFirestore.instance
         .collection('stations')
         .where('city', isEqualTo: city)
@@ -359,7 +355,8 @@ class Debugger {
     //await charger.pullChargers(46.999883, -120.544755); //46.999883, -120.544755
     //await charger.activateAccount("0fKNcfWsxhrawuATfGUd");
     //charger.printChargers();
-    print(await charger.pullServices(46.999883, -120.544755));
+    //print(await charger.pullServices(46.999883, -120.544755));
+    changeCity();
     print("done");
     //addGeoHash();
   }
@@ -383,6 +380,27 @@ class Debugger {
       FirebaseFirestore.instance.collection('stations').doc(entries['id']).set(
           {'geoHash': charger.geoHash(entries['lat'], entries['lon'])},
           SetOptions(merge: true)).then((value) {});
+    }
+    print("complete");
+  }
+
+  void changeCity() async {
+    print("start");
+    var charger = Chargers();
+
+    var querryList =
+        await FirebaseFirestore.instance.collection('stations').get();
+
+    List<Map<String, dynamic>> chargers = [];
+    for (var docs in querryList.docs) {
+      chargers.add(docs.data());
+      chargers.last['id'] = docs.id;
+    }
+
+    for (var entries in chargers) {
+      String a = entries['city'];
+      FirebaseFirestore.instance.collection('stations').doc(entries['id']).set(
+          {'city': a.toLowerCase()}, SetOptions(merge: true)).then((value) {});
     }
     print("complete");
   }
