@@ -11,9 +11,20 @@ class FirebaseFunctions {
 
   // global firestore instance
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+  FirebaseAuth auth = FirebaseAuth.instance;
 
   // global auth object
   UserAuth userAuth = UserAuth();
+
+  // gets user's id
+  String getUId() {
+    String? uId = auth.currentUser?.uid;
+    if (uId == null) {
+      print("How did you get here?");
+      return '';
+    }
+    return uId;
+  }
 
   // create new user account
   Future<String?> createAccount(String email, String password) async {
@@ -291,14 +302,17 @@ class FirebaseFunctions {
       Map<String, String> map = {};
 
       // check if zip matches with user's zip
+      // need to grab: zip, network, name, price
+      // map contains: zip, price, displayName, databaseName, inUser
 
       if (tempZip == userZip && !(uniqueNames.contains(list[i]['network']))) {
-        map['network'] = list[i]['network'];
+        //map['network'] = list[i]['network'];
         map['zip'] = userZip;
         if (list[i]['network'] == 'Non-Networked') {
           String name = list[i]['name'];
           name += ' (' + list[i]['city'] + ')';
-          map['name'] = name;
+          map['displayName'] = name;
+          map['databaseName'] = list[i]['name'];
 
           // inUser used to determine if service is present in user's document
           if (userServices.contains(list[i]['name'])) {
@@ -307,7 +321,8 @@ class FirebaseFunctions {
             map['inUser'] = 'false';
           }
         } else {
-          map['name'] = list[i]['name'];
+          map['displayName'] = list[i]['network'];
+          map['databaseName'] = list[i]['network'];
 
           if (userServices.contains(list[i]['network'])) {
             map['inUser'] = 'true';
@@ -327,7 +342,6 @@ class FirebaseFunctions {
       }
     }
 
-    // need to grab: zip, network, name, price
     for (int i = 0; i < list.length; i++) {
       Map<String, String> map = {};
 
@@ -339,13 +353,14 @@ class FirebaseFunctions {
         uniqueNames.add(list[i]['network']);
       }
 
-      map['network'] = list[i]['network'];
+      //map['network'] = list[i]['network'];
       map['zip'] = list[i]['zip'].toString();
 
       if (list[i]['network'] == 'Non-Networked') {
         String name = list[i]['name'];
         name += ' (' + list[i]['city'] + ')';
-        map['name'] = name;
+        map['displayName'] = name;
+        map['databaseName'] = list[i]['name'];
 
         if (userServices.contains(list[i]['name'])) {
           map['inUser'] = 'true';
@@ -353,7 +368,8 @@ class FirebaseFunctions {
           map['inUser'] = 'false';
         }
       } else {
-        map['name'] = list[i]['name'];
+        map['displayName'] = list[i]['network'];
+        map['databaseName'] = list[i]['network'];
 
         if (userServices.contains(list[i]['network'])) {
           map['inUser'] = 'true';

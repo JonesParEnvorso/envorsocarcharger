@@ -50,6 +50,10 @@ class _AddAcounts extends State<AddAcounts> {
 
   // list to store all service info
   List<Map<String, String>> services = [];
+  String zip = '';
+
+  // list of users selected services. will be filled with data from the database
+  List<String> userServices = [];
 
   @override
   void initState() {
@@ -60,15 +64,14 @@ class _AddAcounts extends State<AddAcounts> {
 
   // grab all unique services from database
   fillServices() async {
-    String? uId = auth.currentUser?.uid;
-    if (uId == null) {
+    String uId = firebaseFunctions.getUId();
+    if (uId == '') {
       print("How did you get here?");
       return;
     }
 
     services = await firebaseFunctions.getServices(uId);
 
-    String zip = '';
     var doc = FirebaseFirestore.instance.collection('users').doc(uId);
     await doc.get().then((DocumentSnapshot docSnap) {
       zip = docSnap.get(FieldPath(const ['address', 'zip']));
@@ -87,13 +90,27 @@ class _AddAcounts extends State<AddAcounts> {
   Widget build(BuildContext context) {
     // TO DO: Make this function similar to charging buttons on enRouteAccountSettings
     // make Elevated button stay at bottom of screen regardless of scroll
-    // see if checkmark can be disabled if clicked. prevent people from removing stations from their account
-    _updateServices() {
+    _updateServices() async {
       setState(() {
         isLoading = true;
       });
 
+      for (int i = 0; i < checkBoxListTileModel.length; i++) {
+        if (checkBoxListTileModel[i].isCheck == true) {
+          userServices.add(checkBoxListTileModel[i].databaseTitle);
+        }
+      }
+
+      String uId = firebaseFunctions.getUId();
+      if (uId == '') {
+        return;
+      }
+
+      await firebaseFunctions.addServices(uId, userServices);
+      await fillServices();
+
       setState(() {
+        userServices = [];
         isLoading = false;
       });
     }
@@ -236,8 +253,7 @@ class _AddAcounts extends State<AddAcounts> {
                           );
                         }),
                     ElevatedButton(
-                        onPressed: () =>
-                            print('update services'), //_updateServices(),
+                        onPressed: () => _updateServices(),
                         child: Text('Update Services'),
                         style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all(
@@ -258,13 +274,15 @@ class CheckBoxListTileModel {
   bool money;
   String title;
   bool? isCheck;
+  String databaseTitle;
 
   CheckBoxListTileModel(
       {required this.id,
       required this.local,
       required this.money,
       required this.title,
-      required this.isCheck});
+      required this.isCheck,
+      required this.databaseTitle});
 
   static Future<List<CheckBoxListTileModel>> getServices(
       List<Map<String, String>> services, String zip) async {
@@ -276,12 +294,10 @@ class CheckBoxListTileModel {
       bool money;
       bool local;
       bool isCheck;
+      String? databaseTitle;
 
-      if (services[i]['network'] == 'Non-Networked') {
-        title = services[i]['name'];
-      } else {
-        title = services[i]['network'];
-      }
+      title = services[i]['displayName'];
+      databaseTitle = services[i]['databaseName'];
 
       // following logic will have to be changed as we find more information on the price of chargers
       if (services[i]['price'] == '' || services[i]['price'] == 'Free') {
@@ -304,9 +320,14 @@ class CheckBoxListTileModel {
 
       // isCheck should be true if the service is in the user's document
 
-      if (title != null) {
+      if (title != null && databaseTitle != null) {
         list.add(CheckBoxListTileModel(
-            id: i, local: local, money: money, title: title, isCheck: isCheck));
+            id: i,
+            local: local,
+            money: money,
+            title: title,
+            isCheck: isCheck,
+            databaseTitle: databaseTitle));
       }
     }
 
