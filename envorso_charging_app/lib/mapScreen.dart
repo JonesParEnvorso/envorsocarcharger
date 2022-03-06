@@ -240,52 +240,53 @@ class _MapScreenState extends State<MapScreen> {
                                 bottomRight: Radius.circular(25)),
                           ),
                           child: Card(
-                              child: ListTile(
-                                  leading: Icon(Icons.location_pin,
-                                      color: chargerData[highlightedMarkerInd]
-                                                  ['DC fast'] >
-                                              0
-                                          ? Colors.red
-                                          : Colors.yellow),
-                                  title: Text(
-                                      chargerData[highlightedMarkerInd]
-                                          ['network'],
-                                      textAlign: TextAlign.left),
-                                  subtitle: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          chargerData[highlightedMarkerInd]
-                                              ['address'],
+                              /*
+                              child: Stack(children: [
+                            ListTile(
+                                leading: Icon(Icons.location_pin,
+                                    color: chargerData[highlightedMarkerInd]
+                                                ['DC fast'] >
+                                            0
+                                        ? Colors.red
+                                        : Colors.yellow),
+                                title: Text(
+                                    chargerData[highlightedMarkerInd]
+                                        ['network'],
+                                    textAlign: TextAlign.left),
+                                subtitle: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        chargerData[highlightedMarkerInd]
+                                            ['address'],
+                                        textAlign: TextAlign.left,
+                                      ),
+                                      Text(
+                                          "DC Fast: " +
+                                              chargerData[highlightedMarkerInd]
+                                                      ['DC fast']
+                                                  .toString() +
+                                              " | Level 2: " +
+                                              chargerData[highlightedMarkerInd]
+                                                      ['level 1']
+                                                  .toString() +
+                                              " | Level 1: " +
+                                              chargerData[highlightedMarkerInd]
+                                                      ['level 2']
+                                                  .toString(),
                                           textAlign: TextAlign.left,
-                                        ),
-                                        Text(
-                                            "DC Fast: " +
-                                                chargerData[highlightedMarkerInd]
-                                                        ['DC fast']
-                                                    .toString() +
-                                                " | Level 2: " +
-                                                chargerData[highlightedMarkerInd]
-                                                        ['level 1']
-                                                    .toString() +
-                                                " | Level 1: " +
-                                                chargerData[highlightedMarkerInd]
-                                                        ['level 2']
-                                                    .toString(),
-                                            textAlign: TextAlign.left,
-                                            style: TextStyle(
-                                                fontStyle: FontStyle.italic,
-                                                fontSize: 15,
-                                                color: Colors.black)),
-                                      ]),
-                                  trailing: Text(
-                                    plugsString,
-                                    textAlign: TextAlign.right,
-                                  ))
-                                  
+                                          style: TextStyle(
+                                              fontStyle: FontStyle.italic,
+                                              fontSize: 15,
+                                              color: Colors.black)),
+                                    ]),
+                                trailing: Text(
+                                  plugsString,
+                                  textAlign: TextAlign.right,
+                                ))
+                          ])*/
 
-                              /*Row(children: [
+                              child: Row(children: [
                             Container(
                               padding: EdgeInsets.all(10),
                               width: screenWidth / 1.60,
@@ -364,8 +365,7 @@ class _MapScreenState extends State<MapScreen> {
                                 )
                               ]),
                             ),
-                          ]))*/
-                              )))
+                          ]))))
                 ]),
               ])),
         ),
