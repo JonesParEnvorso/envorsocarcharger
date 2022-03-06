@@ -98,6 +98,7 @@ class FirebaseFunctions {
             "cvv": cvv,
           },
           "username": username,
+          "saved": []
         })
         .then((value) => users
             .doc(uId)
