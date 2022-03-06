@@ -1,9 +1,12 @@
 //import 'dart:html';
 import 'dart:io';
 import 'dart:ui';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:avatar_glow/avatar_glow.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'settings.dart';
 import 'mapScreen.dart';
 import 'chargeStation.dart';
@@ -49,6 +52,8 @@ class _SearchPage extends State<SearchPage> {
   bool dcFast = true;
   bool lvl1 = true;
   bool lvl2 = true;
+  List<dynamic> chargersID = [];
+  String userID = "";
 
   final searchText = TextEditingController();
 
@@ -62,6 +67,11 @@ class _SearchPage extends State<SearchPage> {
   late FocusNode searchBarFocus;
   late FocusNode micButtonFocus;
   late bool isMicPressed;
+
+  late stt.SpeechToText _speech;
+  bool _isListening = false;
+  String _text = 'Press button and speak';
+  double _confidence = 1.0;
 
   bool visible = false;
 
@@ -93,13 +103,53 @@ class _SearchPage extends State<SearchPage> {
   //const _searchPage({Key? key}) : super(key: key);
   @override
   goToSettings(BuildContext context) {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => const SettingsScreen()));
+    Navigator.pop(context);
+    //Navigator.push(context,
+    //    MaterialPageRoute(builder: (context) => const SettingsScreen()));
   }
 
   goToMap(BuildContext context) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const MapScreen()));
+    Navigator.pop(context);
+    //Navigator.push(
+    //    context, MaterialPageRoute(builder: (context) => const MapScreen()));
+  }
+
+  _remove(String id) async {
+    chargersID.remove(id);
+
+    String uId = userID;
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(uId)
+        .set({'saved': chargersID}, SetOptions(merge: true)).then((value) {});
+    setState(() {});
+  }
+
+  _add(String id) async {
+    chargersID.add(id);
+
+    String uId = userID;
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(uId)
+        .set({'saved': chargersID}, SetOptions(merge: true)).then((value) {});
+    setState(() {});
+  }
+
+  _pullAccount() async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    String uId;
+    if (auth.currentUser == null) {
+      print("No user!?!? How did you even get here?");
+      return;
+    } else {
+      uId = auth.currentUser!.uid;
+    }
+    userID = uId;
+    var querryL =
+        await FirebaseFirestore.instance.collection('users').doc(userID).get();
+    var a = querryL.get('saved');
+    chargersID = a;
   }
 
   _generateList() async {
@@ -172,7 +222,9 @@ class _SearchPage extends State<SearchPage> {
             lvl1: station['level 1'],
             lvl2: station['level 2'],
             dcFast: station['DC fast'],
-            plugs: plugs));
+            plugs: plugs,
+            dbID: station['id'],
+            contains: (chargersID.contains(station['id']))));
       }
     }
   }
@@ -200,8 +252,13 @@ class _SearchPage extends State<SearchPage> {
     super.dispose();
   }
 
+  bool firstLoad = true;
   @override
   Widget build(BuildContext context) {
+    if (firstLoad) {
+      firstLoad = false;
+      _pullAccount();
+    }
     return Scaffold(
         resizeToAvoidBottomInset: false,
         body: Stack(children: [
@@ -247,6 +304,7 @@ class _SearchPage extends State<SearchPage> {
                     // make a list of starred then recent locations
                     // when location is clicked, it goes to map screen with location focused
 
+//<<<<<<< HEAD
                     Container(
                         padding: const EdgeInsets.all(1),
                         width: 250,
@@ -264,15 +322,16 @@ class _SearchPage extends State<SearchPage> {
                         )),
                     Container(
                         child: ElevatedButton(
-                      onPressed: () {
-                        //speech.MyApp;
-                        speech.main();
-                        setState(() {
-                          isMicPressed = !isMicPressed;
-                        });
-                      },
+                      onPressed: //() {
+                          _listen,
+                      child: Icon(_isListening ? Icons.mic : Icons.mic_none),
+                      // speech.main();
+                      // setState(() {
+                      //   isMicPressed = !isMicPressed;
+                      // });
+                      //},
                       focusNode: micButtonFocus,
-                      child: Icon(isMicPressed ? Icons.mic_none : Icons.mic),
+                      //child: Icon(isMicPressed ? Icons.mic_none : Icons.mic),
                       style: ButtonStyle(
                         shape: MaterialStateProperty.all(const CircleBorder()),
                         padding:
@@ -286,9 +345,50 @@ class _SearchPage extends State<SearchPage> {
                           }
                           return null; // Splash color
                         }),
+
+                        //Container(
+                        // padding: const EdgeInsets.all(1),
+                        // width: 250,
+                        // child: TextField(
+                        //   keyboardType: TextInputType.text,
+                        //   controller: searchText,
+                        //   focusNode: searchBarFocus,
+                        //   decoration: InputDecoration(
+                        //     prefixIcon: const Icon(Icons.search),
+                        //     hintText: "Search",
+                        //     hintStyle: const TextStyle(color: Colors.grey),
+                        //     border: OutlineInputBorder(
+                        //         borderRadius: BorderRadius.circular(25.0)),
                       ),
                     )),
                   ])),
+              //   Container(
+              //       child: ElevatedButton(
+              //     onPressed: () {
+              //       //speech.MyApp;
+              //       speech.main();
+              //       setState(() {
+              //         isMicPressed = !isMicPressed;
+              //       });
+              //     },
+              //     focusNode: micButtonFocus,
+              //     child: Icon(isMicPressed ? Icons.mic_none : Icons.mic),
+              //     style: ButtonStyle(
+              //       shape: MaterialStateProperty.all(const CircleBorder()),
+              //       padding:
+              //           MaterialStateProperty.all(const EdgeInsets.all(8)),
+              //       backgroundColor: MaterialStateProperty.all(
+              //           const Color(0xff732015)), // Button color
+              //       overlayColor:
+              //           MaterialStateProperty.resolveWith<Color?>((states) {
+              //         if (states.contains(MaterialState.pressed)) {
+              //           return Colors.black;
+              //         }
+              //         return null; // Splash color
+              //       }),
+              //     ),
+              //   )),
+              // ])),
               Container(
                 height: 70,
                 width: 200,
@@ -364,7 +464,73 @@ class _SearchPage extends State<SearchPage> {
                                                         fontStyle:
                                                             FontStyle.italic,
                                                         fontSize: 15,
-                                                        color: Colors.black))
+                                                        color: Colors.black)),
+                                                Visibility(
+                                                    visible: tileList[index]
+                                                        .contains,
+                                                    child: TextButton.icon(
+                                                      style: ButtonStyle(
+                                                          visualDensity:
+                                                              VisualDensity
+                                                                  .compact,
+                                                          padding: MaterialStateProperty
+                                                              .all(const EdgeInsets
+                                                                      .fromLTRB(
+                                                                  0, 0, 0, 0)),
+                                                          alignment: Alignment
+                                                              .centerLeft),
+                                                      icon: const Icon(
+                                                        Icons
+                                                            .remove_circle_outline,
+                                                        color:
+                                                            Color(0xff096B72),
+                                                      ),
+                                                      label: const Text(
+                                                          'Unsave',
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .black)),
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          _remove(
+                                                              tileList[index]
+                                                                  .dbID);
+                                                          _generateTile();
+                                                        });
+                                                      },
+                                                    )),
+                                                Visibility(
+                                                    visible: !tileList[index]
+                                                        .contains,
+                                                    child: TextButton.icon(
+                                                      style: ButtonStyle(
+                                                          visualDensity:
+                                                              VisualDensity
+                                                                  .compact,
+                                                          padding: MaterialStateProperty
+                                                              .all(const EdgeInsets
+                                                                      .fromLTRB(
+                                                                  0, 0, 0, 0)),
+                                                          alignment: Alignment
+                                                              .centerLeft),
+                                                      icon: const Icon(
+                                                        Icons
+                                                            .add_circle_outline,
+                                                        color:
+                                                            Color(0xff096B72),
+                                                      ),
+                                                      label: const Text('Save',
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .black)),
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          _add(tileList[index]
+                                                              .dbID);
+                                                          _generateTile();
+                                                        });
+                                                      },
+                                                    ))
                                               ],
                                             ),
                                             trailing: Text(
@@ -570,6 +736,29 @@ class _SearchPage extends State<SearchPage> {
           )
         ]));
   }
+
+  void _listen() async {
+    if (!_isListening) {
+      bool available = await _speech.initialize(
+        onStatus: (val) => print('onStatus: $val'),
+        onError: (val) => print('onError: $val'),
+      );
+      if (available) {
+        setState(() => _isListening = true);
+        _speech.listen(
+          onResult: (val) => setState(() {
+            _text = val.recognizedWords;
+            if (val.hasConfidenceRating && val.confidence > 0) {
+              _confidence = val.confidence;
+            }
+          }),
+        );
+      }
+    } else {
+      setState(() => _isListening = false);
+      _speech.stop();
+    }
+  }
 }
 
 class listTilesLocations {
@@ -581,6 +770,8 @@ class listTilesLocations {
   int lvl2;
   int dcFast;
   String plugs;
+  String dbID;
+  bool contains;
 
   listTilesLocations(
       {required this.id,
@@ -590,5 +781,99 @@ class listTilesLocations {
       required this.lvl1,
       required this.lvl2,
       required this.dcFast,
-      required this.plugs});
+      required this.plugs,
+      required this.dbID,
+      required this.contains});
+}
+
+class SpeechScreen extends StatefulWidget {
+  @override
+  _SpeechScreenState createState() => _SpeechScreenState();
+}
+
+class _SpeechScreenState extends State<SpeechScreen> {
+  // final Map<String, HighlightedWord> _highlights = {
+  //   'Washington': HighlightedWord(
+  //     onTap: () => print('Washington'),
+  //     textStyle: const TextStyle(
+  //       color: Colors.blue,
+  //       fontWeight: FontWeight.bold,
+  //     ),
+  //   ),
+  // };
+
+  late stt.SpeechToText _speech;
+  bool _isListening = false;
+  String _text = 'Press button and speak';
+  double _confidence = 1.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _speech = stt.SpeechToText();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Confidence: ${(_confidence * 100.0).toStringAsFixed(1)}%'),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: AvatarGlow(
+        animate: _isListening,
+        glowColor: Theme.of(context).primaryColor,
+        endRadius: 75.0,
+        duration: const Duration(milliseconds: 2000),
+        repeatPauseDuration: const Duration(milliseconds: 100),
+        repeat: true,
+        child: FloatingActionButton(
+          onPressed: _listen,
+          child: Icon(_isListening ? Icons.mic : Icons.mic_none),
+        ),
+      ),
+      body: SingleChildScrollView(
+        reverse: true,
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 150.0),
+          // child: TextHighlight(
+          //   text: _text,
+          //   words: _highlights,
+          //   textStyle: const TextStyle(
+          //     fontSize: 32.0,
+          //     color: Colors.black,
+          //     fontWeight: FontWeight.w400,
+          //   ),
+          // ),
+        ),
+      ),
+    );
+  }
+
+  void _listen() async {
+    if (!_isListening) {
+      bool available = await _speech.initialize(
+        onStatus: (val) => print('onStatus: $val'),
+        onError: (val) => print('onError: $val'),
+      );
+      if (available) {
+        setState(() => _isListening = true);
+        _speech.listen(
+          onResult: (val) => setState(() {
+            _text = val.recognizedWords;
+            if (val.hasConfidenceRating && val.confidence > 0) {
+              _confidence = val.confidence;
+            }
+          }),
+        );
+      }
+    } else {
+      setState(() => _isListening = false);
+      _speech.stop();
+    }
+  }
+
+  printSomething() {
+    _listen();
+  }
 }

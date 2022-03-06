@@ -388,8 +388,7 @@ class Debugger {
     print("start");
     var charger = Chargers();
 
-    var querryList =
-        await FirebaseFirestore.instance.collection('stations').get();
+    var querryList = await FirebaseFirestore.instance.collection('users').get();
 
     List<Map<String, dynamic>> chargers = [];
     for (var docs in querryList.docs) {
@@ -398,9 +397,10 @@ class Debugger {
     }
 
     for (var entries in chargers) {
-      String a = entries['city'];
-      FirebaseFirestore.instance.collection('stations').doc(entries['id']).set(
-          {'city': a.toLowerCase()}, SetOptions(merge: true)).then((value) {});
+      List<String> a = [];
+      FirebaseFirestore.instance.collection('users').doc(entries['id']).set(
+          {'saved': FieldValue.arrayUnion(a)},
+          SetOptions(merge: true)).then((value) {});
     }
     print("complete");
   }
