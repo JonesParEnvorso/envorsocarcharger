@@ -1,6 +1,7 @@
 //import 'dart:html';
 import 'dart:io';
 import 'dart:ui';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -51,6 +52,8 @@ class _SearchPage extends State<SearchPage> {
   bool dcFast = true;
   bool lvl1 = true;
   bool lvl2 = true;
+  List<dynamic> chargersID = [];
+  String userID = "";
 
   final searchText = TextEditingController();
 
@@ -100,13 +103,53 @@ class _SearchPage extends State<SearchPage> {
   //const _searchPage({Key? key}) : super(key: key);
   @override
   goToSettings(BuildContext context) {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => const SettingsScreen()));
+    Navigator.pop(context);
+    //Navigator.push(context,
+    //    MaterialPageRoute(builder: (context) => const SettingsScreen()));
   }
 
   goToMap(BuildContext context) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const MapScreen()));
+    Navigator.pop(context);
+    //Navigator.push(
+    //    context, MaterialPageRoute(builder: (context) => const MapScreen()));
+  }
+
+  _remove(String id) async {
+    chargersID.remove(id);
+
+    String uId = userID;
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(uId)
+        .set({'saved': chargersID}, SetOptions(merge: true)).then((value) {});
+    setState(() {});
+  }
+
+  _add(String id) async {
+    chargersID.add(id);
+
+    String uId = userID;
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(uId)
+        .set({'saved': chargersID}, SetOptions(merge: true)).then((value) {});
+    setState(() {});
+  }
+
+  _pullAccount() async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    String uId;
+    if (auth.currentUser == null) {
+      print("No user!?!? How did you even get here?");
+      return;
+    } else {
+      uId = auth.currentUser!.uid;
+    }
+    userID = uId;
+    var querryL =
+        await FirebaseFirestore.instance.collection('users').doc(userID).get();
+    var a = querryL.get('saved');
+    chargersID = a;
   }
 
   _generateList() async {
@@ -179,7 +222,9 @@ class _SearchPage extends State<SearchPage> {
             lvl1: station['level 1'],
             lvl2: station['level 2'],
             dcFast: station['DC fast'],
-            plugs: plugs));
+            plugs: plugs,
+            dbID: station['id'],
+            contains: (chargersID.contains(station['id']))));
       }
     }
   }
@@ -207,8 +252,13 @@ class _SearchPage extends State<SearchPage> {
     super.dispose();
   }
 
+  bool firstLoad = true;
   @override
   Widget build(BuildContext context) {
+    if (firstLoad) {
+      firstLoad = false;
+      _pullAccount();
+    }
     return Scaffold(
         resizeToAvoidBottomInset: false,
         body: Stack(children: [
@@ -414,7 +464,73 @@ class _SearchPage extends State<SearchPage> {
                                                         fontStyle:
                                                             FontStyle.italic,
                                                         fontSize: 15,
-                                                        color: Colors.black))
+                                                        color: Colors.black)),
+                                                Visibility(
+                                                    visible: tileList[index]
+                                                        .contains,
+                                                    child: TextButton.icon(
+                                                      style: ButtonStyle(
+                                                          visualDensity:
+                                                              VisualDensity
+                                                                  .compact,
+                                                          padding: MaterialStateProperty
+                                                              .all(const EdgeInsets
+                                                                      .fromLTRB(
+                                                                  0, 0, 0, 0)),
+                                                          alignment: Alignment
+                                                              .centerLeft),
+                                                      icon: const Icon(
+                                                        Icons
+                                                            .remove_circle_outline,
+                                                        color:
+                                                            Color(0xff096B72),
+                                                      ),
+                                                      label: const Text(
+                                                          'Unsave',
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .black)),
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          _remove(
+                                                              tileList[index]
+                                                                  .dbID);
+                                                          _generateTile();
+                                                        });
+                                                      },
+                                                    )),
+                                                Visibility(
+                                                    visible: !tileList[index]
+                                                        .contains,
+                                                    child: TextButton.icon(
+                                                      style: ButtonStyle(
+                                                          visualDensity:
+                                                              VisualDensity
+                                                                  .compact,
+                                                          padding: MaterialStateProperty
+                                                              .all(const EdgeInsets
+                                                                      .fromLTRB(
+                                                                  0, 0, 0, 0)),
+                                                          alignment: Alignment
+                                                              .centerLeft),
+                                                      icon: const Icon(
+                                                        Icons
+                                                            .add_circle_outline,
+                                                        color:
+                                                            Color(0xff096B72),
+                                                      ),
+                                                      label: const Text('Save',
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .black)),
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          _add(tileList[index]
+                                                              .dbID);
+                                                          _generateTile();
+                                                        });
+                                                      },
+                                                    ))
                                               ],
                                             ),
                                             trailing: Text(
@@ -654,6 +770,8 @@ class listTilesLocations {
   int lvl2;
   int dcFast;
   String plugs;
+  String dbID;
+  bool contains;
 
   listTilesLocations(
       {required this.id,
@@ -663,7 +781,9 @@ class listTilesLocations {
       required this.lvl1,
       required this.lvl2,
       required this.dcFast,
-      required this.plugs});
+      required this.plugs,
+      required this.dbID,
+      required this.contains});
 }
 
 class SpeechScreen extends StatefulWidget {

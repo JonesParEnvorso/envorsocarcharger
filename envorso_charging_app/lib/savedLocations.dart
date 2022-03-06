@@ -82,8 +82,6 @@ class _SavedLocations extends State<SavedLocations> {
   }
 
   _fillChargerList() async {
-    print("hello");
-    print("1");
     List<Map<String, dynamic>> temp = [];
     chargers = [];
     final FirebaseAuth auth = FirebaseAuth.instance;
@@ -95,42 +93,20 @@ class _SavedLocations extends State<SavedLocations> {
       uId = auth.currentUser!.uid;
     }
     userID = uId;
-    print("2");
     var querryL =
         await FirebaseFirestore.instance.collection('users').doc(userID).get();
     var a = querryL.get('saved');
     chargersID = a;
-    print("3");
     var querryList =
         await FirebaseFirestore.instance.collection('stations').get();
     for (var docs in querryList.docs) {
       temp.add(docs.data());
     }
-    print("4");
     for (var doc in temp) {
       if (chargersID.contains(doc['id'])) {
         chargers.add(doc);
       }
     }
-  }
-
-// fills the list with the result from the database
-  _fillChargerList1() async {
-    chargers = [];
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    String uId;
-    if (auth.currentUser == null) {
-      print("No user!?!? How did you even get here?");
-      return;
-    } else {
-      uId = auth.currentUser!.uid;
-    }
-    await chargeList.activateAccount(uId);
-    String city = searchText.text;
-    city = city.toLowerCase();
-    chargers = await chargeList.findCity("yakima");
-    chargers = chargeList.maskPlugs(chargers);
-    //chargers2 = await chargeList.pullServices(46.999883, -120.544755);
   }
 
   goToMap(BuildContext context) {
