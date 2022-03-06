@@ -10,8 +10,11 @@ class Help extends StatefulWidget {
 class _Help extends State<Help> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: const Text('About us'),
-    );
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    return Scaffold(
+        body: Container(
+      child: const Text('Help'),
+    ));
   }
 }
