@@ -38,8 +38,7 @@ late bool _saeComboSelected;
 
 class _ChangePID extends State<ChangePID> {
   goToSettings(BuildContext context) {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => const SettingsScreen()));
+    Navigator.pop(context);
   }
 
   String newState = 'State';
@@ -385,7 +384,7 @@ class _ChangePID extends State<ChangePID> {
                       children: <Widget>[
                         Container(
                           // city
-                          width: screenWidth / 2,
+                          width: screenWidth / 2.15,
                           padding: inputPadding,
                           child: TextFormField(
                             controller: newCity,
@@ -422,38 +421,149 @@ class _ChangePID extends State<ChangePID> {
                             },
                           ),
                         ),
-                        Container(
-                          height: 80,
-                          width: screenWidth / 5,
+                        /*Container(
+                          // state dropdown
                           margin: const EdgeInsets.all(5.0),
+                          height: 60,
                           decoration: const ShapeDecoration(
-                              shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                            side: BorderSide(
-                                width: 1.0,
-                                style: BorderStyle.solid,
-                                color: Colors.white),
-                          )),
-                          child: DropdownButtonFormField(
-                            items: states.map((states) {
-                              return DropdownMenuItem(
-                                value: states,
-                                child: Text(states),
-                              );
-                            }).toList(),
-                            value: newState,
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                if (newValue != null) {
-                                  newState = newValue;
-                                }
-                              });
-                            },
-                            elevation: 5,
-                            isDense: true,
-                            //iconSize: 20.0,
+                            shape: RoundedRectangleBorder(
+                              //dimensions: EdgeInsetsGeometry(50),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5)),
+                              side: BorderSide(
+                                  width: 1.0,
+                                  style: BorderStyle.solid,
+                                  color: Colors.grey),
+                            ),
                           ),
+                          child: DropdownButtonHideUnderline(
+                            child: ButtonTheme(
+                              alignedDropdown: true,
+                              child: DropdownButton(
+                                hint: const Text('Hint'),
+                                value: newState,
+                                // After selecting the desired option,it will
+                                // change button value to selected value
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    newState = newValue!;
+                                  });
+                                },
+                                // Down Arrow Icon
+                                icon: const Icon(Icons.keyboard_arrow_down),
+                                // Array list of items
+                                items: states.map((states) {
+                                  return DropdownMenuItem(
+                                    value: states,
+                                    child: Text(states),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                        ),*/
+                        Stack(
+                          children: [
+                            Container(
+                                height: 60,
+                                width: screenWidth / 4,
+                                margin: const EdgeInsets.all(5.0),
+                                decoration: const ShapeDecoration(
+                                    shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5)),
+                                  side: BorderSide(
+                                      width: 1.0,
+                                      style: BorderStyle.solid,
+                                      color: Colors.grey),
+                                ))),
+                            ButtonTheme(
+                                alignedDropdown: true,
+                                child: SizedBox(
+                                  height: 60,
+                                  width: screenWidth / 4,
+                                  child: DropdownButtonFormField(
+                                    items: states.map((states) {
+                                      return DropdownMenuItem(
+                                        value: states,
+                                        child: Text(states),
+                                      );
+                                    }).toList(),
+                                    value: newState,
+                                    validator: (String? value) {
+                                      if (value == null ||
+                                          value.isEmpty ||
+                                          newState == 'State') {
+                                        return 'Required';
+                                      }
+                                      return null;
+                                    },
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        if (newValue != null) {
+                                          newState = newValue;
+                                        }
+                                      });
+                                    },
+                                    elevation: 5,
+                                    isDense: true,
+                                    decoration: const InputDecoration(
+                                        enabledBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: Colors.white))),
+                                  ),
+                                ))
+                          ],
                         ),
+                        /*Container(
+                            // state dropdown
+                            height: 60,
+                            width: screenWidth / 4,
+                            margin: const EdgeInsets.all(5.0),
+                            decoration: const ShapeDecoration(
+                                shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5)),
+                              side: BorderSide(
+                                  width: 1.0,
+                                  style: BorderStyle.solid,
+                                  color: Colors.grey),
+                            )),
+                            child: DropdownButtonHideUnderline(
+                              child: ButtonTheme(
+                                alignedDropdown: true,
+                                child: DropdownButtonFormField(
+                                  items: states.map((states) {
+                                    return DropdownMenuItem(
+                                      value: states,
+                                      child: Text(states),
+                                    );
+                                  }).toList(),
+                                  value: newState,
+                                  validator: (String? value) {
+                                    if (value == null ||
+                                        value.isEmpty ||
+                                        newState == 'State') {
+                                      return 'Required';
+                                    }
+                                    return null;
+                                  },
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      if (newValue != null) {
+                                        newState = newValue;
+                                      }
+                                    });
+                                  },
+                                  elevation: 5,
+                                  isDense: true,
+                                  decoration: const InputDecoration(
+                                      enabledBorder: UnderlineInputBorder(
+                                          borderSide:
+                                              BorderSide(color: Colors.white))),
+                                ),
+                              ),
+                            )),*/
                       ], // end children
                     ),
                     TextButton(
