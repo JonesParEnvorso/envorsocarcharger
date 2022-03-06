@@ -76,7 +76,7 @@ class _SearchPage extends State<SearchPage> {
   late bool isMicPressed;
 
   late stt.SpeechToText _speech;
-  bool _isListening = false;
+  late bool _isListening;
   String _text = 'Press button and speak';
   double _confidence = 1.0;
 
@@ -245,9 +245,12 @@ class _SearchPage extends State<SearchPage> {
     isMicPressed = false;
     if (widget.whichFocus == 0) {
       searchBarFocus.requestFocus();
+      _isListening = false;
+      isMicPressed = false;
     } else if (widget.whichFocus == 1) {
       micButtonFocus.requestFocus();
       isMicPressed = true;
+      _isListening = true;
     }
   }
 
@@ -329,9 +332,16 @@ class _SearchPage extends State<SearchPage> {
                         )),
                     Container(
                         child: ElevatedButton(
-                      onPressed: //() {
-                          _listen,
-                      child: Icon(_isListening ? Icons.mic : Icons.mic_none),
+                      onPressed: () {
+                        // handle listen in here. Be sure to set the boolean values accordingly once the _listen is finished
+                        setState(() {
+                          isMicPressed = !isMicPressed;
+                          _isListening = !_isListening;
+                        });
+                        print('pressed');
+                        //_listen,
+                      },
+                      child: Icon(_isListening ? Icons.mic_none : Icons.mic),
                       // speech.main();
                       // setState(() {
                       //   isMicPressed = !isMicPressed;
