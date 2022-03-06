@@ -216,22 +216,23 @@ class _MapScreenState extends State<MapScreen> {
                       padding: EdgeInsets.only(top: 20),
                       decoration: const BoxDecoration(
                         color: Color(0xff096B72),
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        borderRadius: BorderRadius.all(Radius.circular(25)),
                       ),
                       child: Container(
                           // White card
-                          width: screenWidth / 1.18,
-                          height: 205,
+                          width: screenWidth / 1.15,
+                          height: 25,
                           decoration: const BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(20),
-                                bottomRight: Radius.circular(20)),
+                                bottomLeft: Radius.circular(25),
+                                bottomRight: Radius.circular(25)),
                           ),
-                          child: Column(children: [
-                            Row(
-                              children: [
-                                Column(
+                          child: Row(children: [
+                            Container(
+                              padding: EdgeInsets.all(10),
+                              width: screenWidth / 1.60,
+                              child: Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -264,6 +265,15 @@ class _MapScreenState extends State<MapScreen> {
                                         style: new TextStyle(
                                             color: const Color(0xff096B72),
                                             fontWeight: FontWeight.bold)),
+                                    Text(
+                                        ("Charger Types "
+                                        /*chargerData[highlightedMarkerInd]
+                                                    ['DC fast']
+                                                .toString()*/
+                                        ),
+                                        style: new TextStyle(
+                                            color: const Color(0xff096B72),
+                                            fontWeight: FontWeight.bold)),
                                     // Network
                                     Text("Network",
                                         style: new TextStyle(
@@ -271,25 +281,34 @@ class _MapScreenState extends State<MapScreen> {
                                             fontWeight: FontWeight.bold)),
                                     Text(chargerData[highlightedMarkerInd]
                                         ['network']),
-                                  ],
-                                ),
-                              ],
+                                  ]),
                             ),
-                            Row(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  FloatingActionButton(
-                                    backgroundColor: const Color(0xff096B72),
-                                    foregroundColor: Colors.white,
-                                    onPressed: () =>
-                                        launchMap(highlightedMarkerInd),
-                                    child: const Icon(Icons.near_me),
-                                    heroTag: 'center',
-                                  ),
-                                ])
+                            Expanded(
+                              child: Column(children: [
+                                IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      highlightedMarkerInd = -1;
+                                    });
+                                  },
+                                  icon: Icon(Icons.cancel),
+                                  iconSize: 30,
+                                ),
+                                SizedBox(
+                                  height: 30,
+                                ),
+                                FloatingActionButton(
+                                  backgroundColor: const Color(0xff096B72),
+                                  foregroundColor: Colors.white,
+                                  onPressed: () =>
+                                      launchMap(highlightedMarkerInd),
+                                  child: const Icon(Icons.near_me),
+                                  heroTag: 'center',
+                                )
+                              ]),
+                            ),
                           ])))
-                ])
+                ]),
               ])),
         ),
       // Recenter button
