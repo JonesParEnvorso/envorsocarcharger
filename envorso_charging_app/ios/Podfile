@@ -1,10 +1,20 @@
 # Uncomment the next line to define a global platform for your project
-platform :ios, '9.0'
+#platform :ios, '9.0'
+
+pod 'Firebase/Firestore'
+pod 'Firebase/Auth'
+pod 'Firebase/Firestore'
+
+ENV['COCOAPODS_DISABLE_STATS'] = true
+
+source 'https://github.com/CocoaPods/Spec.git'
+platform: ioss, '12.0'
+
 
 target 'Runner' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
-
+  pod 'GoogleMaps'
   # Pods for Runner
 
 end
