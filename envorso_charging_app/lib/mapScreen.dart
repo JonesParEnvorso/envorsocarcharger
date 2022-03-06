@@ -958,6 +958,15 @@ class _MapScreenState extends State<MapScreen> {
     // Redefine polyline using json data
 
     setPolyline(directions['polyline_decoded']);
+
+    // Animate camera to bounds between origin and destination
+    _googleMapController.animateCamera(CameraUpdate.newLatLngBounds(
+        LatLngBounds(
+            southwest: LatLng(
+                directions['bounds_sw']['lat'], directions['bounds_sw']['lng']),
+            northeast: LatLng(directions['bounds_ne']['lat'],
+                directions['bounds_ne']['lng'])),
+        35));
   }
 
   Route _saveLocations() {
