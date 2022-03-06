@@ -46,7 +46,7 @@ class _SpeechScreenState extends State<SpeechScreen> {
 
   @override
   void initState() {
-    //super.initState();
+    super.initState();
     _speech = stt.SpeechToText();
   }
 

@@ -4,6 +4,8 @@ import 'enRouteAccountSettings.dart';
 import 'addAccounts.dart';
 import 'mapScreen.dart';
 import 'searchPage.dart';
+import 'aboutUs.dart';
+import 'help.dart';
 
 void main() {
   runApp(const MyApp());
@@ -59,6 +61,14 @@ class _SettingsScreen extends State<SettingsScreen> {
                   whichFocus: 2,
                 )));
   }
+  goToHelp(BuildContext context) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Help(
+                //documentId: curUser,
+                )));
+  }
 
   goToMap(BuildContext context) {
     Navigator.push(
@@ -67,6 +77,10 @@ class _SettingsScreen extends State<SettingsScreen> {
             builder: (context) => MapScreen(
                 //documentId: curUser,
                 )));
+  }
+
+  goToInformation(BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => AboutUs()));
   }
 
   Widget build(BuildContext context) {
@@ -133,7 +147,7 @@ class _SettingsScreen extends State<SettingsScreen> {
                   ),
                 ])),
               ])),
-              Container(
+              /*Container(
                   child: ListView(shrinkWrap: true, children: <Widget>[
                 Expanded(
                     child: Column(children: [
@@ -145,7 +159,7 @@ class _SettingsScreen extends State<SettingsScreen> {
                     title: Text('General'),
                   )),
                 ])),
-              ])),
+              ])),*/
               Container(
                   child: ListView(shrinkWrap: true, children: <Widget>[
                 Expanded(
@@ -180,7 +194,9 @@ class _SettingsScreen extends State<SettingsScreen> {
                     child: Column(children: [
                   Card(
                       child: ListTile(
-                    onTap: () {},
+                    onTap: () {
+                      goToInformation(context);
+                    },
                     leading: Icon(Icons.info, size: 40),
                     iconColor: Color(0xff096B72),
                     title: Text('Information'),
@@ -193,7 +209,7 @@ class _SettingsScreen extends State<SettingsScreen> {
                     child: Column(children: [
                   Card(
                       child: ListTile(
-                    onTap: () {},
+                    onTap: () => goToHelp(context),
                     leading: Icon(Icons.help, size: 40),
                     iconColor: Color(0xff096B72),
                     title: Text('Help'),
