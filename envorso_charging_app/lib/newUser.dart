@@ -375,38 +375,46 @@ class _AddPID extends State<AddPID> {
                         validator: _validateField),
                   ),
                   Container(
-                    height: 80,
-                    width: screenWidth / 5,
-                    margin: const EdgeInsets.all(5.0),
-                    decoration: const ShapeDecoration(
-                        shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
-                      side: BorderSide(
-                          width: 1.0,
-                          style: BorderStyle.solid,
-                          color: Colors.white),
-                    )),
-                    child: DropdownButtonFormField(
-                      items: states.map((states) {
-                        return DropdownMenuItem(
-                          value: states,
-                          child: Text(states),
-                        );
-                      }).toList(),
-                      value: newState,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          if (newValue != null) {
-                            newState = newValue;
-                          }
-                        });
-                      },
-                      validator: _validateDropDown,
-                      elevation: 5,
-                      isDense: true,
-                      //iconSize: 20.0,
-                    ),
-                  ),
+                      child: ButtonTheme(
+                          alignedDropdown: true,
+                          child: Column(children: [
+                            SizedBox(
+                              height: 20,
+                            ),
+                            SizedBox(
+                              height: 30,
+                              width: screenWidth / 4,
+                              child: DropdownButtonFormField(
+                                alignment: Alignment.centerLeft,
+                                items: states.map((states) {
+                                  return DropdownMenuItem(
+                                    value: states,
+                                    child: Text(states),
+                                  );
+                                }).toList(),
+                                value: newState,
+                                validator: (String? value) {
+                                  if (value == null ||
+                                      value.isEmpty ||
+                                      newState == 'State') {
+                                    return 'Required';
+                                  }
+                                  return null;
+                                },
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    if (newValue != null) {
+                                      newState = newValue;
+                                    }
+                                  });
+                                },
+                                elevation: 5,
+                                isDense: true,
+                                decoration: const InputDecoration.collapsed(
+                                    hintText: ''),
+                              ),
+                            )
+                          ])))
                   /*Container(
                     // state dropdown
                     margin: const EdgeInsets.all(5.0),
