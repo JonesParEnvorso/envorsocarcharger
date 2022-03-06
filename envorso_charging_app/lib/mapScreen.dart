@@ -1,7 +1,8 @@
 import 'dart:io';
-
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+//import 'package:flutter_map/flutter_map.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'chargeStation.dart';
 import 'package:location/location.dart';
@@ -86,7 +87,11 @@ class _MapScreenState extends State<MapScreen> {
   Set<Polyline> polylines = Set<Polyline>();
   List<LatLng> polygonLatLngs = <LatLng>[];
   int polyLineIdCounter = 1;
-
+  // Map style
+  bool mapStyleChanged = false;
+  bool darkMode = false;
+  bool detailedMode = true;
+  String mapStyle = "";
   // Display card data
   bool isCardDisplayed = false;
   int highlightedMarkerInd = -1;
@@ -103,6 +108,12 @@ class _MapScreenState extends State<MapScreen> {
   void initState() {
     //showChargersAtLocation();
     super.initState();
+    // Set default map type
+    rootBundle
+        .loadString('assets/mapStyles/mapLightDetailed.txt')
+        .then((string) {
+      mapStyle = string;
+    });
   }
 
   bool visible = false;
@@ -765,6 +776,8 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void showChargersAtLocation() async {
+    _googleMapController.setMapStyle(mapStyle);
+
     await _activateFilterPlugs();
     await getLocation(_googleMapController);
     await _fillChargerList(

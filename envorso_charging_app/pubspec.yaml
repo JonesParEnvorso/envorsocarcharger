@@ -103,6 +103,10 @@ flutter:
     - assets/images/Plug-Icon-CHAdeMO.png
     - assets/images/Plug-Icon-J1772-Combo.png
     - assets/images/Plug-Icon-J1772.png
+    - assets/mapStyles/mapDarkDetailed.txt
+    - assets/mapStyles/mapDarkSimple.txt
+    - assets/mapStyles/mapLightDetailed.txt
+    - assets/mapStyles/mapLightSimple.txt
 
 # Custom app icon
 flutter_icons:
