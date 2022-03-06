@@ -331,7 +331,6 @@ class _MapScreenState extends State<MapScreen> {
             foregroundColor: Colors.white,
             onPressed: () => getLocation(_googleMapController),
             child: const Icon(Icons.center_focus_strong),
-            heroTag: 'center',
           )),
       // Debug refresh button: call this function when x miles away from previous
 
@@ -346,7 +345,7 @@ class _MapScreenState extends State<MapScreen> {
                   screenWidth, screenHeight, _googleMapController)
             },
             child: const Icon(Icons.refresh),
-            //heroTag: 'center',
+            heroTag: 'refresh',
           )),
       // Back button
       Positioned(
@@ -589,7 +588,7 @@ class _MapScreenState extends State<MapScreen> {
                             label: const Text('Search',
                                 style: TextStyle(color: Colors.grey)),
                             onPressed: () {
-                              Navigator.of(context).push(_createRoute(0));
+                              handleSearchPageNavigation(context);
                               //speech.main();
                             },
                           ),
@@ -852,6 +851,55 @@ class _MapScreenState extends State<MapScreen> {
         );
       },
     );
+  }
+
+  void handleSearchPageNavigation(context) async {
+    final result = await Navigator.of(context).push(_createRoute(0));
+
+    if (result != null) {
+      // Add all chargers in searched city
+      int clickedInd = 0;
+      for (int j = 0; j < result.chargers.length; j++) {
+        // For every charger from search page
+        print(result.chargers[result.index]['address']);
+        bool isInMap = false;
+        int i = 0;
+        while (!isInMap && i < chargerData.length) {
+          // Search for charger in current list
+          if (chargerData[i]['address']
+                  .compareTo(result.chargers[j]['address']) ==
+              0) {
+            clickedInd = i;
+            isInMap = true;
+          } else {
+            i++;
+          }
+        }
+        if (!isInMap) {
+          // Add to charger list
+          chargerData.add(result.chargers[j]);
+          // Add to marker list
+          LatLng pos =
+              LatLng(result.chargers[j]['lat'], result.chargers[j]['lon']);
+          setState(() {
+            markers.add(Marker(
+                markerId: (MarkerId(markers.length.toString())),
+                position: pos,
+                icon: (result.chargers[j]['DC fast'] > 0)
+                    ? BitmapDescriptor.defaultMarkerWithHue(
+                        BitmapDescriptor.hueRed)
+                    : BitmapDescriptor.defaultMarkerWithHue(
+                        BitmapDescriptor.hueYellow),
+                onTap: () async {
+                  selectMarker(i);
+                }));
+          });
+          clickedInd = chargerData.length - 1;
+        }
+      }
+
+      selectMarker(clickedInd);
+    }
   }
 
   // Rebuilds the directions polyline object using parse json directions.

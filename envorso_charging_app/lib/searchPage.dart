@@ -1,4 +1,5 @@
 //import 'dart:html';
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,6 +13,12 @@ import 'mapScreen.dart';
 import 'chargeStation.dart';
 import 'main.dart';
 import 'speech_recognition.dart' as speech;
+
+class MapReturnValues {
+  List<Map<String, dynamic>> chargers = [];
+  int index = 0;
+  MapReturnValues(this.chargers, this.index);
+}
 
 void main() {
   runApp(const MyApp());
@@ -432,6 +439,12 @@ class _SearchPage extends State<SearchPage> {
                                       (BuildContext context, int index) {
                                     return Card(
                                         child: ListTile(
+                                            onTap: () => {
+                                                  Navigator.pop(
+                                                      context,
+                                                      MapReturnValues(
+                                                          chargers, index))
+                                                },
                                             leading: Icon(Icons.location_pin,
                                                 color: tileList[index].superc
                                                     ? Colors.red
