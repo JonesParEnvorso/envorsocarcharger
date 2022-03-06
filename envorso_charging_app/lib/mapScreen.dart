@@ -316,13 +316,29 @@ class _MapScreenState extends State<MapScreen> {
                                         chargerData[highlightedMarkerInd]
                                             ['state']),
                                     Text(
-                                        ("DC fast " +
+                                        ("DC fast: " +
                                             chargerData[highlightedMarkerInd]
                                                     ['DC fast']
                                                 .toString()),
                                         style: new TextStyle(
                                             color: const Color(0xff096B72),
                                             fontWeight: FontWeight.bold)),
+                                    Row(children: [
+                                      Text(
+                                          ("Level 2: " +
+                                              chargerData[highlightedMarkerInd]
+                                                      ['level 2']
+                                                  .toString()),
+                                          style: new TextStyle(
+                                              fontWeight: FontWeight.bold)),
+                                      Text(
+                                          (" | Level 1: " +
+                                              chargerData[highlightedMarkerInd]
+                                                      ['level 1']
+                                                  .toString()),
+                                          style: new TextStyle(
+                                              fontWeight: FontWeight.bold))
+                                    ]),
                                     Text(
                                         ("Charger Types "
                                         /*chargerData[highlightedMarkerInd]
