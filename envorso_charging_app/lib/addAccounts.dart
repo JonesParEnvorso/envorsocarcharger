@@ -36,8 +36,9 @@ class AddAcounts extends StatefulWidget {
 
 class _AddAcounts extends State<AddAcounts> {
   goToSettings(BuildContext context) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => SettingsScreen()));
+    Navigator.pop(context);
+    //Navigator.push(
+    //    context, MaterialPageRoute(builder: (context) => SettingsScreen()));
   }
 
   FirebaseFunctions firebaseFunctions = FirebaseFunctions();

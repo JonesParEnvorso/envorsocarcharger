@@ -12,8 +12,9 @@ class AboutUs extends StatefulWidget {
 
 class _AboutUsState extends State<AboutUs> {
   goToSettings(BuildContext context) {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => const SettingsScreen()));
+    Navigator.pop(context);
+    //Navigator.push(context,
+    //    MaterialPageRoute(builder: (context) => const SettingsScreen()));
   }
 
   @override
