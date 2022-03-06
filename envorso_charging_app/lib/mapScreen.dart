@@ -95,7 +95,7 @@ class _MapScreenState extends State<MapScreen> {
   // Display card data
   bool isCardDisplayed = false;
   int highlightedMarkerInd = -1;
-
+  String plugsString = "";
   //GoogleMapPolyline googleMapPolyline = new GoogleMapPolyline();
   @override
   void dispose() {
@@ -239,7 +239,53 @@ class _MapScreenState extends State<MapScreen> {
                                 bottomLeft: Radius.circular(25),
                                 bottomRight: Radius.circular(25)),
                           ),
-                          child: Row(children: [
+                          child: Card(
+                              child: ListTile(
+                                  leading: Icon(Icons.location_pin,
+                                      color: chargerData[highlightedMarkerInd]
+                                                  ['DC fast'] >
+                                              0
+                                          ? Colors.red
+                                          : Colors.yellow),
+                                  title: Text(
+                                      chargerData[highlightedMarkerInd]
+                                          ['network'],
+                                      textAlign: TextAlign.left),
+                                  subtitle: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          chargerData[highlightedMarkerInd]
+                                              ['address'],
+                                          textAlign: TextAlign.left,
+                                        ),
+                                        Text(
+                                            "DC Fast: " +
+                                                chargerData[highlightedMarkerInd]
+                                                        ['DC fast']
+                                                    .toString() +
+                                                " | Level 2: " +
+                                                chargerData[highlightedMarkerInd]
+                                                        ['level 1']
+                                                    .toString() +
+                                                " | Level 1: " +
+                                                chargerData[highlightedMarkerInd]
+                                                        ['level 2']
+                                                    .toString(),
+                                            textAlign: TextAlign.left,
+                                            style: TextStyle(
+                                                fontStyle: FontStyle.italic,
+                                                fontSize: 15,
+                                                color: Colors.black)),
+                                      ]),
+                                  trailing: Text(
+                                    plugsString,
+                                    textAlign: TextAlign.right,
+                                  ))
+                                  
+
+                              /*Row(children: [
                             Container(
                               padding: EdgeInsets.all(10),
                               width: screenWidth / 1.60,
@@ -318,7 +364,8 @@ class _MapScreenState extends State<MapScreen> {
                                 )
                               ]),
                             ),
-                          ])))
+                          ]))*/
+                              )))
                 ]),
               ])),
         ),
@@ -858,7 +905,7 @@ class _MapScreenState extends State<MapScreen> {
 
     if (result != null) {
       // Add all chargers in searched city
-      int clickedInd = 0;
+      int clickedInd = -1;
       for (int j = 0; j < result.chargers.length; j++) {
         // For every charger from search page
         print(result.chargers[result.index]['address']);
@@ -869,13 +916,17 @@ class _MapScreenState extends State<MapScreen> {
           if (chargerData[i]['address']
                   .compareTo(result.chargers[j]['address']) ==
               0) {
-            clickedInd = i;
+            // Save index of clicked charger if in map already
+            if (j == result.index) {
+              clickedInd = i;
+            }
             isInMap = true;
           } else {
             i++;
           }
         }
         if (!isInMap) {
+          print(result.chargers[j]['address'] + "Was not in map");
           // Add to charger list
           chargerData.add(result.chargers[j]);
           // Add to marker list
@@ -891,13 +942,14 @@ class _MapScreenState extends State<MapScreen> {
                     : BitmapDescriptor.defaultMarkerWithHue(
                         BitmapDescriptor.hueYellow),
                 onTap: () async {
-                  selectMarker(i);
+                  selectMarker(chargerData.length);
                 }));
           });
-          clickedInd = chargerData.length - 1;
+          if (j == result.index) {
+            clickedInd = chargerData.length - 1;
+          }
         }
       }
-
       selectMarker(clickedInd);
     }
   }
@@ -943,6 +995,11 @@ class _MapScreenState extends State<MapScreen> {
 
   // Sets which charger will be displayed on the info card
   void selectMarker(int ind) async {
+    plugsString = "";
+    for (String plug in chargerData[ind]['plug']) {
+      plugsString += plug;
+      plugsString += "\n";
+    }
     setState(() {
       highlightedMarkerInd = ind;
     });
