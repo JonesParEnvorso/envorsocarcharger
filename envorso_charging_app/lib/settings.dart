@@ -61,6 +61,7 @@ class _SettingsScreen extends State<SettingsScreen> {
                   whichFocus: 2,
                 )));
   }
+
   goToHelp(BuildContext context) {
     Navigator.push(
         context,
@@ -71,12 +72,11 @@ class _SettingsScreen extends State<SettingsScreen> {
   }
 
   goToMap(BuildContext context) {
-    Navigator.push(
+    Navigator.pop(context);
+    /*Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => MapScreen(
-                //documentId: curUser,
-                )));
+            builder: (context) => MapScreen()));*/
   }
 
   goToInformation(BuildContext context) {
