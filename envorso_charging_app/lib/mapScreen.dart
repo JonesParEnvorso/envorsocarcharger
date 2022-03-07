@@ -15,6 +15,8 @@ import 'savedLocations.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import 'settings.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
@@ -139,6 +141,46 @@ class _MapScreenState extends State<MapScreen> {
     print(plugs);
   }
 
+  _pullAccount() async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    String uId;
+    if (auth.currentUser == null) {
+      print("No user!?!? How did you even get here?");
+      return;
+    } else {
+      uId = auth.currentUser!.uid;
+    }
+    userID = uId;
+    var querryL =
+        await FirebaseFirestore.instance.collection('users').doc(userID).get();
+    var a = querryL.get('saved');
+    chargersID = a;
+  }
+
+  String userID = "";
+  List<dynamic> chargersID = [];
+  _remove(String id) async {
+    chargersID.remove(id);
+
+    String uId = userID;
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uId)
+        .set({'saved': chargersID}, SetOptions(merge: true)).then((value) {});
+    setState(() {});
+  }
+
+  _add(String id) async {
+    chargersID.add(id);
+
+    String uId = userID;
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uId)
+        .set({'saved': chargersID}, SetOptions(merge: true)).then((value) {});
+    setState(() {});
+  }
+
   void showFilterOptions() {
     setState(() {
       visible = !visible;
@@ -190,10 +232,15 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   // Generate map view
+  bool firstLoad = true;
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
+    //if (firstLoad) {
+    //  firstLoad = false;
+    _pullAccount();
+    //}
     //getStation();
     return Scaffold(
         // Google Map component values
@@ -223,7 +270,7 @@ class _MapScreenState extends State<MapScreen> {
                   Container(
                       // Green background
                       width: screenWidth / 1.18,
-                      height: 200,
+                      height: 205,
                       padding: EdgeInsets.only(top: 20),
                       decoration: const BoxDecoration(
                         color: Color(0xff096B72),
@@ -378,7 +425,58 @@ class _MapScreenState extends State<MapScreen> {
                                       launchMap(highlightedMarkerInd),
                                   child: const Icon(Icons.near_me),
                                   heroTag: 'center',
-                                )
+                                ),
+                                Visibility(
+                                    visible: chargersID.contains(
+                                        chargerData[highlightedMarkerInd]
+                                            ['id']),
+                                    child: TextButton.icon(
+                                      style: ButtonStyle(
+                                          visualDensity: VisualDensity.compact,
+                                          padding: MaterialStateProperty.all(
+                                              const EdgeInsets.fromLTRB(
+                                                  0, 0, 0, 0)),
+                                          alignment: Alignment.centerLeft),
+                                      icon: const Icon(
+                                        Icons.remove_circle_outline,
+                                        color: Color(0xff096B72),
+                                      ),
+                                      label: const Text('Unsave',
+                                          style:
+                                              TextStyle(color: Colors.black)),
+                                      onPressed: () {
+                                        setState(() {
+                                          _remove(
+                                              chargerData[highlightedMarkerInd]
+                                                  ['id']);
+                                        });
+                                      },
+                                    )),
+                                Visibility(
+                                    visible: !chargersID.contains(
+                                        chargerData[highlightedMarkerInd]
+                                            ['id']),
+                                    child: TextButton.icon(
+                                      style: ButtonStyle(
+                                          visualDensity: VisualDensity.compact,
+                                          padding: MaterialStateProperty.all(
+                                              const EdgeInsets.fromLTRB(
+                                                  0, 0, 0, 0)),
+                                          alignment: Alignment.centerLeft),
+                                      icon: const Icon(
+                                        Icons.add_circle_outline,
+                                        color: Color(0xff096B72),
+                                      ),
+                                      label: const Text('Save',
+                                          style:
+                                              TextStyle(color: Colors.black)),
+                                      onPressed: () {
+                                        setState(() {
+                                          _add(chargerData[highlightedMarkerInd]
+                                              ['id']);
+                                        });
+                                      },
+                                    ))
                               ]),
                             ),
                           ]))))
