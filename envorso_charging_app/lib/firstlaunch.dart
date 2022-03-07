@@ -149,7 +149,20 @@ class _FirstLaunch extends State<FirstLaunch> {
                       ),
                       TextButton(
                         onPressed: () {
-                          //forgot password screen
+                          //forgot passord screen
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                    title: const Text('Forgot Your Password?'),
+                                    content: const Text(
+                                        'Please email ENRoute@gmail.com.'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: const Text('Close'),
+                                        onPressed: () => Navigator.pop(context),
+                                      )
+                                    ],
+                                  ));
                         },
                         child: const Text('Forgot Password?',
                             style: TextStyle(color: Color(0xff096B72))),
@@ -278,33 +291,6 @@ class _FirstLaunch extends State<FirstLaunch> {
                         ],
                         mainAxisAlignment: MainAxisAlignment.center,
                       ),
-                      /* Container(
-                    height: 50,
-                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    child: ElevatedButton(
-                      child: const Text('SERVICES SKIP TEMP'),
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Color(0xff096B72)),
-                      ),
-                      onPressed: () => goToServices(context) ,
-                    )),*/
-                      // TEMP!!!!!! TEMP!!!! DELETE
-                      /*Container(
-                          height: 50,
-                          width: 200,
-                          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                          child: ElevatedButton(
-                            child: const Text(
-                              'Settings',
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  const Color(0xff096B72)),
-                            ),
-                            onPressed: () => goToSettings(context),
-                          )),*/
                     ],
                   ),
                 ),
