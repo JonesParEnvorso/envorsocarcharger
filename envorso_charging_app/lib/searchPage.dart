@@ -324,7 +324,7 @@ class _SearchPage extends State<SearchPage> {
                           focusNode: searchBarFocus,
                           decoration: InputDecoration(
                             prefixIcon: const Icon(Icons.search),
-                            hintText: "Search",
+                            hintText: "Search by City",
                             hintStyle: const TextStyle(color: Colors.grey),
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(25.0)),

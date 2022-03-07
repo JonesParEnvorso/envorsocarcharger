@@ -111,9 +111,7 @@ class _MapScreenState extends State<MapScreen> {
     //showChargersAtLocation();
     super.initState();
     // Set default map type
-    rootBundle
-        .loadString('assets/mapStyles/mapLightSimple.txt')
-        .then((string) {
+    rootBundle.loadString('assets/mapStyles/mapLightSimple.txt').then((string) {
       mapStyle = string;
     });
   }
@@ -505,8 +503,8 @@ class _MapScreenState extends State<MapScreen> {
             onPressed: () => getLocation(_googleMapController),
             child: const Icon(Icons.center_focus_strong),
           )),
+      /*
       // Debug refresh button: call this function when x miles away from previous
-
       Positioned(
           right: 30,
           bottom: 230,
@@ -519,7 +517,7 @@ class _MapScreenState extends State<MapScreen> {
             },
             child: const Icon(Icons.refresh),
             heroTag: 'refresh',
-          )),
+          )),*/
       // Back button
       Positioned(
           height: 28,
@@ -763,7 +761,7 @@ class _MapScreenState extends State<MapScreen> {
                               Icons.search,
                               color: Colors.grey,
                             ),
-                            label: const Text('Search',
+                            label: const Text('Search by City',
                                 style: TextStyle(color: Colors.grey)),
                             onPressed: () {
                               handleSearchPageNavigation(context, 0);
