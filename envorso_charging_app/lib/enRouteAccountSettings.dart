@@ -365,6 +365,10 @@ class _ChangePID extends State<ChangePID> {
                             FilteringTextInputFormatter.digitsOnly,
                             LengthLimitingTextInputFormatter(10),
                           ],
+                          onChanged: (value) => {
+                            if (newPhone.text.length == 10)
+                              {FocusScope.of(context).nextFocus()}
+                          },
                           textInputAction: TextInputAction.next,
                           validator: (String? value) {
                             if (newPhone.text.length != 10) {

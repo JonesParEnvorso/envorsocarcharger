@@ -317,6 +317,10 @@ class _AddPID extends State<AddPID> {
                       LengthLimitingTextInputFormatter(10),
                     ],
                     textInputAction: TextInputAction.next,
+                    onChanged: (value) => {
+                      if (newPhone.text.length == 10)
+                        {FocusScope.of(context).nextFocus()}
+                    },
                     validator: (String? value) {
                       if (newPhone.text.length != 10) {
                         return 'Please Enter a valid phone number';
