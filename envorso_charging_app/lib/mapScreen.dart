@@ -271,7 +271,7 @@ class _MapScreenState extends State<MapScreen> {
                       // Green background
                       width: screenWidth / 1.18,
                       height: 205,
-                      padding: EdgeInsets.only(top: 20),
+                      /*padding: EdgeInsets.only(top: 20),
                       decoration: const BoxDecoration(
                         color: Color(0xff096B72),
                         borderRadius: BorderRadius.all(Radius.circular(25)),
@@ -285,7 +285,7 @@ class _MapScreenState extends State<MapScreen> {
                             borderRadius: BorderRadius.only(
                                 bottomLeft: Radius.circular(25),
                                 bottomRight: Radius.circular(25)),
-                          ),
+                          ),*/
                           child: Card(
                               /*
                               child: Stack(children: [
@@ -426,6 +426,7 @@ class _MapScreenState extends State<MapScreen> {
                                   child: const Icon(Icons.near_me),
                                   heroTag: 'center',
                                 ),
+                                SizedBox(height: 20),
                                 Visibility(
                                     visible: chargersID.contains(
                                         chargerData[highlightedMarkerInd]
@@ -435,7 +436,7 @@ class _MapScreenState extends State<MapScreen> {
                                           visualDensity: VisualDensity.compact,
                                           padding: MaterialStateProperty.all(
                                               const EdgeInsets.fromLTRB(
-                                                  0, 0, 0, 0)),
+                                                  0, 0, 5, 0)),
                                           alignment: Alignment.centerLeft),
                                       icon: const Icon(
                                         Icons.remove_circle_outline,
@@ -452,6 +453,7 @@ class _MapScreenState extends State<MapScreen> {
                                         });
                                       },
                                     )),
+                                    
                                 Visibility(
                                     visible: !chargersID.contains(
                                         chargerData[highlightedMarkerInd]
@@ -461,7 +463,7 @@ class _MapScreenState extends State<MapScreen> {
                                           visualDensity: VisualDensity.compact,
                                           padding: MaterialStateProperty.all(
                                               const EdgeInsets.fromLTRB(
-                                                  0, 0, 0, 0)),
+                                                  0, 0, 5, 0)),
                                           alignment: Alignment.centerLeft),
                                       icon: const Icon(
                                         Icons.add_circle_outline,
@@ -479,7 +481,7 @@ class _MapScreenState extends State<MapScreen> {
                                     ))
                               ]),
                             ),
-                          ]))))
+                          ])))
                 ]),
               ])),
         ),
@@ -570,11 +572,12 @@ class _MapScreenState extends State<MapScreen> {
                             },
                             child: Row(
                               children: <Widget>[
-                                Text("Free",
+                                Text("Free      ",
                                     style: TextStyle(color: Colors.white)),
                                 Checkbox(
                                   visualDensity: VisualDensity.compact,
-                                  checkColor: Colors.white,
+                                  activeColor: Colors.white,
+                                  checkColor: Colors.black,
                                   value: free,
                                   onChanged: (value) {
                                     free = value!;
@@ -592,11 +595,12 @@ class _MapScreenState extends State<MapScreen> {
                             },
                             child: Row(
                               children: <Widget>[
-                                Text("Costs",
+                                Text("Costs   ",
                                     style: TextStyle(color: Colors.white)),
                                 Checkbox(
                                   visualDensity: VisualDensity.compact,
-                                  checkColor: Colors.white,
+                                   activeColor: Colors.white,
+                                  checkColor: Colors.black,
                                   value: cost,
                                   onChanged: (value) {
                                     setState(() {
@@ -636,7 +640,8 @@ class _MapScreenState extends State<MapScreen> {
                                     style: TextStyle(color: Colors.white)),
                                 Checkbox(
                                   visualDensity: VisualDensity.compact,
-                                  checkColor: Colors.white,
+                                   activeColor: Colors.white,
+                                  checkColor: Colors.black,
                                   value: dcFast,
                                   onChanged: (value) {
                                     dcFast = value!;
@@ -654,11 +659,12 @@ class _MapScreenState extends State<MapScreen> {
                             },
                             child: Row(
                               children: <Widget>[
-                                Text("Level 2",
+                                Text("Level 2 ",
                                     style: TextStyle(color: Colors.white)),
                                 Checkbox(
                                   visualDensity: VisualDensity.compact,
-                                  checkColor: Colors.white,
+                                   activeColor: Colors.white,
+                                  checkColor: Colors.black,
                                   value: lvl2,
                                   onChanged: (value) {
                                     lvl2 = value!;
@@ -676,11 +682,12 @@ class _MapScreenState extends State<MapScreen> {
                             },
                             child: Row(
                               children: <Widget>[
-                                Text("Level 1",
+                                Text("Level 1 ",
                                     style: TextStyle(color: Colors.white)),
                                 Checkbox(
                                   visualDensity: VisualDensity.compact,
-                                  checkColor: Colors.white,
+                                   activeColor: Colors.white,
+                                  checkColor: Colors.black,
                                   value: lvl1,
                                   onChanged: (value) {
                                     lvl1 = value!;
@@ -808,7 +815,7 @@ class _MapScreenState extends State<MapScreen> {
                               Icons.location_on,
                               color: Colors.white,
                             ),
-                            label: (const Text('My locations',
+                            label: (const Text('Saved locations',
                                 style: TextStyle(color: Colors.white))),
                             onPressed: () =>
                                 Navigator.of(context).push(_saveLocations()),
