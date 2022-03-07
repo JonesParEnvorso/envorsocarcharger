@@ -622,6 +622,7 @@ class _SearchPage extends State<SearchPage> {
                       borderRadius: BorderRadius.all(Radius.circular(20))),
 
                   child: ListView(
+                      controller: ScrollController(),
                       padding: const EdgeInsets.fromLTRB(7, 0, 0, 0),
                       shrinkWrap: true,
                       children: [
