@@ -443,7 +443,7 @@ class _MapScreenState extends State<MapScreen> {
                                       visualDensity: VisualDensity.compact,
                                       padding: MaterialStateProperty.all(
                                           const EdgeInsets.fromLTRB(
-                                              0, 0, 5, 0)),
+                                              0, 0, 1, 0)),
                                       alignment: Alignment.centerLeft),
                                   icon: const Icon(
                                     Icons.remove_circle_outline,
