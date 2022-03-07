@@ -149,10 +149,26 @@ class _MapScreenState extends State<MapScreen> {
       uId = auth.currentUser!.uid;
     }
     userID = uId;
-    var querryL =
-        await FirebaseFirestore.instance.collection('users').doc(userID).get();
+    dynamic querryL = 1;
+    while (querryL == 1) {
+      querryL = await _getSaved(userID);
+    }
+    //querryL =
+    //    await FirebaseFirestore.instance.collection('users').doc(userID).get();
+    //var querryL =
+    //    await FirebaseFirestore.instance.collection('users').doc(userID).get();
     var a = querryL.get('saved');
     chargersID = a;
+  }
+
+  Future<dynamic> _getSaved(String userID) async {
+    DocumentSnapshot<Map<String, dynamic>> data =
+        await FirebaseFirestore.instance.collection('users').doc(userID).get();
+
+    if (data.data() == null) {
+      return 1;
+    }
+    return data;
   }
 
   String userID = "";
