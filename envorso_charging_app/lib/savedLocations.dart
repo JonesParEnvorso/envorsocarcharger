@@ -237,7 +237,6 @@ class _SavedLocations extends State<SavedLocations> {
                         ),
                         decoration: BoxDecoration(
                           color: const Color(0xff096B72),
-                          
                           borderRadius: BorderRadius.circular(12),
                         ))
                   ])),
@@ -268,11 +267,13 @@ class _SavedLocations extends State<SavedLocations> {
                                       (BuildContext context, int index) {
                                     return Card(
                                         child: ListTile(
-                                            leading: Icon(Icons.location_pin,
-                                                color: tileList[index].superc
-                                                    ? Colors.red
-                                                    : Colors.yellow,
-                                                    size: 50,),
+                                            leading: Icon(
+                                              Icons.location_pin,
+                                              color: tileList[index].superc
+                                                  ? Colors.red
+                                                  : Colors.yellow,
+                                              size: 50,
+                                            ),
                                             title: Text(tileList[index].title,
                                                 textAlign: TextAlign.center),
                                             subtitle: Positioned(
@@ -315,7 +316,8 @@ class _SavedLocations extends State<SavedLocations> {
                                                               .all(const EdgeInsets
                                                                       .fromLTRB(
                                                                   0, 0, 0, 0)),
-                                                          alignment: Alignment.center),
+                                                          alignment:
+                                                              Alignment.center),
                                                       icon: const Icon(
                                                         Icons
                                                             .remove_circle_outline,
@@ -419,7 +421,7 @@ class _SavedLocations extends State<SavedLocations> {
                                     Checkbox(
                                       visualDensity: VisualDensity.compact,
                                       activeColor: Colors.white,
-                                  checkColor: Colors.black,
+                                      checkColor: Colors.black,
                                       value: free,
                                       onChanged: (value) {
                                         free = value!;
@@ -443,8 +445,8 @@ class _SavedLocations extends State<SavedLocations> {
                                         style: TextStyle(color: Colors.white)),
                                     Checkbox(
                                       visualDensity: VisualDensity.compact,
-                                     activeColor: Colors.white,
-                                  checkColor: Colors.black,
+                                      activeColor: Colors.white,
+                                      checkColor: Colors.black,
                                       value: cost,
                                       onChanged: (value) {
                                         setState(() {
@@ -485,7 +487,7 @@ class _SavedLocations extends State<SavedLocations> {
                                     Checkbox(
                                       visualDensity: VisualDensity.compact,
                                       activeColor: Colors.white,
-                                  checkColor: Colors.black,
+                                      checkColor: Colors.black,
                                       value: dcFast,
                                       onChanged: (value) {
                                         dcFast = value!;
@@ -510,7 +512,7 @@ class _SavedLocations extends State<SavedLocations> {
                                     Checkbox(
                                       visualDensity: VisualDensity.compact,
                                       activeColor: Colors.white,
-                                  checkColor: Colors.black,
+                                      checkColor: Colors.black,
                                       value: lvl2,
                                       onChanged: (value) {
                                         lvl2 = value!;
@@ -535,7 +537,7 @@ class _SavedLocations extends State<SavedLocations> {
                                     Checkbox(
                                       visualDensity: VisualDensity.compact,
                                       activeColor: Colors.white,
-                                  checkColor: Colors.black,
+                                      checkColor: Colors.black,
                                       value: lvl1,
                                       onChanged: (value) {
                                         lvl1 = value!;
