@@ -159,7 +159,8 @@ class _FirstLaunch extends State<FirstLaunch> {
                                     actions: <Widget>[
                                       TextButton(
                                         child: const Text('Close'),
-                                        onPressed: () => Navigator.pop(context),
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
                                       )
                                     ],
                                   ));
