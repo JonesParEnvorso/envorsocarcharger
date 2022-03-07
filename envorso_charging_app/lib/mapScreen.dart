@@ -211,7 +211,6 @@ class _MapScreenState extends State<MapScreen> {
             !((dcFast && chargerData[i]['DC fast'] > 0) ||
                 (lvl1 && chargerData[i]['level 1'] > 0) ||
                 (lvl2 && chargerData[i]['level 2'] > 0))) {
-          print("applyin");
 
           markers[i] = markers[i].copyWith(
             visibleParam: false,
@@ -945,9 +944,7 @@ class _MapScreenState extends State<MapScreen> {
   // TO DO: use unique keys for recalculating
   _fillChargerList(double lat, double lon) async {
     // Pull data
-    print("ok");
     var newChargerData = await chargers.pullChargers(lat, lon);
-    print(newChargerData.length);
     for (int i = 0; i < newChargerData.length; i++) {
       bool chargerAlreadyAdded = false;
       int j = 0;
@@ -961,10 +958,8 @@ class _MapScreenState extends State<MapScreen> {
       }
       if (!chargerAlreadyAdded) {
         chargerData.add(newChargerData[i]);
-        print("yep");
       }
     }
-    print(chargerData.length);
     //chargerData = chargers.filterChargers(chargerData, s, c);
     //chargerData = chargers.maskPlugs(chargerData);
     markers = [];
@@ -1019,7 +1014,6 @@ class _MapScreenState extends State<MapScreen> {
       int clickedInd = -1;
       for (int j = 0; j < result.chargers.length; j++) {
         // For every charger from search page
-        print(result.chargers[result.index]['address']);
         bool isInMap = false;
         int i = 0;
         while (!isInMap && i < chargerData.length) {
@@ -1037,7 +1031,6 @@ class _MapScreenState extends State<MapScreen> {
           }
         }
         if (!isInMap) {
-          print(result.chargers[j]['address'] + "Was not in map");
           // Add to charger list
           chargerData.add(result.chargers[j]);
           // Add to marker list
@@ -1053,14 +1046,22 @@ class _MapScreenState extends State<MapScreen> {
                     : BitmapDescriptor.defaultMarkerWithHue(
                         BitmapDescriptor.hueYellow),
                 onTap: () async {
-                  selectMarker(chargerData.length);
+                  selectMarker(i);
                 }));
           });
+
           if (j == result.index) {
             clickedInd = chargerData.length - 1;
           }
         }
       }
+
+      // Animate to selected charger
+      _googleMapController.animateCamera(CameraUpdate.newLatLngZoom(
+          LatLng(
+              chargerData[clickedInd]['lat'], chargerData[clickedInd]['lon']),
+          14));
+
       selectMarker(clickedInd);
     }
   }
@@ -1121,20 +1122,20 @@ class _MapScreenState extends State<MapScreen> {
     String destination = chargerData[ind]['lat'].toString() +
         "," +
         chargerData[ind]['lon'].toString();
-    print(origin + " " + destination);
     var directions = await getDirections(origin, destination);
     // Redefine polyline using json data
 
     setPolyline(directions['polyline_decoded']);
 
     // Animate camera to bounds between origin and destination
+    /*
     _googleMapController.animateCamera(CameraUpdate.newLatLngBounds(
         LatLngBounds(
             southwest: LatLng(
                 directions['bounds_sw']['lat'], directions['bounds_sw']['lng']),
             northeast: LatLng(directions['bounds_ne']['lat'],
                 directions['bounds_ne']['lng'])),
-        35));
+        35));*/
   }
 
   Route _saveLocations() {
