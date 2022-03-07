@@ -92,7 +92,7 @@ class _MapScreenState extends State<MapScreen> {
   // Map style
   bool mapStyleChanged = false;
   bool darkMode = false;
-  bool detailedMode = true;
+  bool detailedMode = false;
   String mapStyle = "";
   // Display card data
   bool isCardDisplayed = false;
@@ -112,7 +112,7 @@ class _MapScreenState extends State<MapScreen> {
     super.initState();
     // Set default map type
     rootBundle
-        .loadString('assets/mapStyles/mapLightDetailed.txt')
+        .loadString('assets/mapStyles/mapLightSimple.txt')
         .then((string) {
       mapStyle = string;
     });
