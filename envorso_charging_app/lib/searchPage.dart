@@ -409,7 +409,7 @@ class _SearchPage extends State<SearchPage> {
               Container(
                 height: 70,
                 width: 200,
-                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                padding: const EdgeInsets.fromLTRB(10, 15, 10, 10),
                 child: ElevatedButton(
                     onPressed: () {
                       _generateList();
@@ -458,16 +458,17 @@ class _SearchPage extends State<SearchPage> {
                                             leading: Icon(Icons.location_pin,
                                                 color: tileList[index].superc
                                                     ? Colors.red
-                                                    : Colors.yellow),
+                                                    : Colors.yellow,
+                                                size: 50),
                                             title: Text(tileList[index].title,
-                                                textAlign: TextAlign.left),
+                                                textAlign: TextAlign.center),
                                             subtitle: Column(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.start,
                                               children: <Widget>[
                                                 Text(
                                                   tileList[index].address,
-                                                  textAlign: TextAlign.left,
+                                                  textAlign: TextAlign.center,
                                                 ),
                                                 Text(
                                                     "DC Fast: " +
@@ -482,83 +483,102 @@ class _SearchPage extends State<SearchPage> {
                                                         tileList[index]
                                                             .lvl1
                                                             .toString(),
-                                                    textAlign: TextAlign.left,
+                                                    textAlign: TextAlign.center,
                                                     style: TextStyle(
                                                         fontStyle:
                                                             FontStyle.italic,
                                                         fontSize: 15,
                                                         color: Colors.black)),
-                                                Visibility(
-                                                    visible: tileList[index]
-                                                        .contains,
-                                                    child: TextButton.icon(
-                                                      style: ButtonStyle(
-                                                          visualDensity:
-                                                              VisualDensity
-                                                                  .compact,
-                                                          padding: MaterialStateProperty
-                                                              .all(const EdgeInsets
-                                                                      .fromLTRB(
-                                                                  0, 0, 0, 0)),
-                                                          alignment: Alignment
-                                                              .centerLeft),
-                                                      icon: const Icon(
-                                                        Icons
-                                                            .remove_circle_outline,
-                                                        color:
-                                                            Color(0xff096B72),
-                                                      ),
-                                                      label: const Text(
-                                                          'Unsave',
-                                                          style: TextStyle(
-                                                              color: Colors
-                                                                  .black)),
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          _remove(
+                                                Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Visibility(
+                                                          visible:
                                                               tileList[index]
-                                                                  .dbID);
-                                                          _generateTile();
-                                                        });
-                                                      },
-                                                    )),
-                                                Visibility(
-                                                    visible: !tileList[index]
-                                                        .contains,
-                                                    child: TextButton.icon(
-                                                      style: ButtonStyle(
-                                                          visualDensity:
-                                                              VisualDensity
-                                                                  .compact,
-                                                          padding: MaterialStateProperty
-                                                              .all(const EdgeInsets
-                                                                      .fromLTRB(
-                                                                  0, 0, 0, 0)),
-                                                          alignment: Alignment
-                                                              .centerLeft),
-                                                      icon: const Icon(
-                                                        Icons
-                                                            .add_circle_outline,
-                                                        color:
-                                                            Color(0xff096B72),
-                                                      ),
-                                                      label: const Text('Save',
-                                                          style: TextStyle(
-                                                              color: Colors
-                                                                  .black)),
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          _add(tileList[index]
-                                                              .dbID);
-                                                          _generateTile();
-                                                        });
-                                                      },
-                                                    ))
+                                                                  .contains,
+                                                          child:
+                                                              TextButton.icon(
+                                                            style: ButtonStyle(
+                                                                visualDensity:
+                                                                    VisualDensity
+                                                                        .compact,
+                                                                padding: MaterialStateProperty.all(
+                                                                    const EdgeInsets
+                                                                            .fromLTRB(
+                                                                        0,
+                                                                        0,
+                                                                        0,
+                                                                        0)),
+                                                                alignment: Alignment
+                                                                    .centerLeft),
+                                                            icon: const Icon(
+                                                              Icons
+                                                                  .remove_circle_outline,
+                                                              color: Color(
+                                                                  0xff096B72),
+                                                            ),
+                                                            label: const Text(
+                                                                'Unsave',
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .black)),
+                                                            onPressed: () {
+                                                              setState(() {
+                                                                _remove(tileList[
+                                                                        index]
+                                                                    .dbID);
+                                                                _generateTile();
+                                                              });
+                                                            },
+                                                          )),
+                                                      Visibility(
+                                                          visible:
+                                                              !tileList[index]
+                                                                  .contains,
+                                                          child:
+                                                              TextButton.icon(
+                                                            style: ButtonStyle(
+                                                                visualDensity:
+                                                                    VisualDensity
+                                                                        .compact,
+                                                                padding: MaterialStateProperty.all(
+                                                                    const EdgeInsets
+                                                                            .fromLTRB(
+                                                                        0,
+                                                                        0,
+                                                                        0,
+                                                                        0)),
+                                                                alignment: Alignment
+                                                                    .centerLeft),
+                                                            icon: const Icon(
+                                                              Icons
+                                                                  .add_circle_outline,
+                                                              color: Color(
+                                                                  0xff096B72),
+                                                            ),
+                                                            label: const Text(
+                                                                'Save',
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .black)),
+                                                            onPressed: () {
+                                                              setState(() {
+                                                                _add(tileList[
+                                                                        index]
+                                                                    .dbID);
+                                                                _generateTile();
+                                                              });
+                                                            },
+                                                          ))
+                                                    ]),
                                               ],
                                             ),
-                                            trailing: Text(
-                                              tileList[index].plugs,
-                                              textAlign: TextAlign.right,
+                                            trailing: SizedBox(
+                                              width: 90,
+                                              child: Text(tileList[index].plugs,
+                                                  textAlign: TextAlign.right),
                                             ))
                                         /*
                                       child: ListTile(
@@ -628,11 +648,12 @@ class _SearchPage extends State<SearchPage> {
                                 },
                                 child: Row(
                                   children: <Widget>[
-                                    Text("Free",
+                                    Text("Free      ",
                                         style: TextStyle(color: Colors.white)),
                                     Checkbox(
                                       visualDensity: VisualDensity.compact,
-                                      checkColor: Colors.white,
+                                      activeColor: Colors.white,
+                                      checkColor: Colors.black,
                                       value: free,
                                       onChanged: (value) {
                                         free = value!;
@@ -652,11 +673,12 @@ class _SearchPage extends State<SearchPage> {
                                 },
                                 child: Row(
                                   children: <Widget>[
-                                    Text("Costs",
+                                    Text("Fares    ",
                                         style: TextStyle(color: Colors.white)),
                                     Checkbox(
                                       visualDensity: VisualDensity.compact,
-                                      checkColor: Colors.white,
+                                      activeColor: Colors.white,
+                                      checkColor: Colors.black,
                                       value: cost,
                                       onChanged: (value) {
                                         setState(() {
@@ -692,11 +714,12 @@ class _SearchPage extends State<SearchPage> {
                                 },
                                 child: Row(
                                   children: <Widget>[
-                                    Text("DC fast",
+                                    Text("DC Fast",
                                         style: TextStyle(color: Colors.white)),
                                     Checkbox(
                                       visualDensity: VisualDensity.compact,
-                                      checkColor: Colors.white,
+                                      activeColor: Colors.white,
+                                      checkColor: Colors.black,
                                       value: dcFast,
                                       onChanged: (value) {
                                         dcFast = value!;
@@ -716,11 +739,12 @@ class _SearchPage extends State<SearchPage> {
                                 },
                                 child: Row(
                                   children: <Widget>[
-                                    Text("Level 2",
+                                    Text("Level 2 ",
                                         style: TextStyle(color: Colors.white)),
                                     Checkbox(
                                       visualDensity: VisualDensity.compact,
-                                      checkColor: Colors.white,
+                                      activeColor: Colors.white,
+                                      checkColor: Colors.black,
                                       value: lvl2,
                                       onChanged: (value) {
                                         lvl2 = value!;
@@ -740,11 +764,12 @@ class _SearchPage extends State<SearchPage> {
                                 },
                                 child: Row(
                                   children: <Widget>[
-                                    Text("Level 1",
+                                    Text("Level 1 ",
                                         style: TextStyle(color: Colors.white)),
                                     Checkbox(
                                       visualDensity: VisualDensity.compact,
-                                      checkColor: Colors.white,
+                                      activeColor: Colors.white,
+                                      checkColor: Colors.black,
                                       value: lvl1,
                                       onChanged: (value) {
                                         lvl1 = value!;
