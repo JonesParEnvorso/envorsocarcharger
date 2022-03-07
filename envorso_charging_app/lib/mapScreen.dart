@@ -626,7 +626,7 @@ class _MapScreenState extends State<MapScreen> {
                             },
                             child: Row(
                               children: <Widget>[
-                                Text("DC fast",
+                                Text("DC Fast",
                                     style: TextStyle(color: Colors.white)),
                                 Checkbox(
                                   visualDensity: VisualDensity.compact,

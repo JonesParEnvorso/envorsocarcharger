@@ -203,7 +203,7 @@ class _SavedLocations extends State<SavedLocations> {
           Column(
             children: <Widget>[
               Container(
-                  padding: const EdgeInsets.fromLTRB(10, 30, 0, 0),
+                  padding: const EdgeInsets.fromLTRB(10, 35, 0, 0),
                   child: Row(children: [
                     Container(
                         child: ElevatedButton(
@@ -237,10 +237,7 @@ class _SavedLocations extends State<SavedLocations> {
                         ),
                         decoration: BoxDecoration(
                           color: const Color(0xff096B72),
-                          border: Border.all(
-                            color: Colors.black,
-                            width: 1,
-                          ),
+                          
                           borderRadius: BorderRadius.circular(12),
                         ))
                   ])),
@@ -274,9 +271,10 @@ class _SavedLocations extends State<SavedLocations> {
                                             leading: Icon(Icons.location_pin,
                                                 color: tileList[index].superc
                                                     ? Colors.red
-                                                    : Colors.yellow),
+                                                    : Colors.yellow,
+                                                    size: 50,),
                                             title: Text(tileList[index].title,
-                                                textAlign: TextAlign.left),
+                                                textAlign: TextAlign.center),
                                             subtitle: Positioned(
                                                 left: 20,
                                                 child: Column(
@@ -317,8 +315,7 @@ class _SavedLocations extends State<SavedLocations> {
                                                               .all(const EdgeInsets
                                                                       .fromLTRB(
                                                                   0, 0, 0, 0)),
-                                                          alignment: Alignment
-                                                              .centerLeft),
+                                                          alignment: Alignment.center),
                                                       icon: const Icon(
                                                         Icons
                                                             .remove_circle_outline,
@@ -417,11 +414,12 @@ class _SavedLocations extends State<SavedLocations> {
                                 },
                                 child: Row(
                                   children: <Widget>[
-                                    Text("Free",
+                                    Text("Free     ",
                                         style: TextStyle(color: Colors.white)),
                                     Checkbox(
                                       visualDensity: VisualDensity.compact,
-                                      checkColor: Colors.white,
+                                      activeColor: Colors.white,
+                                  checkColor: Colors.black,
                                       value: free,
                                       onChanged: (value) {
                                         free = value!;
@@ -441,11 +439,12 @@ class _SavedLocations extends State<SavedLocations> {
                                 },
                                 child: Row(
                                   children: <Widget>[
-                                    Text("Costs",
+                                    Text("Costs   ",
                                         style: TextStyle(color: Colors.white)),
                                     Checkbox(
                                       visualDensity: VisualDensity.compact,
-                                      checkColor: Colors.white,
+                                     activeColor: Colors.white,
+                                  checkColor: Colors.black,
                                       value: cost,
                                       onChanged: (value) {
                                         setState(() {
@@ -481,11 +480,12 @@ class _SavedLocations extends State<SavedLocations> {
                                 },
                                 child: Row(
                                   children: <Widget>[
-                                    Text("DC fast",
+                                    Text("DC Fast",
                                         style: TextStyle(color: Colors.white)),
                                     Checkbox(
                                       visualDensity: VisualDensity.compact,
-                                      checkColor: Colors.white,
+                                      activeColor: Colors.white,
+                                  checkColor: Colors.black,
                                       value: dcFast,
                                       onChanged: (value) {
                                         dcFast = value!;
@@ -505,11 +505,12 @@ class _SavedLocations extends State<SavedLocations> {
                                 },
                                 child: Row(
                                   children: <Widget>[
-                                    Text("Level 2",
+                                    Text("Level 2 ",
                                         style: TextStyle(color: Colors.white)),
                                     Checkbox(
                                       visualDensity: VisualDensity.compact,
-                                      checkColor: Colors.white,
+                                      activeColor: Colors.white,
+                                  checkColor: Colors.black,
                                       value: lvl2,
                                       onChanged: (value) {
                                         lvl2 = value!;
@@ -529,11 +530,12 @@ class _SavedLocations extends State<SavedLocations> {
                                 },
                                 child: Row(
                                   children: <Widget>[
-                                    Text("Level 1",
+                                    Text("Level 1 ",
                                         style: TextStyle(color: Colors.white)),
                                     Checkbox(
                                       visualDensity: VisualDensity.compact,
-                                      checkColor: Colors.white,
+                                      activeColor: Colors.white,
+                                  checkColor: Colors.black,
                                       value: lvl1,
                                       onChanged: (value) {
                                         lvl1 = value!;
