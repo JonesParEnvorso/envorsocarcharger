@@ -253,6 +253,7 @@ class _MapScreenState extends State<MapScreen> {
         onMapCreated: (controller) =>
             {_googleMapController = controller, showChargersAtLocation()},
         markers: Set.of(markers), // Displays markers
+
         polylines: polylines,
       )),
       // Info card
@@ -419,6 +420,7 @@ class _MapScreenState extends State<MapScreen> {
                               onPressed: () {
                                 setState(() {
                                   highlightedMarkerInd = -1;
+                                  polylines.clear();
                                 });
                               },
                               icon: Icon(Icons.cancel),
@@ -758,7 +760,7 @@ class _MapScreenState extends State<MapScreen> {
                             label: const Text('Search',
                                 style: TextStyle(color: Colors.grey)),
                             onPressed: () {
-                              handleSearchPageNavigation(context);
+                              handleSearchPageNavigation(context, 0);
                               //speech.main();
                             },
                           ),
@@ -820,7 +822,7 @@ class _MapScreenState extends State<MapScreen> {
                             label: (const Text('Saved locations',
                                 style: TextStyle(color: Colors.white))),
                             onPressed: () =>
-                                Navigator.of(context).push(_saveLocations()),
+                                handleSearchPageNavigation(context, 1),
                           ),
                           Container(
                               padding: const EdgeInsets.all(2),
@@ -1019,9 +1021,15 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  void handleSearchPageNavigation(context) async {
-    final result = await Navigator.of(context).push(_createRoute(0));
-
+  void handleSearchPageNavigation(context, int pageAccessed) async {
+    // 0 = searchpage
+    // 1 = savedlocations
+    late final result;
+    if (pageAccessed == 0) {
+      result = await Navigator.of(context).push(_createRoute(0));
+    } else if (pageAccessed == 1) {
+      result = await Navigator.of(context).push(_saveLocations());
+    }
     if (result != null) {
       // Add all chargers in searched city
       int clickedInd = -1;

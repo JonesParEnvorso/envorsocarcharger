@@ -12,6 +12,12 @@ import 'mapScreen.dart';
 import 'chargeStation.dart';
 import 'main.dart';
 
+class MapReturnValues {
+  List<Map<String, dynamic>> chargers = [];
+  int index = 0;
+  MapReturnValues(this.chargers, this.index);
+}
+
 void main() {
   runApp(const MyApp());
 }
@@ -267,6 +273,12 @@ class _SavedLocations extends State<SavedLocations> {
                                       (BuildContext context, int index) {
                                     return Card(
                                         child: ListTile(
+                                            onTap: () => {
+                                                  Navigator.pop(
+                                                      context,
+                                                      MapReturnValues(
+                                                          chargers, index))
+                                                },
                                             leading: Icon(
                                               Icons.location_pin,
                                               color: tileList[index].superc
