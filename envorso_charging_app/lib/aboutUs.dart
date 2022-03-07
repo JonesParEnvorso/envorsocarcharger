@@ -80,7 +80,7 @@ class _AboutUsState extends State<AboutUs> {
         Container(
           padding: const EdgeInsets.fromLTRB(30, 10, 20, 5),
           child: const Text(
-            'Welcome to ENRoute!\n\nThis app allows you to easily locate, navigate, and pay for a charge in your Electric Vehicle. We take care of managing all of your charging service subscriptions.',
+            'Welcome to ENRoute!\n\nThis app allows you to easily locate, navigate, and pay for a charger for your Electric Vehicle. We take care of managing all of your charging service subscriptions.',
             style: TextStyle(fontSize: 16),
           ),
         ),
