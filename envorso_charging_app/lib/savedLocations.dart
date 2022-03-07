@@ -284,7 +284,8 @@ class _SavedLocations extends State<SavedLocations> {
                                                   children: <Widget>[
                                                     Text(
                                                       tileList[index].address,
-                                                      textAlign: TextAlign.left,
+                                                      textAlign:
+                                                          TextAlign.center,
                                                     ),
                                                     Text(
                                                         "DC Fast: " +
@@ -300,7 +301,7 @@ class _SavedLocations extends State<SavedLocations> {
                                                                 .lvl1
                                                                 .toString(),
                                                         textAlign:
-                                                            TextAlign.left,
+                                                            TextAlign.center,
                                                         style: TextStyle(
                                                             fontStyle: FontStyle
                                                                 .italic,
@@ -337,9 +338,10 @@ class _SavedLocations extends State<SavedLocations> {
                                                     )
                                                   ],
                                                 )),
-                                            trailing: Text(
-                                              tileList[index].plugs,
-                                              textAlign: TextAlign.right,
+                                            trailing: SizedBox(
+                                              width: 90,
+                                              child: Text(tileList[index].plugs,
+                                                  textAlign: TextAlign.right),
                                             ))
                                         /*
                                       child: ListTile(
