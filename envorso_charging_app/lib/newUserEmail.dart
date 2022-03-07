@@ -164,30 +164,38 @@ class _AddUser extends State<AddUser> {
               onPressed: () async {
                 // button validation. need to make checkbox work better.
                 // currently there is no indication that the box needs to be checked
-                if (_formKey.currentState!.validate() && _isSelected) {
+                if (_formKey.currentState!.validate()) {
                   // error checking
-                  String? res = await firebaseFunctions.createAccount(
-                      newEmail.text, newPassword.text);
-                  if (res == '' || res == null) {
-                    // do something
-                  } else if (res == 'email') {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) =>
-                            _signUpAlert(context, 'Email is already in use'));
-                  } else if (res == 'weak') {
+                  if (_isSelected == false) {
                     showDialog(
                         context: context,
                         builder: (BuildContext context) => _signUpAlert(context,
-                            'Weak Password. Need a minimum of six characters'));
-                  } else if (res == 'invalid email') {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) => _signUpAlert(
-                            context, 'Please Enter a valid email'));
+                            'Please Accept the Terms of Services and Privacy Policy'));
                   } else {
-                    uId = res;
-                    goToPID(context);
+                    String? res = await firebaseFunctions.createAccount(
+                        newEmail.text, newPassword.text);
+                    if (res == '' || res == null) {
+                      // do something
+                    } else if (res == 'email') {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) =>
+                              _signUpAlert(context, 'Email is already in use'));
+                    } else if (res == 'weak') {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) => _signUpAlert(
+                              context,
+                              'Weak Password. Need a minimum of six characters'));
+                    } else if (res == 'invalid email') {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) => _signUpAlert(
+                              context, 'Please Enter a valid email'));
+                    } else {
+                      uId = res;
+                      goToPID(context);
+                    }
                   }
                 }
               })),
@@ -222,7 +230,7 @@ class LinkedLabelCheckbox extends StatelessWidget {
         Expanded(
           child: Checkbox(
             value: value,
-            activeColor: Color(0xff096B72),
+            activeColor: const Color(0xff096B72),
             onChanged: (bool? newValue) {
               onChanged(newValue!);
             },
@@ -230,8 +238,8 @@ class LinkedLabelCheckbox extends StatelessWidget {
         ),
         Row(children: [
           RichText(
-              text: TextSpan(children: [
-            const TextSpan(
+              text: const TextSpan(children: [
+            TextSpan(
                 text: "I agree to the ", style: TextStyle(color: Colors.black)),
           ])),
           TextButton(
@@ -247,8 +255,8 @@ class LinkedLabelCheckbox extends StatelessWidget {
                       )),
                       actions: <Widget>[
                         TextButton(
-                          style:
-                              TextButton.styleFrom(primary: Color(0xff096B72)),
+                          style: TextButton.styleFrom(
+                              primary: const Color(0xff096B72)),
                           onPressed: () => Navigator.pop(context, 'OK'),
                           child: const Text('OK'),
                         ),
@@ -256,8 +264,8 @@ class LinkedLabelCheckbox extends StatelessWidget {
                     ),
                   )),
           RichText(
-              text: TextSpan(children: [
-            const TextSpan(text: "and", style: TextStyle(color: Colors.black)),
+              text: const TextSpan(children: [
+            TextSpan(text: "and", style: TextStyle(color: Colors.black)),
           ])),
         ]),
         TextButton(
@@ -273,7 +281,8 @@ class LinkedLabelCheckbox extends StatelessWidget {
                             style: TextStyle(color: Color(0xff096B72)))),
                     actions: <Widget>[
                       TextButton(
-                        style: TextButton.styleFrom(primary: Color(0xff096B72)),
+                        style: TextButton.styleFrom(
+                            primary: const Color(0xff096B72)),
                         onPressed: () => Navigator.pop(context, 'OK'),
                         child: const Text('OK'),
                       ),
