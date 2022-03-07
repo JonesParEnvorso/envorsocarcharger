@@ -290,10 +290,9 @@ class _ChangePID extends State<ChangePID> {
       }
 
       await FirebaseAuth.instance.signOut().then((res) {
-        //Navigator.pushNamedAndRemoveUntil(
-        //    context, './startUp.dart', (r) => false);
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => const StartUp()));
+        Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+        //Navigator.pushReplacement(
+        //    context, MaterialPageRoute(builder: (context) => const StartUp()));
       });
     }
 

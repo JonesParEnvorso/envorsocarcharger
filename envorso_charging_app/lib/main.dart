@@ -26,12 +26,16 @@ class MyApp extends StatelessWidget {
           FocusManager.instance.primaryFocus?.unfocus();
         },
         child: MaterialApp(
-            title: 'ENRoute',
-            theme: ThemeData(
-              primarySwatch: Colors.blue,
-            ),
-            // change to StartUp to attempt persistent sign-in
-            home: const StartUp() //const FirstLaunch() ,
-            ));
+          title: 'ENRoute',
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          initialRoute: '/',
+          routes: {
+            '/': (context) => const StartUp(),
+          },
+          // change to StartUp to attempt persistent sign-in
+          //home: const StartUp() //const FirstLaunch() ,
+        ));
   }
 }
