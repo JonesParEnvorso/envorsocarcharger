@@ -151,19 +151,33 @@ class _FirstLaunch extends State<FirstLaunch> {
                         onPressed: () {
                           //forgot passord screen
                           showDialog(
-                              context: context,
-                              builder: (BuildContext context) => AlertDialog(
-                                    title: const Text('Forgot Your Password?'),
-                                    content: const Text(
-                                        'Please email ENRoute@gmail.com.'),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        child: const Text('Close'),
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(),
-                                      )
-                                    ],
-                                  ));
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: const Text('Forgot Your Password?'),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('Close'),
+                                  onPressed: () => Navigator.of(context).pop(),
+                                ),
+                              ],
+                              content: RichText(
+                                text: const TextSpan(children: [
+                                  TextSpan(
+                                      text: 'Please email: ',
+                                      style: TextStyle(
+                                          color: Colors.black, fontSize: 16)),
+                                  TextSpan(
+                                      text: 'ENRoute@gmail.com',
+                                      style: TextStyle(
+                                          color: Color(0xff096B72),
+                                          fontSize: 16,
+                                          decoration: TextDecoration.underline))
+                                ]),
+                              ),
+                            ),
+                            /*const Text(
+                                        'Please email ENRoute@gmail.com.'),*/
+                          );
                         },
                         child: const Text('Forgot Password?',
                             style: TextStyle(color: Color(0xff096B72))),
