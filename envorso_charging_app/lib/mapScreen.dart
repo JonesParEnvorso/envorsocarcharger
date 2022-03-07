@@ -286,8 +286,8 @@ class _MapScreenState extends State<MapScreen> {
                                 bottomLeft: Radius.circular(25),
                                 bottomRight: Radius.circular(25)),
                           ),*/
-                          child: Card(
-                              /*
+                      child: Card(
+                          /*
                               child: Stack(children: [
                             ListTile(
                                 leading: Icon(Icons.location_pin,
@@ -333,155 +333,145 @@ class _MapScreenState extends State<MapScreen> {
                                 ))
                           ])*/
 
-                              child: Row(children: [
-                            Container(
-                              padding: EdgeInsets.all(10),
-                              width: screenWidth / 1.60,
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                        // Charger name
-                                        (chargerData[highlightedMarkerInd]
-                                            ['name']),
-                                        style: new TextStyle(
-                                            color: const Color(0xff096B72),
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20)),
-                                    Text("Address",
-                                        style: new TextStyle(
-                                            color: const Color(0xff096B72),
-                                            fontWeight: FontWeight.bold)),
-                                    Text("" + //
+                          child: Row(children: [
+                        Container(
+                          padding: EdgeInsets.all(10),
+                          width: screenWidth / 1.60,
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                    // Charger name
+                                    (chargerData[highlightedMarkerInd]['name']),
+                                    style: new TextStyle(
+                                        color: const Color(0xff096B72),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20)),
+                                Text("Address",
+                                    style: new TextStyle(
+                                        color: const Color(0xff096B72),
+                                        fontWeight: FontWeight.bold)),
+                                Text("" + //
+                                    chargerData[highlightedMarkerInd]
+                                        ['address'] +
+                                    ", " +
+                                    chargerData[highlightedMarkerInd]['city'] +
+                                    " " +
+                                    chargerData[highlightedMarkerInd]['state']),
+                                Text(
+                                    ("DC fast: " +
                                         chargerData[highlightedMarkerInd]
-                                            ['address'] +
-                                        ", " +
-                                        chargerData[highlightedMarkerInd]
-                                            ['city'] +
-                                        " " +
-                                        chargerData[highlightedMarkerInd]
-                                            ['state']),
-                                    Text(
-                                        ("DC fast: " +
-                                            chargerData[highlightedMarkerInd]
-                                                    ['DC fast']
-                                                .toString()),
-                                        style: new TextStyle(
-                                            color: const Color(0xff096B72),
-                                            fontWeight: FontWeight.bold)),
-                                    Row(children: [
-                                      Text(
-                                          ("Level 2: " +
-                                              chargerData[highlightedMarkerInd]
-                                                      ['level 2']
-                                                  .toString()),
-                                          style: new TextStyle(
-                                              fontWeight: FontWeight.bold)),
-                                      Text(
-                                          (" | Level 1: " +
-                                              chargerData[highlightedMarkerInd]
-                                                      ['level 1']
-                                                  .toString()),
-                                          style: new TextStyle(
-                                              fontWeight: FontWeight.bold))
-                                    ]),
-                                    Text(
-                                        ("Charger Types "
-                                        /*chargerData[highlightedMarkerInd]
+                                                ['DC fast']
+                                            .toString()),
+                                    style: new TextStyle(
+                                        color: const Color(0xff096B72),
+                                        fontWeight: FontWeight.bold)),
+                                Row(children: [
+                                  Text(
+                                      ("Level 2: " +
+                                          chargerData[highlightedMarkerInd]
+                                                  ['level 2']
+                                              .toString()),
+                                      style: new TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                  Text(
+                                      (" | Level 1: " +
+                                          chargerData[highlightedMarkerInd]
+                                                  ['level 1']
+                                              .toString()),
+                                      style: new TextStyle(
+                                          fontWeight: FontWeight.bold))
+                                ]),
+                                Text(
+                                    ("Charger Types "
+                                    /*chargerData[highlightedMarkerInd]
                                                     ['DC fast']
                                                 .toString()*/
-                                        ),
-                                        style: new TextStyle(
-                                            color: const Color(0xff096B72),
-                                            fontWeight: FontWeight.bold)),
-                                    // Network
-                                    Text("Network",
-                                        style: new TextStyle(
-                                            color: const Color(0xff096B72),
-                                            fontWeight: FontWeight.bold)),
-                                    Text(chargerData[highlightedMarkerInd]
-                                        ['network']),
-                                  ]),
+                                    ),
+                                    style: new TextStyle(
+                                        color: const Color(0xff096B72),
+                                        fontWeight: FontWeight.bold)),
+                                // Network
+                                Text("Network",
+                                    style: new TextStyle(
+                                        color: const Color(0xff096B72),
+                                        fontWeight: FontWeight.bold)),
+                                Text(chargerData[highlightedMarkerInd]
+                                    ['network']),
+                              ]),
+                        ),
+                        Expanded(
+                          child: Column(children: [
+                            IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  highlightedMarkerInd = -1;
+                                });
+                              },
+                              icon: Icon(Icons.cancel),
+                              iconSize: 30,
                             ),
-                            Expanded(
-                              child: Column(children: [
-                                IconButton(
+                            SizedBox(
+                              height: 30,
+                            ),
+                            FloatingActionButton(
+                              backgroundColor: const Color(0xff096B72),
+                              foregroundColor: Colors.white,
+                              onPressed: () => launchMap(highlightedMarkerInd),
+                              child: const Icon(Icons.near_me),
+                              heroTag: 'center',
+                            ),
+                            SizedBox(height: 20),
+                            Visibility(
+                                visible: chargersID.contains(
+                                    chargerData[highlightedMarkerInd]['id']),
+                                child: TextButton.icon(
+                                  style: ButtonStyle(
+                                      visualDensity: VisualDensity.compact,
+                                      padding: MaterialStateProperty.all(
+                                          const EdgeInsets.fromLTRB(
+                                              0, 0, 5, 0)),
+                                      alignment: Alignment.centerLeft),
+                                  icon: const Icon(
+                                    Icons.remove_circle_outline,
+                                    color: Color(0xff096B72),
+                                  ),
+                                  label: const Text('Unsave',
+                                      style: TextStyle(color: Colors.black)),
                                   onPressed: () {
                                     setState(() {
-                                      highlightedMarkerInd = -1;
+                                      _remove(chargerData[highlightedMarkerInd]
+                                          ['id']);
                                     });
                                   },
-                                  icon: Icon(Icons.cancel),
-                                  iconSize: 30,
-                                ),
-                                SizedBox(
-                                  height: 30,
-                                ),
-                                FloatingActionButton(
-                                  backgroundColor: const Color(0xff096B72),
-                                  foregroundColor: Colors.white,
-                                  onPressed: () =>
-                                      launchMap(highlightedMarkerInd),
-                                  child: const Icon(Icons.near_me),
-                                  heroTag: 'center',
-                                ),
-                                SizedBox(height: 20),
-                                Visibility(
-                                    visible: chargersID.contains(
-                                        chargerData[highlightedMarkerInd]
-                                            ['id']),
-                                    child: TextButton.icon(
-                                      style: ButtonStyle(
-                                          visualDensity: VisualDensity.compact,
-                                          padding: MaterialStateProperty.all(
-                                              const EdgeInsets.fromLTRB(
-                                                  0, 0, 5, 0)),
-                                          alignment: Alignment.centerLeft),
-                                      icon: const Icon(
-                                        Icons.remove_circle_outline,
-                                        color: Color(0xff096B72),
-                                      ),
-                                      label: const Text('Unsave',
-                                          style:
-                                              TextStyle(color: Colors.black)),
-                                      onPressed: () {
-                                        setState(() {
-                                          _remove(
-                                              chargerData[highlightedMarkerInd]
-                                                  ['id']);
-                                        });
-                                      },
-                                    )),
-                                    
-                                Visibility(
-                                    visible: !chargersID.contains(
-                                        chargerData[highlightedMarkerInd]
-                                            ['id']),
-                                    child: TextButton.icon(
-                                      style: ButtonStyle(
-                                          visualDensity: VisualDensity.compact,
-                                          padding: MaterialStateProperty.all(
-                                              const EdgeInsets.fromLTRB(
-                                                  0, 0, 5, 0)),
-                                          alignment: Alignment.centerLeft),
-                                      icon: const Icon(
-                                        Icons.add_circle_outline,
-                                        color: Color(0xff096B72),
-                                      ),
-                                      label: const Text('Save',
-                                          style:
-                                              TextStyle(color: Colors.black)),
-                                      onPressed: () {
-                                        setState(() {
-                                          _add(chargerData[highlightedMarkerInd]
-                                              ['id']);
-                                        });
-                                      },
-                                    ))
-                              ]),
-                            ),
-                          ])))
+                                )),
+                            Visibility(
+                                visible: !chargersID.contains(
+                                    chargerData[highlightedMarkerInd]['id']),
+                                child: TextButton.icon(
+                                  style: ButtonStyle(
+                                      visualDensity: VisualDensity.compact,
+                                      padding: MaterialStateProperty.all(
+                                          const EdgeInsets.fromLTRB(
+                                              0, 0, 5, 0)),
+                                      alignment: Alignment.centerLeft),
+                                  icon: const Icon(
+                                    Icons.add_circle_outline,
+                                    color: Color(0xff096B72),
+                                  ),
+                                  label: const Text('Save',
+                                      style: TextStyle(color: Colors.black)),
+                                  onPressed: () {
+                                    setState(() {
+                                      _add(chargerData[highlightedMarkerInd]
+                                          ['id']);
+                                    });
+                                  },
+                                ))
+                          ]),
+                        ),
+                      ])))
                 ]),
               ])),
         ),
@@ -599,7 +589,7 @@ class _MapScreenState extends State<MapScreen> {
                                     style: TextStyle(color: Colors.white)),
                                 Checkbox(
                                   visualDensity: VisualDensity.compact,
-                                   activeColor: Colors.white,
+                                  activeColor: Colors.white,
                                   checkColor: Colors.black,
                                   value: cost,
                                   onChanged: (value) {
@@ -640,7 +630,7 @@ class _MapScreenState extends State<MapScreen> {
                                     style: TextStyle(color: Colors.white)),
                                 Checkbox(
                                   visualDensity: VisualDensity.compact,
-                                   activeColor: Colors.white,
+                                  activeColor: Colors.white,
                                   checkColor: Colors.black,
                                   value: dcFast,
                                   onChanged: (value) {
@@ -663,7 +653,7 @@ class _MapScreenState extends State<MapScreen> {
                                     style: TextStyle(color: Colors.white)),
                                 Checkbox(
                                   visualDensity: VisualDensity.compact,
-                                   activeColor: Colors.white,
+                                  activeColor: Colors.white,
                                   checkColor: Colors.black,
                                   value: lvl2,
                                   onChanged: (value) {
@@ -686,7 +676,7 @@ class _MapScreenState extends State<MapScreen> {
                                     style: TextStyle(color: Colors.white)),
                                 Checkbox(
                                   visualDensity: VisualDensity.compact,
-                                   activeColor: Colors.white,
+                                  activeColor: Colors.white,
                                   checkColor: Colors.black,
                                   value: lvl1,
                                   onChanged: (value) {
