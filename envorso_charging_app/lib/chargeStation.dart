@@ -87,10 +87,14 @@ class Chargers {
     city = city.toLowerCase();
     var querryList = await FirebaseFirestore.instance
         .collection('stations')
-        .where('city', isEqualTo: city)
+        //.where('city', isEqualTo: city)
         .get();
+    String a;
     for (var docs in querryList.docs) {
-      chargers.add(docs.data());
+      a = docs.data()['city'];
+      if (a.toLowerCase() == city) {
+        chargers.add(docs.data());
+      }
     }
     return chargers;
   }
