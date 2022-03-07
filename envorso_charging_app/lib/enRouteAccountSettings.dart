@@ -290,6 +290,8 @@ class _ChangePID extends State<ChangePID> {
       }
 
       await FirebaseAuth.instance.signOut().then((res) {
+        //Navigator.pushNamedAndRemoveUntil(
+        //    context, './startUp.dart', (r) => false);
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => const StartUp()));
       });
@@ -360,9 +362,20 @@ class _ChangePID extends State<ChangePID> {
                           ),
                           keyboardType: TextInputType.phone,
                           inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.digitsOnly
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(10),
                           ],
+                          onChanged: (value) => {
+                            if (newPhone.text.length == 10)
+                              {FocusScope.of(context).nextFocus()}
+                          },
                           textInputAction: TextInputAction.next,
+                          validator: (String? value) {
+                            if (newPhone.text.length != 10) {
+                              return 'Please Enter a valid phone number';
+                            }
+                            return null;
+                          },
                         )),
 
                     // Home Street
@@ -421,47 +434,6 @@ class _ChangePID extends State<ChangePID> {
                             },
                           ),
                         ),
-                        /*Container(
-                          // state dropdown
-                          margin: const EdgeInsets.all(5.0),
-                          height: 60,
-                          decoration: const ShapeDecoration(
-                            shape: RoundedRectangleBorder(
-                              //dimensions: EdgeInsetsGeometry(50),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5)),
-                              side: BorderSide(
-                                  width: 1.0,
-                                  style: BorderStyle.solid,
-                                  color: Colors.grey),
-                            ),
-                          ),
-                          child: DropdownButtonHideUnderline(
-                            child: ButtonTheme(
-                              alignedDropdown: true,
-                              child: DropdownButton(
-                                hint: const Text('Hint'),
-                                value: newState,
-                                // After selecting the desired option,it will
-                                // change button value to selected value
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    newState = newValue!;
-                                  });
-                                },
-                                // Down Arrow Icon
-                                icon: const Icon(Icons.keyboard_arrow_down),
-                                // Array list of items
-                                items: states.map((states) {
-                                  return DropdownMenuItem(
-                                    value: states,
-                                    child: Text(states),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                          ),
-                        ),*/
                         Stack(
                           children: [
                             Container(
@@ -521,55 +493,6 @@ class _ChangePID extends State<ChangePID> {
                                     ])))
                           ],
                         ),
-                        /*Container(
-                            // state dropdown
-                            height: 60,
-                            width: screenWidth / 4,
-                            margin: const EdgeInsets.all(5.0),
-                            decoration: const ShapeDecoration(
-                                shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5)),
-                              side: BorderSide(
-                                  width: 1.0,
-                                  style: BorderStyle.solid,
-                                  color: Colors.grey),
-                            )),
-                            child: DropdownButtonHideUnderline(
-                              child: ButtonTheme(
-                                alignedDropdown: true,
-                                child: DropdownButtonFormField(
-                                  items: states.map((states) {
-                                    return DropdownMenuItem(
-                                      value: states,
-                                      child: Text(states),
-                                    );
-                                  }).toList(),
-                                  value: newState,
-                                  validator: (String? value) {
-                                    if (value == null ||
-                                        value.isEmpty ||
-                                        newState == 'State') {
-                                      return 'Required';
-                                    }
-                                    return null;
-                                  },
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      if (newValue != null) {
-                                        newState = newValue;
-                                      }
-                                    });
-                                  },
-                                  elevation: 5,
-                                  isDense: true,
-                                  decoration: const InputDecoration(
-                                      enabledBorder: UnderlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: Colors.white))),
-                                ),
-                              ),
-                            )),*/
                       ], // end children
                     ),
                     TextButton(

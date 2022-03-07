@@ -305,19 +305,29 @@ class _AddPID extends State<AddPID> {
                   width: screenWidth,
                   padding: inputPadding,
                   child: TextFormField(
-                      controller: newPhone,
-                      //autocorrect: false,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Phone Number',
-                      ),
-                      keyboardType: TextInputType.phone,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly
-                      ],
-                      textInputAction: TextInputAction.next,
-                      validator: _validateField)),
-
+                    controller: newPhone,
+                    //autocorrect: false,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Phone Number',
+                    ),
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(10),
+                    ],
+                    textInputAction: TextInputAction.next,
+                    onChanged: (value) => {
+                      if (newPhone.text.length == 10)
+                        {FocusScope.of(context).nextFocus()}
+                    },
+                    validator: (String? value) {
+                      if (newPhone.text.length != 10) {
+                        return 'Please Enter a valid phone number';
+                      }
+                      return null;
+                    },
+                  )),
               // Home Street
               Container(
                 width: screenWidth / 2.25,
@@ -337,7 +347,7 @@ class _AddPID extends State<AddPID> {
                 children: <Widget>[
                   Container(
                     // city
-                    width: screenWidth / 2,
+                    width: screenWidth / 2.15,
                     padding: inputPadding,
                     child: TextFormField(
                         controller: newCity,
@@ -374,92 +384,63 @@ class _AddPID extends State<AddPID> {
                             },
                         validator: _validateField),
                   ),
-                  Container(
-                      child: ButtonTheme(
-                          alignedDropdown: true,
-                          child: Column(children: [
-                            SizedBox(
-                              height: 20,
-                            ),
-                            SizedBox(
-                              height: 30,
-                              width: screenWidth / 4,
-                              child: DropdownButtonFormField(
-                                alignment: Alignment.centerLeft,
-                                items: states.map((states) {
-                                  return DropdownMenuItem(
-                                    value: states,
-                                    child: Text(states),
-                                  );
-                                }).toList(),
-                                value: newState,
-                                validator: (String? value) {
-                                  if (value == null ||
-                                      value.isEmpty ||
-                                      newState == 'State') {
-                                    return 'Required';
-                                  }
-                                  return null;
-                                },
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    if (newValue != null) {
-                                      newState = newValue;
-                                    }
-                                  });
-                                },
-                                elevation: 5,
-                                isDense: true,
-                                decoration: const InputDecoration.collapsed(
-                                    hintText: ''),
-                              ),
-                            )
-                          ])))
-                  /*Container(
-                    // state dropdown
-                    margin: const EdgeInsets.all(5.0),
-                    height: 60,
-                    decoration: const ShapeDecoration(
-                      shape: RoundedRectangleBorder(
-                        //dimensions: EdgeInsetsGeometry(50),
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                        side: BorderSide(
-                            width: 1.0,
-                            style: BorderStyle.solid,
-                            color: Colors.grey),
-                      ),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: ButtonTheme(
-                        alignedDropdown: true,
-                        child: DropdownButton(
-                          value: newState,
-                          // After selecting the desired option,it will
-                          // change button value to selected value
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              newState = newValue!;
-                              _dropdownError = '';
-                            });
-                          },
-                          // Down Arrow Icon
-                          icon: const Icon(Icons.keyboard_arrow_down),
-
-                          // Array list of items
-                          items: states.map((states) {
-                            return DropdownMenuItem(
-                              value: states,
-                              child: Text(states),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    ),
+                  Stack(
+                    children: [
+                      Container(
+                          height: 60,
+                          width: screenWidth / 4,
+                          margin: const EdgeInsets.all(5.0),
+                          decoration: const ShapeDecoration(
+                              shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                            side: BorderSide(
+                                width: 1.0,
+                                style: BorderStyle.solid,
+                                color: Colors.grey),
+                          ))),
+                      Container(
+                          child: ButtonTheme(
+                              alignedDropdown: true,
+                              child: Column(children: [
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                SizedBox(
+                                  height: 30,
+                                  width: screenWidth / 4,
+                                  child: DropdownButtonFormField(
+                                    alignment: Alignment.centerLeft,
+                                    items: states.map((states) {
+                                      return DropdownMenuItem(
+                                        value: states,
+                                        child: Text(states),
+                                      );
+                                    }).toList(),
+                                    value: newState,
+                                    validator: (String? value) {
+                                      if (value == null ||
+                                          value.isEmpty ||
+                                          newState == 'State') {
+                                        return 'Required';
+                                      }
+                                      return null;
+                                    },
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        if (newValue != null) {
+                                          newState = newValue;
+                                        }
+                                      });
+                                    },
+                                    elevation: 5,
+                                    isDense: true,
+                                    decoration: const InputDecoration.collapsed(
+                                        hintText: ''),
+                                  ),
+                                )
+                              ])))
+                    ],
                   ),
-                  _dropdownError == ''
-                      ? Text(_dropdownError,
-                          style: const TextStyle(color: Colors.red))
-                      : const SizedBox.shrink(),*/
                 ], // end children
               ),
 
