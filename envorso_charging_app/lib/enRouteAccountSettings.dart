@@ -362,9 +362,16 @@ class _ChangePID extends State<ChangePID> {
                           ),
                           keyboardType: TextInputType.phone,
                           inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.digitsOnly
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(10),
                           ],
                           textInputAction: TextInputAction.next,
+                          validator: (String? value) {
+                            if (newPhone.text.length != 10) {
+                              return 'Please Enter a valid phone number';
+                            }
+                            return null;
+                          },
                         )),
 
                     // Home Street

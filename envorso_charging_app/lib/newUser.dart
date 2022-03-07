@@ -305,18 +305,25 @@ class _AddPID extends State<AddPID> {
                   width: screenWidth,
                   padding: inputPadding,
                   child: TextFormField(
-                      controller: newPhone,
-                      //autocorrect: false,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Phone Number',
-                      ),
-                      keyboardType: TextInputType.phone,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly
-                      ],
-                      textInputAction: TextInputAction.next,
-                      validator: _validateField)),
+                    controller: newPhone,
+                    //autocorrect: false,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Phone Number',
+                    ),
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(10),
+                    ],
+                    textInputAction: TextInputAction.next,
+                    validator: (String? value) {
+                      if (newPhone.text.length != 10) {
+                        return 'Please Enter a valid phone number';
+                      }
+                      return null;
+                    },
+                  )),
 
               // Home Street
               Container(
@@ -431,51 +438,6 @@ class _AddPID extends State<AddPID> {
                               ])))
                     ],
                   ),
-                  /*Container(
-                    // state dropdown
-                    margin: const EdgeInsets.all(5.0),
-                    height: 60,
-                    decoration: const ShapeDecoration(
-                      shape: RoundedRectangleBorder(
-                        //dimensions: EdgeInsetsGeometry(50),
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                        side: BorderSide(
-                            width: 1.0,
-                            style: BorderStyle.solid,
-                            color: Colors.grey),
-                      ),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: ButtonTheme(
-                        alignedDropdown: true,
-                        child: DropdownButton(
-                          value: newState,
-                          // After selecting the desired option,it will
-                          // change button value to selected value
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              newState = newValue!;
-                              _dropdownError = '';
-                            });
-                          },
-                          // Down Arrow Icon
-                          icon: const Icon(Icons.keyboard_arrow_down),
-
-                          // Array list of items
-                          items: states.map((states) {
-                            return DropdownMenuItem(
-                              value: states,
-                              child: Text(states),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    ),
-                  ),
-                  _dropdownError == ''
-                      ? Text(_dropdownError,
-                          style: const TextStyle(color: Colors.red))
-                      : const SizedBox.shrink(),*/
                 ], // end children
               ),
 
