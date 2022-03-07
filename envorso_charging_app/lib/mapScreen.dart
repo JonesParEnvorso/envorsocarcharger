@@ -211,7 +211,6 @@ class _MapScreenState extends State<MapScreen> {
             !((dcFast && chargerData[i]['DC fast'] > 0) ||
                 (lvl1 && chargerData[i]['level 1'] > 0) ||
                 (lvl2 && chargerData[i]['level 2'] > 0))) {
-
           markers[i] = markers[i].copyWith(
             visibleParam: false,
           );
@@ -342,7 +341,8 @@ class _MapScreenState extends State<MapScreen> {
                               children: [
                                 Text(
                                     // Charger name
-                                    (chargerData[highlightedMarkerInd]['name']),
+                                    (chargerData[highlightedMarkerInd]
+                                        ['network']),
                                     style: new TextStyle(
                                         color: const Color(0xff096B72),
                                         fontWeight: FontWeight.bold,
@@ -358,32 +358,43 @@ class _MapScreenState extends State<MapScreen> {
                                     chargerData[highlightedMarkerInd]['city'] +
                                     " " +
                                     chargerData[highlightedMarkerInd]['state']),
-                                Text(
-                                    ("DC fast: " +
-                                        chargerData[highlightedMarkerInd]
-                                                ['DC fast']
-                                            .toString()),
-                                    style: new TextStyle(
-                                        color: const Color(0xff096B72),
-                                        fontWeight: FontWeight.bold)),
-                                Row(children: [
-                                  Text(
-                                      ("Level 2: " +
-                                          chargerData[highlightedMarkerInd]
-                                                  ['level 2']
-                                              .toString()),
+                                if ((chargerData[highlightedMarkerInd]
+                                        ['DC fast'] >=
+                                    1))
+                                  Text("DC fast",
                                       style: new TextStyle(
+                                          color: Colors.red,
                                           fontWeight: FontWeight.bold)),
-                                  Text(
-                                      (" | Level 1: " +
-                                          chargerData[highlightedMarkerInd]
-                                                  ['level 1']
-                                              .toString()),
-                                      style: new TextStyle(
-                                          fontWeight: FontWeight.bold))
+                                Row(children: [
+                                  if ((chargerData[highlightedMarkerInd]
+                                          ['level 2'] >=
+                                      1))
+                                    Text("Level 2",
+                                        style: new TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                  if ((chargerData[highlightedMarkerInd]
+                                              ['level 2'] >=
+                                          1 &&
+                                      chargerData[highlightedMarkerInd]
+                                              ['level 1'] >=
+                                          1))
+                                    Text(" | ",
+                                        style: new TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                  if ((chargerData[highlightedMarkerInd]
+                                          ['level 1'] >=
+                                      1))
+                                    Text(
+                                        ((chargerData[highlightedMarkerInd]
+                                                    ['level 1'] >=
+                                                1)
+                                            ? ("Level 1")
+                                            : ""),
+                                        style: new TextStyle(
+                                            fontWeight: FontWeight.bold))
                                 ]),
                                 Text(
-                                    ("Charger Types "
+                                    ("Plug Types"
                                     /*chargerData[highlightedMarkerInd]
                                                     ['DC fast']
                                                 .toString()*/
@@ -391,13 +402,15 @@ class _MapScreenState extends State<MapScreen> {
                                     style: new TextStyle(
                                         color: const Color(0xff096B72),
                                         fontWeight: FontWeight.bold)),
+                                Text(plugsString),
+                                /*
                                 // Network
                                 Text("Network",
                                     style: new TextStyle(
                                         color: const Color(0xff096B72),
                                         fontWeight: FontWeight.bold)),
                                 Text(chargerData[highlightedMarkerInd]
-                                    ['network']),
+                                    ['network']),*/
                               ]),
                         ),
                         Expanded(
@@ -430,7 +443,7 @@ class _MapScreenState extends State<MapScreen> {
                                       visualDensity: VisualDensity.compact,
                                       padding: MaterialStateProperty.all(
                                           const EdgeInsets.fromLTRB(
-                                              0, 0, 5, 0)),
+                                              0, 0, 1, 0)),
                                       alignment: Alignment.centerLeft),
                                   icon: const Icon(
                                     Icons.remove_circle_outline,
@@ -1108,9 +1121,11 @@ class _MapScreenState extends State<MapScreen> {
   // Sets which charger will be displayed on the info card
   void selectMarker(int ind) async {
     plugsString = "";
-    for (String plug in chargerData[ind]['plug']) {
-      plugsString += plug;
-      plugsString += "\n";
+    for (int i = 0; i < chargerData[ind]['plug'].length; i++) {
+      plugsString += chargerData[ind]['plug'][i];
+      if (i < chargerData[ind]['plug'].length - 1) {
+        plugsString += "\n";
+      }
     }
     setState(() {
       highlightedMarkerInd = ind;
