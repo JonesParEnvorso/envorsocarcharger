@@ -364,7 +364,6 @@ class _MapScreenState extends State<MapScreen> {
                                     1))
                                   Text("DC fast",
                                       style: new TextStyle(
-                                          color: Colors.red,
                                           fontWeight: FontWeight.bold)),
                                 Row(children: [
                                   if ((chargerData[highlightedMarkerInd]
@@ -404,6 +403,13 @@ class _MapScreenState extends State<MapScreen> {
                                         color: const Color(0xff096B72),
                                         fontWeight: FontWeight.bold)),
                                 Text(plugsString),
+                                Icon(Icons.location_pin,
+                                    color: chargerData[highlightedMarkerInd]
+                                                ['DC fast'] >=
+                                            1
+                                        ? Colors.red
+                                        : Colors.yellow,
+                                    size: 25),
                                 /*
                                 // Network
                                 Text("Network",
